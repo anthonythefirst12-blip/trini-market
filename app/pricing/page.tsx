@@ -7,7 +7,7 @@ const tiers = [
     price: "TT$0",
     period: "forever",
     description: "Get started selling with no upfront cost.",
-    color: "gray",
+    subscription: false,
     features: [
       { text: "1 active listing at a time", included: true },
       { text: "Standard search placement", included: true },
@@ -23,13 +23,14 @@ const tiers = [
     cta: "Get Started Free",
     href: "/auth/signup",
     highlight: false,
+    badge: null,
   },
   {
     name: "Featured",
-    price: "TT$15",
-    period: "per week",
+    price: "TT$150",
+    period: "/ month",
     description: "Stand out in search results and reach more buyers.",
-    color: "blue",
+    subscription: true,
     badge: "Most Popular",
     features: [
       { text: "Unlimited active listings", included: true },
@@ -43,16 +44,17 @@ const tiers = [
       { text: "Extended image gallery (5 photos)", included: false },
       { text: "\"Premium Picks\" section", included: false },
     ],
-    cta: "Boost a Listing",
+    cta: "Subscribe — TT$150/mo",
     href: "/wallet",
     highlight: true,
   },
   {
     name: "Premium",
-    price: "TT$40",
-    period: "per week",
+    price: "TT$350",
+    period: "/ month",
     description: "Maximum visibility for serious sellers and businesses.",
-    color: "blue",
+    subscription: true,
+    badge: null,
     features: [
       { text: "Unlimited active listings", included: true },
       { text: "Standard search placement", included: true },
@@ -65,7 +67,7 @@ const tiers = [
       { text: "Extended image gallery (5 photos)", included: true },
       { text: "\"Premium Picks\" section", included: true },
     ],
-    cta: "Go Premium",
+    cta: "Subscribe — TT$350/mo",
     href: "/wallet",
     highlight: false,
   },
@@ -89,16 +91,24 @@ export default function PricingPage() {
           Pricing
         </span>
         <h1 className="font-display font-bold text-4xl text-gray-900 mb-3">
-          Pay less. Sell more.
+          Simple, honest pricing.
         </h1>
         <p className="text-gray-500 text-lg max-w-xl mx-auto">
-          TriniMarket listings start at just <strong className="text-blue-700">TT$15/week</strong> — a fraction of what other T&T platforms charge. No hidden fees, no lock-in.
+          Monthly subscriptions with no lock-in. Upgrade, downgrade, or cancel anytime — no questions asked.
         </p>
-        <div className="mt-6 inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm font-medium px-4 py-2 rounded-full">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-          </svg>
-          Up to 60% cheaper than Pin.tt boosts
+
+        {/* Trust pills */}
+        <div className="flex items-center justify-center gap-3 flex-wrap mt-6">
+          {[
+            { icon: "✅", text: "Cancel anytime" },
+            { icon: "🔄", text: "No lock-in contract" },
+            { icon: "💳", text: "Billed monthly" },
+            { icon: "🔒", text: "No hidden fees" },
+          ].map((p) => (
+            <span key={p.text} className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1.5 rounded-full">
+              {p.icon} {p.text}
+            </span>
+          ))}
         </div>
       </section>
 
@@ -124,12 +134,27 @@ export default function PricingPage() {
               )}
 
               <div className="mb-6">
-                <h2 className="font-display font-bold text-xl text-gray-900">{tier.name}</h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="font-display font-bold text-xl text-gray-900">{tier.name}</h2>
+                  {tier.subscription && (
+                    <span className="text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+                      Subscription
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-baseline gap-1 mt-2">
                   <span className="font-display font-bold text-3xl text-blue-700">{tier.price}</span>
-                  <span className="text-gray-400 text-sm">/{tier.period}</span>
+                  <span className="text-gray-400 text-sm">{tier.period}</span>
                 </div>
                 <p className="text-gray-500 text-sm mt-2">{tier.description}</p>
+                {tier.subscription && (
+                  <p className="text-xs text-green-600 font-medium mt-1.5 flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    Cancel anytime, no penalty
+                  </p>
+                )}
               </div>
 
               <ul className="space-y-2.5 flex-1 mb-7">
@@ -158,13 +183,26 @@ export default function PricingPage() {
                   {tier.cta}
                 </Button>
               </Link>
+
+              {tier.subscription && (
+                <p className="text-xs text-center text-gray-400 mt-3">
+                  Billed monthly · Cancel before next billing date to stop charges
+                </p>
+              )}
             </div>
           ))}
         </div>
 
-        <p className="text-center text-sm text-gray-400 mt-6">
-          Credits are deducted weekly per listing. Cancel or downgrade anytime. No subscription required.
-        </p>
+        {/* Subscription explainer strip */}
+        <div className="mt-10 bg-white rounded-2xl border border-gray-200 p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+          <div className="text-3xl shrink-0">🔄</div>
+          <div>
+            <h3 className="font-display font-semibold text-gray-900 mb-1">How subscriptions work</h3>
+            <p className="text-sm text-gray-500 leading-relaxed">
+              Featured and Premium are monthly subscriptions billed on the same date each month. You can cancel at any time from your dashboard — your plan stays active until the end of the current billing period, then stops automatically. No penalties, no awkward calls.
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* Pro Account section */}
@@ -176,7 +214,7 @@ export default function PricingPage() {
             </span>
             <h2 className="font-display font-bold text-3xl text-white mb-3">Pro Account — TT$150/month</h2>
             <p className="text-blue-200 max-w-xl mx-auto">
-              Everything in Premium, plus a full branded storefront, analytics, and a Verified Business badge. Built for shops, agencies, and serious sellers.
+              Everything in Premium, plus a full branded storefront, analytics, and a Verified Business badge. Cancel anytime.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
@@ -194,26 +232,31 @@ export default function PricingPage() {
                 Upgrade to Pro
               </Button>
             </Link>
+            <p className="text-blue-300 text-xs mt-3">Monthly subscription · Cancel anytime from Settings</p>
           </div>
         </div>
       </section>
 
-      {/* FAQ / comparison callout */}
+      {/* FAQ */}
       <section className="max-w-3xl mx-auto px-4 sm:px-6 py-14">
-        <h2 className="font-display font-bold text-2xl text-gray-900 mb-8 text-center">Why TriniMarket?</h2>
+        <h2 className="font-display font-bold text-2xl text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
         <div className="space-y-4">
           {[
             {
-              q: "How does this compare to Pin.tt?",
-              a: "Pin.tt charges significantly more for boosted listings and offers no transparent pricing. TriniMarket's Featured tier starts at TT$15/week with clear, predictable costs and more prominent placement.",
+              q: "How do I cancel my subscription?",
+              a: "Go to Dashboard → Subscriptions and click \"Cancel Plan\". Your plan remains active until the end of the current billing period. You won't be charged again after that.",
             },
             {
-              q: "Do credits expire?",
-              a: "No. Credits you top up stay in your wallet until you use them. There's no expiry and no monthly subscription required.",
+              q: "What happens to my listings if I cancel?",
+              a: "Your listings stay live until the end of your paid period. After that they revert to Free tier placement — they won't be deleted.",
             },
             {
-              q: "Can I cancel a boost mid-week?",
-              a: "Yes. You can downgrade or cancel a listing's tier at any time. Unused days are refunded to your wallet as credits.",
+              q: "Can I switch between Featured and Premium?",
+              a: "Yes. You can upgrade or downgrade at any time. Upgrades take effect immediately; downgrades take effect at the next billing date.",
+            },
+            {
+              q: "How does TriniMarket's pricing compare to other local platforms?",
+              a: "Many local platforms charge high rates with little transparency. TriniMarket's Featured tier starts at TT$150/month with clear, predictable costs and prominent placement across the site.",
             },
             {
               q: "What payment methods do you accept?",
@@ -223,7 +266,7 @@ export default function PricingPage() {
             <details key={item.q} className="bg-white border border-gray-200 rounded-xl group">
               <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-gray-900 text-sm list-none">
                 {item.q}
-                <svg className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform shrink-0 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </summary>

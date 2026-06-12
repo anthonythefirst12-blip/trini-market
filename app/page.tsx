@@ -1,11 +1,16 @@
 import Link from "next/link";
-import { listings, categories } from "@/lib/data";
+import { categories } from "@/lib/data";
+import { getPremiumListings, getFeaturedListings, getRecentListings, getCategoryCounts } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { Button } from "@/components/ui/Button";
 
-export default function HomePage() {
-  const featured = listings.filter((l) => l.featured);
-  const premium = listings.filter((l) => l.tier === "premium");
+export default async function HomePage() {
+  const [premium, featured, recent, categoryCounts] = await Promise.all([
+    getPremiumListings(),
+    getFeaturedListings(),
+    getRecentListings(6),
+    getCategoryCounts(),
+  ]);
 
   return (
     <>
@@ -95,7 +100,7 @@ export default function HomePage() {
               >
                 <div className="text-2xl mb-1">{cat.icon}</div>
                 <div className="text-xs font-medium text-gray-700 group-hover:text-blue-700 transition-colors leading-tight">{cat.name}</div>
-                <div className="text-xs text-gray-400 mt-0.5">{cat.count}</div>
+                <div className="text-xs text-gray-400 mt-0.5">{categoryCounts[cat.name] ?? 0}</div>
               </Link>
             ))}
           </div>
@@ -150,7 +155,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {listings.slice(0, 4).map((listing) => (
+            {recent.slice(0, 4).map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>

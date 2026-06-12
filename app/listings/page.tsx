@@ -1,4 +1,4 @@
-import { listings } from "@/lib/data";
+import { getListings } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { FilterSidebar } from "@/components/listings/FilterSidebar";
 import { ViewToggle } from "@/components/listings/ViewToggle";
@@ -43,33 +43,13 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
   const params = await searchParams;
   const { q, category, location, minPrice, maxPrice, view = "grid" } = params;
 
-  let results = listings;
-
-  if (q) {
-    const query = q.toLowerCase();
-    results = results.filter(
-      (l) =>
-        l.title.toLowerCase().includes(query) ||
-        l.description.toLowerCase().includes(query) ||
-        l.tags.some((t) => t.includes(query))
-    );
-  }
-
-  if (category) {
-    results = results.filter((l) => l.category === category);
-  }
-
-  if (location) {
-    results = results.filter((l) => l.location.includes(location));
-  }
-
-  if (minPrice) {
-    results = results.filter((l) => l.price >= Number(minPrice));
-  }
-
-  if (maxPrice) {
-    results = results.filter((l) => l.price <= Number(maxPrice));
-  }
+  const results = await getListings({
+    q,
+    category,
+    location,
+    minPrice: minPrice ? Number(minPrice) : undefined,
+    maxPrice: maxPrice ? Number(maxPrice) : undefined,
+  });
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen">

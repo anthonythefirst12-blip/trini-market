@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { listings, comments as allComments } from "@/lib/data";
+import { getListing, getListings, getComments } from "@/lib/db";
 import { ImageGallery } from "@/components/listings/ImageGallery";
 import { ContactForm } from "@/components/listings/ContactForm";
 import { CommentsSection } from "@/components/listings/CommentsSection";
@@ -32,14 +32,14 @@ function TierBadge({ tier }: { tier: string }) {
 
 export default async function ListingDetailPage({ params }: Props) {
   const { id } = await params;
-  const listing = listings.find((l) => l.id === id);
+  const listing = await getListing(id);
   if (!listing) notFound();
 
-  const related = listings
-    .filter((l) => l.category === listing.category && l.id !== listing.id)
-    .slice(0, 3);
-
-  const listingComments = allComments.filter((c) => c.listingId === id);
+  const [allListings, listingComments] = await Promise.all([
+    getListings({ category: listing.category }),
+    getComments(id),
+  ]);
+  const related = allListings.filter((l) => l.id !== listing.id).slice(0, 3);
 
   const formatted = new Intl.NumberFormat("en-TT", {
     style: "currency",
@@ -202,9 +202,9 @@ export default async function ListingDetailPage({ params }: Props) {
               <p className="text-sm font-semibold text-blue-800 mb-1">Is this your listing?</p>
               <p className="text-xs text-blue-600 mb-3">
                 {listing.tier === "free"
-                  ? "Boost it to Featured (TT$15/wk) or Premium (TT$40/wk) for more visibility."
+                  ? "Boost it to Featured (TT$150/mo) or Premium (TT$350/mo) for more visibility."
                   : listing.tier === "featured"
-                  ? "Upgrade to Premium (TT$40/wk) for top placement and a bigger badge."
+                  ? "Upgrade to Premium (TT$350/mo) for top placement and a bigger badge."
                   : "Your listing is at Premium — top of the market! ✨"}
               </p>
               {listing.tier !== "premium" && (

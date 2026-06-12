@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { listings } from "@/lib/data";
+import { getSellerListings } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
@@ -12,7 +12,7 @@ interface Props {
 export default async function StorefrontPage({ params }: Props) {
   const { sellerId } = await params;
 
-  const sellerListings = listings.filter((l) => l.seller.id === sellerId);
+  const sellerListings = await getSellerListings(sellerId);
   if (sellerListings.length === 0) notFound();
 
   const seller = sellerListings[0].seller;

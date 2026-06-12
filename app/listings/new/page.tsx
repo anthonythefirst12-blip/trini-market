@@ -1,28 +1,144 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/Button";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
+import { createClient } from "@/lib/supabase-browser";
 
 type Step = 1 | 2 | 3;
 
 const CATEGORIES = [
-  "Electronics", "Vehicles", "Real Estate", "Fashion",
-  "Food & Beverage", "Services", "Home & Garden", "Sports & Outdoors",
-];
-
-const LOCATIONS = [
-  "Port of Spain", "San Fernando", "Chaguanas", "Arima", "Tunapuna",
-  "Couva", "Fyzabad", "Debe", "Diego Martin", "Maraval",
+  "Electronics",
+  "Vehicles",
+  "Real Estate",
+  "Fashion",
+  "Food & Beverage",
+  "Services",
+  "Home & Garden",
+  "Sports & Outdoors",
 ];
 
 const CONDITIONS = ["New", "Like New", "Good", "Fair"];
 
+const LOCATIONS: { region: string; areas: string[] }[] = [
+  {
+    region: "Port of Spain & Environs",
+    areas: [
+      "Port of Spain",
+      "Belmont",
+      "Cascade",
+      "Woodbrook",
+      "St. Clair",
+      "Newtown",
+      "St. James",
+      "Cocorite",
+      "Gonzales",
+      "Laventille",
+      "Morvant",
+    ],
+  },
+  {
+    region: "East-West Corridor",
+    areas: [
+      "Barataria",
+      "San Juan",
+      "Curepe",
+      "St. Augustine",
+      "Tunapuna",
+      "Arouca",
+      "Trincity",
+      "Piarco",
+      "Arima",
+      "Sangre Grande",
+    ],
+  },
+  {
+    region: "West Trinidad",
+    areas: [
+      "Diego Martin",
+      "Petit Valley",
+      "Maraval",
+      "Westmoorings",
+      "Glencoe",
+      "Carenage",
+      "Chaguaramas",
+      "Santa Cruz",
+      "Paramin",
+    ],
+  },
+  {
+    region: "Central Trinidad",
+    areas: [
+      "Chaguanas",
+      "Cunupia",
+      "Charlieville",
+      "Couva",
+      "Carapichaima",
+      "Felicity",
+      "Endeavour",
+      "Montrose",
+    ],
+  },
+  {
+    region: "South Trinidad",
+    areas: [
+      "San Fernando",
+      "Marabella",
+      "Gasparillo",
+      "Princes Town",
+      "Siparia",
+      "Penal",
+      "Debe",
+      "Barrackpore",
+      "Fyzabad",
+      "Point Fortin",
+      "La Brea",
+      "Cedros",
+      "Icacos",
+      "Moruga",
+      "Rio Claro",
+      "Mayaro",
+    ],
+  },
+  {
+    region: "North Trinidad",
+    areas: [
+      "Blanchisseuse",
+      "Matelot",
+      "Toco",
+      "Salybia",
+    ],
+  },
+  {
+    region: "Tobago",
+    areas: [
+      "Scarborough",
+      "Crown Point",
+      "Canaan",
+      "Signal Hill",
+      "Buccoo",
+      "Plymouth",
+      "Charlotteville",
+      "Speyside",
+      "Roxborough",
+      "Castara",
+      "Moriah",
+    ],
+  },
+];
+
 export default function NewListingPage() {
+  const router = useRouter();
   const [step, setStep] = useState<Step>(1);
-  const [submitted, setSubmitted] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [sellerId, setSellerId] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [dragOver, setDragOver] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const [form, setForm] = useState({
     title: "",
@@ -40,28 +156,140 @@ export default function NewListingPage() {
   const update = (key: string, value: string | boolean) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  if (submitted) {
-    return (
-      <div className="min-h-[70vh] flex items-center justify-center bg-[#FAFAFA] px-4">
-        <div className="text-center max-w-sm">
-          <div className="text-5xl mb-4">🎉</div>
-          <h2 className="font-display font-bold text-2xl text-gray-900 mb-2">Listing Posted!</h2>
-          <p className="text-gray-500 text-sm mb-6">Your listing is now live on TriniMarket.</p>
-          <div className="flex flex-col gap-3">
-            <Link href="/listings"><Button fullWidth>Browse Listings</Button></Link>
-            <Link href="/dashboard"><Button fullWidth variant="secondary">Go to Dashboard</Button></Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Get logged-in user
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        setUserId(data.user.id);
+        setSellerId(data.user.id); // seller id = user id
+      } else {
+        router.push("/auth/login");
+      }
+    });
+  }, [router]);
+
+  const addImages = (files: File[]) => {
+    const newFiles = [...imageFiles, ...files].slice(0, 5);
+    setImageFiles(newFiles);
+    setImagePreviews(newFiles.map((f) => URL.createObjectURL(f)));
+  };
+
+  const removeImage = (index: number) => {
+    const newFiles = imageFiles.filter((_, i) => i !== index);
+    setImageFiles(newFiles);
+    setImagePreviews(newFiles.map((f) => URL.createObjectURL(f)));
+  };
+
+  const handleSubmit = async () => {
+    if (!userId || !sellerId) return;
+    setSubmitting(true);
+    setSubmitError("");
+
+    const supabase = createClient();
+    let imageUrls: string[] = [];
+
+    // Upload images to Supabase Storage
+    if (imageFiles.length > 0) {
+      for (const file of imageFiles) {
+        const ext = file.name.split(".").pop();
+        const path = `listings/${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("listing-images")
+          .upload(path, file, { upsert: false });
+
+        if (uploadError) {
+          // If storage bucket doesn't exist yet, use placeholder
+          console.warn("Image upload failed:", uploadError.message);
+          imageUrls.push(`https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop`);
+        } else {
+          const { data: urlData } = supabase.storage
+            .from("listing-images")
+            .getPublicUrl(uploadData.path);
+          imageUrls.push(urlData.publicUrl);
+        }
+      }
+    }
+
+    // Fallback image if none uploaded
+    if (imageUrls.length === 0) {
+      imageUrls = [`https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop`];
+    }
+
+    const listingId = `l${Date.now()}`;
+    const tagsArray = form.tags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    const { error } = await supabase.from("listings").insert({
+      id: listingId,
+      user_id: userId,
+      seller_id: sellerId,
+      title: form.title,
+      description: form.description,
+      price: parseFloat(form.price),
+      currency: form.currency,
+      category: form.category,
+      condition: form.condition,
+      location: form.location,
+      images: imageUrls,
+      tags: tagsArray,
+      negotiable: form.negotiable,
+      tier: form.tier,
+      featured: form.tier !== "free",
+      created_at: new Date().toISOString(),
+    });
+
+    if (error) {
+      setSubmitError(error.message);
+      setSubmitting(false);
+      return;
+    }
+
+    // Send listing posted confirmation email (fire and forget)
+    fetch("/api/email/listing-posted", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ listingTitle: form.title, listingId, tier: form.tier }),
+    }).catch(() => {});
+
+    // If paid tier, redirect to WiPay for subscription payment
+    if (form.tier !== "free") {
+      const res = await fetch("/api/payments/wipay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amountTTD: form.tier === "featured" ? 150 : 350,
+          purpose: `subscription_${form.tier}_${listingId}`,
+        }),
+      });
+      const data = await res.json();
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+        return;
+      }
+    }
+
+    router.push(`/dashboard?posted=1`);
+  };
+
+  const canProceedStep1 =
+    form.title.trim() &&
+    form.category &&
+    form.condition &&
+    form.price &&
+    parseFloat(form.price) >= 0 &&
+    form.location;
+
+  const canProceedStep2 = form.description.trim().length >= 10;
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen py-10">
       <div className="max-w-2xl mx-auto px-4">
         <div className="mb-8">
           <h1 className="font-display font-bold text-2xl text-gray-900">Post a Listing</h1>
-          <p className="text-sm text-gray-500 mt-1">Fill in the details below to list your item.</p>
+          <p className="text-sm text-gray-500 mt-1">Fill in the details to list your item on TriniMarket.</p>
         </div>
 
         {/* Step indicator */}
@@ -78,7 +306,7 @@ export default function NewListingPage() {
                 "text-sm hidden sm:block",
                 step === s ? "text-gray-900 font-medium" : "text-gray-400",
               ].join(" ")}>
-                {s === 1 ? "Basic Details" : s === 2 ? "Description & Tags" : "Photos"}
+                {s === 1 ? "Basic Details" : s === 2 ? "Description" : "Photos & Post"}
               </span>
               {s < 3 && <div className="w-12 h-px bg-gray-200" />}
             </div>
@@ -86,18 +314,21 @@ export default function NewListingPage() {
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 p-6">
-          {/* Step 1 */}
+
+          {/* ── Step 1: Basic Details ── */}
           {step === 1 && (
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Listing title *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Listing Title *</label>
                 <input
                   type="text"
                   value={form.title}
                   onChange={(e) => update("title", e.target.value)}
                   placeholder="e.g. 2019 Toyota Corolla – Low Mileage"
+                  maxLength={120}
                   className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <p className="text-xs text-gray-400 mt-1">{form.title.length}/120</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -145,16 +376,15 @@ export default function NewListingPage() {
                     className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div className="flex items-center gap-2 mt-2">
+                <label className="flex items-center gap-2 mt-2 cursor-pointer">
                   <input
-                    id="negotiable"
                     type="checkbox"
                     checked={form.negotiable}
                     onChange={(e) => update("negotiable", e.target.checked)}
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <label htmlFor="negotiable" className="text-sm text-gray-600">Price is negotiable</label>
-                </div>
+                  <span className="text-sm text-gray-600">Price is negotiable</span>
+                </label>
               </div>
 
               <div>
@@ -165,28 +395,34 @@ export default function NewListingPage() {
                   className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 >
                   <option value="">Select location</option>
-                  {LOCATIONS.map((l) => <option key={l} value={l}>{l}</option>)}
+                  {LOCATIONS.map((group) => (
+                    <optgroup key={group.region} label={group.region}>
+                      {group.areas.map((area) => (
+                        <option key={area} value={area}>{area}</option>
+                      ))}
+                    </optgroup>
+                  ))}
                 </select>
               </div>
 
-              {/* Tier selection */}
+              {/* Tier */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Listing Tier
-                  <a href="/pricing" target="_blank" className="ml-2 text-xs text-blue-600 hover:underline font-normal">Compare tiers →</a>
+                  <Link href="/pricing" target="_blank" className="ml-2 text-xs text-blue-600 hover:underline font-normal">Compare tiers →</Link>
                 </label>
                 <div className="grid grid-cols-3 gap-3">
                   {([
                     { value: "free", label: "Free", price: "TT$0", desc: "Standard placement" },
-                    { value: "featured", label: "◆ Featured", price: "TT$15/wk", desc: "Homepage + badge" },
-                    { value: "premium", label: "★ Premium", price: "TT$40/wk", desc: "Top placement" },
+                    { value: "featured", label: "◆ Featured", price: "TT$150/mo", desc: "Cancel anytime" },
+                    { value: "premium", label: "★ Premium", price: "TT$350/mo", desc: "Cancel anytime" },
                   ] as const).map((t) => (
                     <button
                       key={t.value}
                       type="button"
                       onClick={() => update("tier", t.value)}
                       className={[
-                        "rounded-xl border-2 p-3 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+                        "rounded-xl border-2 p-3 text-left transition-all",
                         form.tier === t.value
                           ? t.value === "premium" ? "border-blue-700 bg-blue-700 text-white" : "border-blue-500 bg-blue-50"
                           : "border-gray-200 hover:border-blue-300",
@@ -200,14 +436,14 @@ export default function NewListingPage() {
                 </div>
                 {form.tier !== "free" && (
                   <p className="text-xs text-gray-400 mt-2">
-                    Credits will be deducted from your wallet. <a href="/wallet" className="text-blue-600 hover:underline">Top up →</a>
+                    You&apos;ll be redirected to WiPay to complete payment after posting. Billed monthly · Cancel anytime.
                   </p>
                 )}
               </div>
             </div>
           )}
 
-          {/* Step 2 */}
+          {/* ── Step 2: Description ── */}
           {step === 2 && (
             <div className="space-y-5">
               <div>
@@ -215,15 +451,18 @@ export default function NewListingPage() {
                 <textarea
                   value={form.description}
                   onChange={(e) => update("description", e.target.value)}
-                  rows={6}
-                  placeholder="Describe your item — condition, features, reason for selling, availability for viewing, etc."
+                  rows={7}
+                  maxLength={1000}
+                  placeholder="Describe your item — condition details, features, reason for selling, availability for viewing, contact preferences, etc."
                   className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
                 <p className="text-xs text-gray-400 mt-1">{form.description.length}/1000 characters</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tags <span className="text-gray-400 font-normal">(comma separated)</span></label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tags <span className="text-gray-400 font-normal">(optional, comma separated)</span>
+                </label>
                 <input
                   type="text"
                   value={form.tags}
@@ -244,20 +483,20 @@ export default function NewListingPage() {
             </div>
           )}
 
-          {/* Step 3 */}
+          {/* ── Step 3: Photos & Post ── */}
           {step === 3 && (
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Photos</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Photos <span className="text-gray-400 font-normal">(up to 5 images)</span>
+                </label>
                 <div
                   onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                   onDragLeave={() => setDragOver(false)}
                   onDrop={(e) => {
                     e.preventDefault();
                     setDragOver(false);
-                    const files = Array.from(e.dataTransfer.files);
-                    const urls = files.map((f) => URL.createObjectURL(f));
-                    setUploadedImages((prev) => [...prev, ...urls].slice(0, 5));
+                    addImages(Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith("image/")));
                   }}
                   className={[
                     "border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer",
@@ -271,27 +510,22 @@ export default function NewListingPage() {
                     accept="image/*"
                     multiple
                     className="hidden"
-                    onChange={(e) => {
-                      const files = Array.from(e.target.files || []);
-                      const urls = files.map((f) => URL.createObjectURL(f));
-                      setUploadedImages((prev) => [...prev, ...urls].slice(0, 5));
-                    }}
+                    onChange={(e) => addImages(Array.from(e.target.files || []))}
                   />
                   <div className="text-3xl mb-3">📷</div>
                   <p className="font-semibold text-gray-700 text-sm">Drag photos here or click to upload</p>
-                  <p className="text-gray-400 text-xs mt-1">Up to 5 images. JPG, PNG supported.</p>
+                  <p className="text-gray-400 text-xs mt-1">Up to 5 images · JPG, PNG, WEBP supported</p>
                 </div>
               </div>
 
-              {uploadedImages.length > 0 && (
+              {imagePreviews.length > 0 && (
                 <div className="grid grid-cols-3 gap-3">
-                  {uploadedImages.map((url, i) => (
+                  {imagePreviews.map((url, i) => (
                     <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 group">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt={`Upload ${i + 1}`} className="w-full h-full object-cover" />
+                      <Image src={url} alt={`Photo ${i + 1}`} fill className="object-cover" sizes="200px" unoptimized />
                       <button
-                        onClick={() => setUploadedImages((prev) => prev.filter((_, j) => j !== i))}
-                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => removeImage(i)}
+                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         ×
                       </button>
@@ -303,14 +537,30 @@ export default function NewListingPage() {
                 </div>
               )}
 
-              <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-2 text-sm text-gray-600">
-                <p className="font-semibold text-gray-700">Review your listing</p>
-                <p><span className="text-gray-400">Title:</span> {form.title || "—"}</p>
-                <p><span className="text-gray-400">Category:</span> {form.category || "—"}</p>
-                <p><span className="text-gray-400">Price:</span> {form.price ? `${form.currency} ${form.price}` : "—"}</p>
-                <p><span className="text-gray-400">Location:</span> {form.location || "—"}</p>
-                <p><span className="text-gray-400">Tier:</span> <span className="capitalize">{form.tier}</span> {form.tier === "featured" ? "— TT$15/wk" : form.tier === "premium" ? "— TT$40/wk" : "— Free"}</p>
+              {/* Summary */}
+              <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-2 text-sm">
+                <p className="font-semibold text-gray-700 mb-3">Review your listing</p>
+                {[
+                  ["Title", form.title],
+                  ["Category", form.category],
+                  ["Condition", form.condition],
+                  ["Price", form.price ? `${form.currency} ${parseFloat(form.price).toLocaleString()}${form.negotiable ? " (negotiable)" : ""}` : "—"],
+                  ["Location", form.location],
+                  ["Tier", form.tier === "free" ? "Free" : form.tier === "featured" ? "◆ Featured — TT$150/mo" : "★ Premium — TT$350/mo"],
+                  ["Photos", imagePreviews.length > 0 ? `${imagePreviews.length} photo${imagePreviews.length > 1 ? "s" : ""}` : "None (a placeholder will be used)"],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex gap-2">
+                    <span className="text-gray-400 w-20 shrink-0">{label}:</span>
+                    <span className="text-gray-700">{value || "—"}</span>
+                  </div>
+                ))}
               </div>
+
+              {submitError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">
+                  {submitError}
+                </div>
+              )}
             </div>
           )}
 
@@ -321,13 +571,19 @@ export default function NewListingPage() {
             ) : (
               <div />
             )}
-            {step < 3 ? (
-              <Button onClick={() => setStep((s) => (s + 1) as Step)}>
+            {step === 1 && (
+              <Button onClick={() => setStep(2)} disabled={!canProceedStep1}>
                 Continue →
               </Button>
-            ) : (
-              <Button onClick={() => setSubmitted(true)} size="lg">
-                🚀 Post Listing
+            )}
+            {step === 2 && (
+              <Button onClick={() => setStep(3)} disabled={!canProceedStep2}>
+                Continue →
+              </Button>
+            )}
+            {step === 3 && (
+              <Button onClick={handleSubmit} size="lg" disabled={submitting}>
+                {submitting ? "Posting…" : form.tier === "free" ? "🚀 Post Listing" : `🚀 Post & Pay TT$${form.tier === "featured" ? "150" : "350"}/mo`}
               </Button>
             )}
           </div>
