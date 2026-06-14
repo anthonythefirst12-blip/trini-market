@@ -58,6 +58,81 @@ CREATE TABLE IF NOT EXISTS comment_replies (
   created_at    TIMESTAMPTZ DEFAULT now()
 );
 
+-- ============================================================
+-- PAYMENTS & WALLET TABLES
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS wallets (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
+  balance_ttd  NUMERIC(10,2) NOT NULL DEFAULT 0,
+  updated_at   TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS wallet_transactions (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  type         TEXT NOT NULL CHECK (type IN ('topup','deduction','refund')),
+  amount_ttd   NUMERIC(10,2) NOT NULL,
+  description  TEXT,
+  reference_id TEXT,
+  created_at   TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS payments (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  provider     TEXT NOT NULL DEFAULT 'wipay',
+  amount_ttd   NUMERIC(10,2) NOT NULL,
+  status       TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','success','failed')),
+  reference_id TEXT,
+  metadata     JSONB,
+  created_at   TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id        UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  listing_id     TEXT REFERENCES listings(id) ON DELETE SET NULL,
+  tier           TEXT NOT NULL CHECK (tier IN ('featured','premium')),
+  status         TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','cancelled')),
+  price_ttd      NUMERIC(10,2) NOT NULL,
+  next_billing_at TIMESTAMPTZ NOT NULL,
+  cancelled_at   TIMESTAMPTZ,
+  created_at     TIMESTAMPTZ DEFAULT now()
+);
+
+-- RLS for wallet/payment tables (users see only their own data)
+
+ALTER TABLE wallets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE wallet_transactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users read own wallet" ON wallets FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own wallet" ON wallets FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own wallet" ON wallets FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users read own transactions" ON wallet_transactions FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own transactions" ON wallet_transactions FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users read own payments" ON payments FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own payments" ON payments FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own payments" ON payments FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users read own subscriptions" ON subscriptions FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own subscriptions" ON subscriptions FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own subscriptions" ON subscriptions FOR UPDATE USING (auth.uid() = user_id);
+
+-- Helper function to increment wallet balance atomically
+CREATE OR REPLACE FUNCTION increment_wallet_balance(p_user_id UUID, p_amount NUMERIC)
+RETURNS void LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  UPDATE wallets SET balance_ttd = balance_ttd + p_amount, updated_at = now()
+  WHERE user_id = p_user_id;
+END;
+$$;
+
 -- ROW LEVEL SECURITY (public read)
 
 ALTER TABLE sellers ENABLE ROW LEVEL SECURITY;

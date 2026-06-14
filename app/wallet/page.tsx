@@ -88,8 +88,20 @@ export default function WalletPage() {
       body: JSON.stringify({ amountTTD: amount, purpose: "wallet_topup" }),
     });
     const data = await res.json();
-    if (data.redirectUrl) {
-      window.location.href = data.redirectUrl;
+    if (data.wipayUrl && data.fields) {
+      // WiPay requires a POST form submission
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = data.wipayUrl;
+      Object.entries(data.fields).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = value as string;
+        form.appendChild(input);
+      });
+      document.body.appendChild(form);
+      form.submit();
     } else {
       showToast("error", "Could not connect to WiPay. Check your account settings.");
       setProcessing(false);

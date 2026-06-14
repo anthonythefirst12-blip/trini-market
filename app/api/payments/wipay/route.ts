@@ -51,8 +51,11 @@ export async function POST(request: Request) {
       ? "https://wipayfinancial.com/v1/gateway"
       : "https://sandbox.wipayfinancial.com/v1/gateway";
 
+  // WiPay requires a POST form submission — return the fields and URL
+  // so the client can build and submit a hidden form
   return NextResponse.json({
-    redirectUrl: `${wipayUrl}?${params.toString()}`,
+    wipayUrl,
+    fields: Object.fromEntries(params.entries()),
     paymentId: payment?.id,
   });
 }
