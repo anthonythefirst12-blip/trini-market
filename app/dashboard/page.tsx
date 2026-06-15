@@ -21,6 +21,7 @@ type DBListing = {
   images: string[];
   tier: string;
   created_at: string;
+  sold?: boolean;
 };
 
 type DBSubscription = {
@@ -50,7 +51,10 @@ function DashboardContent() {
   const [listings, setListings] = useState<DBListing[]>([]);
   const [subscriptions, setSubscriptions] = useState<DBSubscription[]>([]);
   const [loading, setLoading] = useState(true);
-  const [toast, setToast] = useState<string | null>(justPosted ? "🎉 Listing posted successfully!" : null);
+  const justEdited = searchParams.get("edited") === "1";
+  const [toast, setToast] = useState<string | null>(
+    justPosted ? "🎉 Listing posted successfully!" : justEdited ? "✅ Listing updated." : null
+  );
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -66,7 +70,7 @@ function DashboardContent() {
     const [listingsRes, subsRes] = await Promise.all([
       supabase
         .from("listings")
-        .select("id, title, price, currency, category, location, images, tier, created_at")
+        .select("id, title, price, currency, category, location, images, tier, created_at, sold")
         .eq("user_id", u.id)
         .order("created_at", { ascending: false }),
       supabase
@@ -92,6 +96,13 @@ function DashboardContent() {
     await supabase.from("listings").delete().eq("id", listingId);
     setListings((prev) => prev.filter((l) => l.id !== listingId));
     showToast("Listing deleted.");
+  };
+
+  const handleMarkSold = async (listingId: string, currentlySold: boolean) => {
+    const supabase = createClient();
+    await supabase.from("listings").update({ sold: !currentlySold }).eq("id", listingId);
+    setListings((prev) => prev.map((l) => l.id === listingId ? { ...l, sold: !currentlySold } : l));
+    showToast(currentlySold ? "Listing marked as available." : "Listing marked as sold.");
   };
 
   const handleCancelSub = async (subId: string, tier: string, nextBilling: string) => {
@@ -222,12 +233,25 @@ function DashboardContent() {
                         {listing.location} · Posted {new Date(listing.created_at).toLocaleDateString("en-TT", { month: "short", day: "numeric", year: "numeric" })}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      {listing.tier === "free" && (
+                    <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+                      {listing.sold && (
+                        <span className="text-xs bg-green-100 text-green-700 border border-green-300 font-semibold px-2 py-0.5 rounded-full">✓ Sold</span>
+                      )}
+                      {listing.tier === "free" && !listing.sold && (
                         <Link href="/pricing">
                           <Button size="sm" variant="secondary">⚡ Boost</Button>
                         </Link>
                       )}
+                      <button
+                        onClick={() => handleMarkSold(listing.id, listing.sold ?? false)}
+                        className="text-xs font-medium px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:border-green-400 hover:text-green-600 transition-colors"
+                        title={listing.sold ? "Mark as available" : "Mark as sold"}
+                      >
+                        {listing.sold ? "Relist" : "Mark Sold"}
+                      </button>
+                      <Link href={`/listings/${listing.id}/edit`}>
+                        <Button variant="ghost" size="sm">Edit</Button>
+                      </Link>
                       <Link href={`/listings/${listing.id}`}>
                         <Button variant="ghost" size="sm">View</Button>
                       </Link>

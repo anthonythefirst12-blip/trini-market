@@ -6,6 +6,7 @@ import { FilterSidebar } from "@/components/listings/FilterSidebar";
 import { ViewToggle } from "@/components/listings/ViewToggle";
 import { Category } from "@/lib/types";
 import Link from "next/link";
+import { MobileFilterDrawer } from "@/components/listings/MobileFilterDrawer";
 
 const CATEGORIES: Category[] = [
   "Electronics",
@@ -161,6 +162,20 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
           {/* Results */}
           <div className="flex-1 min-w-0">
+            {/* Mobile filter trigger */}
+            <div className="mb-4 lg:hidden">
+              <MobileFilterDrawer
+                categories={CATEGORIES}
+                locations={LOCATIONS}
+                activeCategory={category}
+                activeLocation={location}
+                activeCondition={condition}
+                activeSort={sort}
+                minPrice={minPrice}
+                maxPrice={maxPrice}
+                q={q}
+              />
+            </div>
             {results.length === 0 ? (
               <div className="text-center py-20 bg-slate-700/50 rounded-2xl border border-slate-600">
                 <div className="text-4xl mb-3">🔍</div>
