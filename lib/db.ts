@@ -37,6 +37,7 @@ interface ListingRow {
   tags: string[];
   negotiable: boolean;
   comment_count: number;
+  views: number;
   sellers: SellerRow;
 }
 
@@ -97,6 +98,7 @@ function mapListing(row: ListingRow): Listing {
     tags: row.tags ?? [],
     negotiable: row.negotiable,
     commentCount: row.comment_count,
+    views: row.views ?? 0,
   };
 }
 

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { ShareButton } from "@/components/listings/ShareButton";
+import { ViewCounter } from "@/components/listings/ViewCounter";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -111,6 +112,7 @@ export default async function ListingDetailPage({ params }: Props) {
                     {listing.commentCount} comments
                   </span>
                 )}
+                <ViewCounter listingId={listing.id} initialViews={listing.views ?? 0} />
               </div>
 
               <hr className="my-5 border-gray-100" />

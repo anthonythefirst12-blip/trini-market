@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Listing } from "@/lib/types";
 import { Badge } from "@/components/ui/Badge";
 import { CardImageCarousel } from "./CardImageCarousel";
+import { SaveButton } from "./SaveButton";
 
 interface ListingCardProps {
   listing: Listing;
@@ -119,9 +120,10 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
             <JustListedBadge createdAt={listing.createdAt} />
             <TierBadge tier={listing.tier} />
           </div>
-          <div className="absolute top-2 right-2">
+          <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
             <Badge variant={conditionVariant[listing.condition]}>{listing.condition}</Badge>
           </div>
+          <SaveButton listingId={listing.id} />
         </div>
         <div className="p-4">
           <span className="text-xs text-blue-600 font-medium uppercase tracking-wide">

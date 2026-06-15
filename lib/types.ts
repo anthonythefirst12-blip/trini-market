@@ -45,6 +45,7 @@ export interface Listing {
   tags: string[];
   negotiable: boolean;
   commentCount?: number;
+  views?: number;
 }
 
 export interface Inquiry {
