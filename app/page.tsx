@@ -52,9 +52,9 @@ export default async function HomePage() {
         }} />
 
         {/* Floating hero icons — right side only, behind the diagonal */}
-        <div className="absolute right-[12%] top-[15%] text-6xl opacity-20 animate-float pointer-events-none select-none hidden lg:block" style={{ filter: "drop-shadow(0 0 12px rgba(96,165,250,0.8))", animationDelay: "0s" }}>🚗</div>
-        <div className="absolute right-[22%] top-[55%] text-5xl opacity-15 animate-float-slow pointer-events-none select-none hidden lg:block" style={{ filter: "drop-shadow(0 0 12px rgba(96,165,250,0.8))", animationDelay: "1.2s" }}>🏠</div>
-        <div className="absolute right-[6%] top-[50%] text-4xl opacity-15 animate-float-reverse pointer-events-none select-none hidden lg:block" style={{ filter: "drop-shadow(0 0 10px rgba(96,165,250,0.7))", animationDelay: "0.6s" }}>📱</div>
+        <div className="absolute right-[12%] top-[15%] text-6xl opacity-60 animate-float pointer-events-none select-none hidden lg:block" style={{ filter: "drop-shadow(0 0 14px rgba(96,165,250,0.9))", animationDelay: "0s" }}>🚗</div>
+        <div className="absolute right-[22%] top-[55%] text-5xl opacity-50 animate-float-slow pointer-events-none select-none hidden lg:block" style={{ filter: "drop-shadow(0 0 14px rgba(96,165,250,0.9))", animationDelay: "1.2s" }}>🏠</div>
+        <div className="absolute right-[6%] top-[50%] text-4xl opacity-50 animate-float-reverse pointer-events-none select-none hidden lg:block" style={{ filter: "drop-shadow(0 0 12px rgba(96,165,250,0.8))", animationDelay: "0.6s" }}>📱</div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="max-w-xl">
