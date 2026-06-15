@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { notFound } from "next/navigation";
 import { getListing, getListings, getComments } from "@/lib/db";
 import { ImageGallery } from "@/components/listings/ImageGallery";

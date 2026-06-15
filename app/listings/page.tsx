@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getListings } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { FilterSidebar } from "@/components/listings/FilterSidebar";
