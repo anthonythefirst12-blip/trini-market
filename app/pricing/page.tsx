@@ -269,12 +269,13 @@ export default function PricingPage() {
             ))}
           </div>
           <div className="text-center">
-            <Link href="/settings">
-              <Button size="lg" className="bg-white text-blue-700 hover:bg-blue-50 focus-visible:ring-white">
-                Upgrade to Pro
-              </Button>
+            <Link
+              href="/settings"
+              className="inline-flex items-center gap-2 bg-white text-blue-700 font-semibold text-base px-8 py-3.5 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.35)] active:scale-95"
+            >
+              ⚡ Upgrade to Pro
             </Link>
-            <p className="text-slate-400 text-xs mt-3">Monthly subscription · Cancel anytime from Settings</p>
+            <p className="text-slate-400 text-xs mt-4">Monthly subscription · Cancel anytime from Settings</p>
           </div>
         </div>
       </section>
