@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -30,6 +30,14 @@ type Subscription = {
 type PaymentMethod = "wipay";
 
 export default function WalletPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center"><div className="text-sm text-gray-400">Loading…</div></div>}>
+      <WalletContent />
+    </Suspense>
+  );
+}
+
+function WalletContent() {
   const searchParams = useSearchParams();
   const paymentStatus = searchParams.get("payment");
 
