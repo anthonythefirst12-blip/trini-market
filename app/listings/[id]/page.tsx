@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getListing, getListings, getComments } from "@/lib/db";
 import { ImageGallery } from "@/components/listings/ImageGallery";
@@ -11,11 +12,38 @@ import { ListingCard } from "@/components/listings/ListingCard";
 import { ShareButton } from "@/components/listings/ShareButton";
 import { ViewCounter } from "@/components/listings/ViewCounter";
 import { RatingForm } from "@/components/listings/RatingForm";
+import { ReportButton } from "@/components/listings/ReportButton";
 import Link from "next/link";
 import Image from "next/image";
 
 interface Props {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const listing = await getListing(id);
+  if (!listing) return {};
+  const formatted = new Intl.NumberFormat("en-TT", {
+    style: "currency", currency: listing.currency, minimumFractionDigits: 0,
+  }).format(listing.price);
+  const desc = `${formatted} · ${listing.condition} · ${listing.location} — ${listing.description.slice(0, 120)}`;
+  return {
+    title: `${listing.title} | TriniMarket`,
+    description: desc,
+    openGraph: {
+      title: listing.title,
+      description: desc,
+      images: listing.images[0] ? [{ url: listing.images[0], width: 800, height: 600 }] : [],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: listing.title,
+      description: desc,
+      images: listing.images[0] ? [listing.images[0]] : [],
+    },
+  };
 }
 
 const conditionVariant = {
@@ -120,7 +148,10 @@ export default async function ListingDetailPage({ params }: Props) {
 
               <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
                 <h2 className="font-display font-semibold text-base text-gray-900">Description</h2>
-                <ShareButton title={listing.title} />
+                <div className="flex items-center gap-2">
+                  <ShareButton title={listing.title} />
+                  <ReportButton listingId={listing.id} />
+                </div>
               </div>
               <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{listing.description}</p>
 
@@ -203,7 +234,13 @@ export default async function ListingDetailPage({ params }: Props) {
               <h3 className="font-display font-semibold text-sm text-gray-900 uppercase tracking-wide mb-4">
                 Send a Message
               </h3>
-              <ContactForm listingId={listing.id} listingTitle={listing.title} price={formatted} />
+              <ContactForm
+                listingId={listing.id}
+                listingTitle={listing.title}
+                price={formatted}
+                sellerId={listing.seller.id}
+                listingImage={listing.images[0]}
+              />
             </div>
 
             {/* Boost this listing (own listing) */}
