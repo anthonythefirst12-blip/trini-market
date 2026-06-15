@@ -5,6 +5,18 @@ import { categories } from "@/lib/data";
 import { getPremiumListings, getFeaturedListings, getRecentListings, getCategoryCounts } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { Button } from "@/components/ui/Button";
+import { LiveSearch } from "@/components/search/LiveSearch";
+
+const categoryGradients: Record<string, string> = {
+  "Electronics":      "from-blue-500 to-cyan-400",
+  "Vehicles":         "from-gray-700 to-gray-500",
+  "Real Estate":      "from-green-500 to-emerald-400",
+  "Fashion":          "from-pink-500 to-rose-400",
+  "Food & Beverage":  "from-orange-500 to-amber-400",
+  "Services":         "from-violet-500 to-purple-400",
+  "Home & Garden":    "from-teal-500 to-green-400",
+  "Sports & Outdoors":"from-red-500 to-orange-400",
+};
 
 export default async function HomePage() {
   const [premium, featured, recent, categoryCounts] = await Promise.all([
@@ -56,23 +68,9 @@ export default async function HomePage() {
             </p>
 
             {/* Search bar */}
-            <form action="/listings" method="GET" className="mt-8 flex gap-2 max-w-lg">
-              <div className="flex-1 relative">
-                <svg
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  name="q"
-                  placeholder="Search listings…"
-                  className="w-full pl-9 pr-4 py-3 rounded-lg border border-gray-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <Button type="submit" size="lg">Search</Button>
-            </form>
+            <div className="mt-8">
+              <LiveSearch />
+            </div>
 
             <div className="mt-5 flex flex-wrap gap-2">
               {["Vehicles", "Electronics", "Real Estate", "Services"].map((cat) => (
@@ -98,11 +96,15 @@ export default async function HomePage() {
               <Link
                 key={cat.name}
                 href={`/listings?category=${encodeURIComponent(cat.name)}`}
-                className="bg-white rounded-xl p-4 text-center hover:border-blue-300 hover:shadow-sm border border-gray-200 transition-all group focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                className="group rounded-xl overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
               >
-                <div className="text-2xl mb-1">{cat.icon}</div>
-                <div className="text-xs font-medium text-gray-700 group-hover:text-blue-700 transition-colors leading-tight">{cat.name}</div>
-                <div className="text-xs text-gray-400 mt-0.5">{categoryCounts[cat.name] ?? 0}</div>
+                <div className={`bg-gradient-to-br ${categoryGradients[cat.name] ?? "from-blue-500 to-blue-400"} p-4 text-center`}>
+                  <div className="text-3xl mb-1 drop-shadow">{cat.icon}</div>
+                </div>
+                <div className="bg-white px-2 py-2 text-center border border-t-0 border-gray-200 rounded-b-xl">
+                  <div className="text-xs font-semibold text-gray-700 group-hover:text-blue-700 transition-colors leading-tight">{cat.name}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{categoryCounts[cat.name] ?? 0} listings</div>
+                </div>
               </Link>
             ))}
           </div>

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Listing } from "@/lib/types";
 import { Badge } from "@/components/ui/Badge";
+import { CardImageCarousel } from "./CardImageCarousel";
 
 interface ListingCardProps {
   listing: Listing;
@@ -33,6 +33,16 @@ function TierBadge({ tier }: { tier: Listing["tier"] }) {
   return null;
 }
 
+function JustListedBadge({ createdAt }: { createdAt: string }) {
+  const hoursOld = (Date.now() - new Date(createdAt).getTime()) / 1000 / 3600;
+  if (hoursOld > 24) return null;
+  return (
+    <span className="inline-flex items-center gap-1 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded animate-pulse">
+      🔥 Just Listed
+    </span>
+  );
+}
+
 export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
   const formatted = new Intl.NumberFormat("en-TT", {
     style: "currency",
@@ -50,15 +60,9 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
   if (view === "list") {
     return (
       <Link href={`/listings/${listing.id}`} className="group block">
-        <article className={`flex gap-4 bg-white border ${borderClass} rounded-xl p-4 hover:shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500`}>
+        <article className={`flex gap-4 bg-white border ${borderClass} rounded-xl p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 focus-within:ring-2 focus-within:ring-blue-500`}>
           <div className="relative shrink-0 w-36 h-28 rounded-lg overflow-hidden bg-gray-100">
-            <Image
-              src={listing.images[0]}
-              alt={listing.title}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="144px"
-            />
+            <CardImageCarousel images={listing.images} title={listing.title} sizes="144px" />
           </div>
           <div className="flex flex-col justify-between flex-1 min-w-0">
             <div>
@@ -66,7 +70,8 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
                 <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-1 group-hover:text-blue-700 transition-colors">
                   {listing.title}
                 </h3>
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
+                  <JustListedBadge createdAt={listing.createdAt} />
                   <TierBadge tier={listing.tier} />
                   <Badge variant={conditionVariant[listing.condition]}>{listing.condition}</Badge>
                 </div>
@@ -101,18 +106,17 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
 
   return (
     <Link href={`/listings/${listing.id}`} className="group block">
-      <article className={`bg-white border-2 ${borderClass} rounded-xl overflow-hidden hover:shadow-md transition-all focus-within:ring-2 focus-within:ring-blue-500`}>
+      <article className={`bg-white border-2 ${borderClass} rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-200 focus-within:ring-2 focus-within:ring-blue-500`}>
         {/* Top accent strip */}
         <div className={`h-1 ${listing.tier === "premium" ? "bg-gradient-to-r from-blue-700 via-blue-500 to-blue-400" : listing.tier === "featured" ? "bg-gradient-to-r from-blue-400 to-blue-200" : "bg-gradient-to-r from-gray-200 to-gray-100"}`} />
         <div className="relative h-48 bg-gray-100">
-          <Image
-            src={listing.images[0]}
-            alt={listing.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          <CardImageCarousel
+            images={listing.images}
+            title={listing.title}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
           <div className="absolute top-2 left-2 flex flex-col gap-1">
+            <JustListedBadge createdAt={listing.createdAt} />
             <TierBadge tier={listing.tier} />
           </div>
           <div className="absolute top-2 right-2">

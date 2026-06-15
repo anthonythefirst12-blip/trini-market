@@ -8,6 +8,7 @@ import { CommentsSection } from "@/components/listings/CommentsSection";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ListingCard } from "@/components/listings/ListingCard";
+import { ShareButton } from "@/components/listings/ShareButton";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -114,7 +115,10 @@ export default async function ListingDetailPage({ params }: Props) {
 
               <hr className="my-5 border-gray-100" />
 
-              <h2 className="font-display font-semibold text-base text-gray-900 mb-3">Description</h2>
+              <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
+                <h2 className="font-display font-semibold text-base text-gray-900">Description</h2>
+                <ShareButton title={listing.title} />
+              </div>
               <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{listing.description}</p>
 
               {listing.tags.length > 0 && (
@@ -236,7 +240,15 @@ export default async function ListingDetailPage({ params }: Props) {
         {/* Related listings */}
         {related.length > 0 && (
           <div className="mt-12">
-            <h2 className="font-display font-bold text-xl text-gray-900 mb-5">More in {listing.category}</h2>
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="font-display font-bold text-xl text-gray-900">More in {listing.category}</h2>
+                <p className="text-sm text-gray-400 mt-0.5">Similar listings you might like</p>
+              </div>
+              <Link href={`/listings?category=${encodeURIComponent(listing.category)}`} className="text-sm text-blue-700 hover:text-blue-800 font-medium transition-colors">
+                View all →
+              </Link>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {related.map((l) => <ListingCard key={l.id} listing={l} />)}
             </div>
