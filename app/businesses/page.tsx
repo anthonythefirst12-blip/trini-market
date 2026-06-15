@@ -15,7 +15,7 @@ export default async function BusinessDirectoryPage() {
   const businesses = await getBusinesses();
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
       {/* Hero */}
       <section className="relative bg-gray-900 overflow-hidden">
         <div
@@ -26,6 +26,12 @@ export default async function BusinessDirectoryPage() {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-gray-900/60" />
+
+        {/* Large background icons */}
+        <div className="absolute left-[-40px] top-1/2 -translate-y-1/2 text-[220px] opacity-5 pointer-events-none select-none animate-float-slow" style={{ filter: "drop-shadow(0 0 30px rgba(59,130,246,0.8))" }}>🏢</div>
+        <div className="absolute right-[-30px] top-1/2 -translate-y-1/2 text-[200px] opacity-5 pointer-events-none select-none animate-float" style={{ animationDelay: "1s", filter: "drop-shadow(0 0 30px rgba(59,130,246,0.8))" }}>🚗</div>
+        <div className="absolute left-1/2 bottom-[-40px] -translate-x-1/2 text-[160px] opacity-5 pointer-events-none select-none animate-float-reverse" style={{ animationDelay: "0.5s", filter: "drop-shadow(0 0 30px rgba(59,130,246,0.8))" }}>⚙️</div>
+
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <span className="inline-block bg-blue-700/30 border border-blue-500/40 text-blue-300 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-5">
             Business Directory
@@ -57,7 +63,7 @@ export default async function BusinessDirectoryPage() {
       <BusinessContent businesses={businesses} />
 
       {/* Join CTA */}
-      <section className="bg-white border-t border-gray-200 py-16 px-4">
+      <section className="bg-gray-100 border-t border-gray-200 py-16 px-4">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="font-display font-bold text-2xl text-gray-900 mb-3">
             Is your business listed here?
