@@ -5,6 +5,7 @@ import { ListingCard } from "@/components/listings/ListingCard";
 import { FilterSidebar } from "@/components/listings/FilterSidebar";
 import { ViewToggle } from "@/components/listings/ViewToggle";
 import { Category } from "@/lib/types";
+import Link from "next/link";
 
 const CATEGORIES: Category[] = [
   "Electronics",
@@ -16,6 +17,17 @@ const CATEGORIES: Category[] = [
   "Home & Garden",
   "Sports & Outdoors",
 ];
+
+const CATEGORY_ICONS: Record<string, string> = {
+  Electronics: "📱",
+  Vehicles: "🚗",
+  "Real Estate": "🏠",
+  Fashion: "👗",
+  "Food & Beverage": "🍽️",
+  Services: "⚙️",
+  "Home & Garden": "🌿",
+  "Sports & Outdoors": "⚽",
+};
 
 const LOCATIONS = [
   "Port of Spain",
@@ -57,17 +69,80 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
     sort,
   });
 
-  return (
-    <div className="bg-[#FAFAFA] min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page header */}
-        <div className="mb-6">
-          <h1 className="font-display font-bold text-2xl text-gray-900">
-            {category ? `${category} Listings` : q ? `Results for "${q}"` : "All Listings"}
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">{results.length} listing{results.length !== 1 ? "s" : ""} found</p>
-        </div>
+  const pageTitle = category
+    ? `${CATEGORY_ICONS[category] ?? ""} ${category}`
+    : q
+    ? `Results for "${q}"`
+    : "All Listings";
 
+  return (
+    <div className="min-h-screen bg-slate-800">
+      {/* Header band — diagonal stripe texture, no floating icons */}
+      <div className="relative overflow-hidden bg-slate-900 border-b border-slate-700">
+        {/* Diagonal stripe overlay */}
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              -45deg,
+              #60a5fa 0px,
+              #60a5fa 1px,
+              transparent 1px,
+              transparent 12px
+            )`,
+          }}
+        />
+        {/* Blue bottom accent line */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <p className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-1">Marketplace</p>
+              <h1 className="font-display font-bold text-3xl text-white">{pageTitle}</h1>
+              <p className="text-slate-400 text-sm mt-1">
+                {results.length} listing{results.length !== 1 ? "s" : ""} found
+                {location ? ` in ${location}` : ""}
+                {condition ? ` · ${condition}` : ""}
+              </p>
+            </div>
+            <ViewToggle currentView={view} />
+          </div>
+
+          {/* Category quick-filter chips */}
+          <div className="mt-5 flex gap-2 flex-wrap">
+            <Link
+              href="/listings"
+              className={[
+                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all",
+                !category
+                  ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-900/40"
+                  : "border-slate-600 text-slate-400 hover:border-slate-400 hover:text-slate-200",
+              ].join(" ")}
+            >
+              All
+            </Link>
+            {CATEGORIES.map((cat) => (
+              <Link
+                key={cat}
+                href={`/listings?category=${encodeURIComponent(cat)}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
+                className={[
+                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all",
+                  category === cat
+                    ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-900/40"
+                    : "border-slate-600 text-slate-400 hover:border-slate-400 hover:text-slate-200",
+                ].join(" ")}
+              >
+                <span>{CATEGORY_ICONS[cat]}</span>
+                {cat}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-6 items-start">
           {/* Sidebar */}
           <aside className="hidden lg:block w-60 shrink-0">
@@ -86,18 +161,11 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
           {/* Results */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-gray-500 hidden sm:block">
-                Showing {results.length} result{results.length !== 1 ? "s" : ""}
-              </p>
-              <ViewToggle currentView={view} />
-            </div>
-
             {results.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
+              <div className="text-center py-20 bg-slate-700/50 rounded-2xl border border-slate-600">
                 <div className="text-4xl mb-3">🔍</div>
-                <h3 className="font-display font-semibold text-lg text-gray-700">No listings found</h3>
-                <p className="text-gray-400 text-sm mt-1">Try adjusting your filters or search terms.</p>
+                <h3 className="font-display font-semibold text-lg text-slate-200">No listings found</h3>
+                <p className="text-slate-400 text-sm mt-1">Try adjusting your filters or search terms.</p>
               </div>
             ) : view === "list" ? (
               <div className="flex flex-col gap-3">

@@ -1,15 +1,15 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Category } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 
 const CONDITIONS = ["New", "Like New", "Good", "Fair"];
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest First" },
-  { value: "price_asc", label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
+  { value: "price_asc", label: "Price: Low → High" },
+  { value: "price_desc", label: "Price: High → Low" },
 ];
 
 interface FilterSidebarProps {
@@ -37,6 +37,12 @@ export function FilterSidebar({
 }: FilterSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [showOtherInput, setShowOtherInput] = useState(
+    !!activeLocation && !locations.includes(activeLocation)
+  );
+  const [otherLocation, setOtherLocation] = useState(
+    activeLocation && !locations.includes(activeLocation) ? activeLocation : ""
+  );
 
   const updateParam = useCallback(
     (key: string, value: string | undefined) => {
@@ -52,19 +58,27 @@ export function FilterSidebar({
   );
 
   const clearAll = () => {
+    setShowOtherInput(false);
+    setOtherLocation("");
     router.push("/listings");
   };
 
+  const isOtherActive = !!activeLocation && !locations.includes(activeLocation);
   const hasFilters = !!(activeCategory || activeLocation || activeCondition || activeSort || minPrice || maxPrice || q);
 
+  const sectionLabel = "text-xs font-bold text-slate-400 uppercase tracking-widest mb-3";
+  const activeBtn = "bg-blue-600 text-white font-semibold shadow-sm shadow-blue-900/40";
+  const inactiveBtn = "text-slate-300 hover:bg-slate-700 hover:text-white";
+  const btn = "w-full text-left text-sm px-3 py-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-6">
+    <div className="bg-slate-800 rounded-2xl border border-slate-700 p-5 space-y-6 shadow-xl">
       <div className="flex items-center justify-between">
-        <h3 className="font-display font-semibold text-sm text-gray-900 uppercase tracking-wide">Filters</h3>
+        <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest">Filters</h3>
         {hasFilters && (
           <button
             onClick={clearAll}
-            className="text-xs text-blue-600 hover:text-blue-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+            className="text-xs text-blue-400 hover:text-blue-300 transition-colors focus-visible:outline-none rounded"
           >
             Clear all
           </button>
@@ -73,19 +87,13 @@ export function FilterSidebar({
 
       {/* Category */}
       <div>
-        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Category</h4>
-        <ul className="space-y-1">
+        <h4 className={sectionLabel}>Category</h4>
+        <ul className="space-y-0.5">
           {categories.map((cat) => (
             <li key={cat}>
               <button
                 onClick={() => updateParam("category", activeCategory === cat ? undefined : cat)}
-                className={[
-                  "w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
-                  activeCategory === cat
-                    ? "bg-blue-700 text-white font-medium"
-                    : "text-gray-700 hover:bg-gray-100",
-                ].join(" ")}
+                className={[btn, activeCategory === cat ? activeBtn : inactiveBtn].join(" ")}
               >
                 {cat}
               </button>
@@ -94,9 +102,12 @@ export function FilterSidebar({
         </ul>
       </div>
 
+      {/* Divider */}
+      <div className="border-t border-slate-700" />
+
       {/* Price range */}
       <div>
-        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Price (TTD)</h4>
+        <h4 className={sectionLabel}>Price (TTD)</h4>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -116,35 +127,31 @@ export function FilterSidebar({
               type="number"
               defaultValue={minPrice}
               placeholder="Min"
-              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-1.5 text-sm bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               name="maxPrice"
               type="number"
               defaultValue={maxPrice}
               placeholder="Max"
-              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-1.5 text-sm bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <Button type="submit" variant="secondary" size="sm" fullWidth>Apply</Button>
         </form>
       </div>
 
+      <div className="border-t border-slate-700" />
+
       {/* Sort */}
       <div>
-        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Sort By</h4>
-        <ul className="space-y-1">
+        <h4 className={sectionLabel}>Sort By</h4>
+        <ul className="space-y-0.5">
           {SORT_OPTIONS.map((opt) => (
             <li key={opt.value}>
               <button
                 onClick={() => updateParam("sort", activeSort === opt.value ? undefined : opt.value)}
-                className={[
-                  "w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
-                  activeSort === opt.value
-                    ? "bg-blue-700 text-white font-medium"
-                    : "text-gray-700 hover:bg-gray-100",
-                ].join(" ")}
+                className={[btn, activeSort === opt.value ? activeBtn : inactiveBtn].join(" ")}
               >
                 {opt.label}
               </button>
@@ -153,21 +160,17 @@ export function FilterSidebar({
         </ul>
       </div>
 
+      <div className="border-t border-slate-700" />
+
       {/* Condition */}
       <div>
-        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Condition</h4>
-        <ul className="space-y-1">
+        <h4 className={sectionLabel}>Condition</h4>
+        <ul className="space-y-0.5">
           {CONDITIONS.map((cond) => (
             <li key={cond}>
               <button
                 onClick={() => updateParam("condition", activeCondition === cond ? undefined : cond)}
-                className={[
-                  "w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
-                  activeCondition === cond
-                    ? "bg-blue-700 text-white font-medium"
-                    : "text-gray-700 hover:bg-gray-100",
-                ].join(" ")}
+                className={[btn, activeCondition === cond ? activeBtn : inactiveBtn].join(" ")}
               >
                 {cond}
               </button>
@@ -176,27 +179,64 @@ export function FilterSidebar({
         </ul>
       </div>
 
+      <div className="border-t border-slate-700" />
+
       {/* Location */}
       <div>
-        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Location</h4>
-        <ul className="space-y-1">
+        <h4 className={sectionLabel}>Location</h4>
+        <ul className="space-y-0.5">
           {locations.map((loc) => (
             <li key={loc}>
               <button
-                onClick={() => updateParam("location", activeLocation === loc ? undefined : loc)}
-                className={[
-                  "w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
-                  activeLocation === loc
-                    ? "bg-blue-700 text-white font-medium"
-                    : "text-gray-700 hover:bg-gray-100",
-                ].join(" ")}
+                onClick={() => {
+                  setShowOtherInput(false);
+                  updateParam("location", activeLocation === loc ? undefined : loc);
+                }}
+                className={[btn, activeLocation === loc && !isOtherActive ? activeBtn : inactiveBtn].join(" ")}
               >
                 {loc}
               </button>
             </li>
           ))}
+          {/* Other option */}
+          <li>
+            <button
+              onClick={() => {
+                setShowOtherInput((v) => !v);
+                if (!showOtherInput) updateParam("location", undefined);
+              }}
+              className={[btn, isOtherActive ? activeBtn : inactiveBtn].join(" ")}
+            >
+              Other…
+            </button>
+          </li>
         </ul>
+
+        {showOtherInput && (
+          <form
+            className="mt-2 flex gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (otherLocation.trim()) {
+                updateParam("location", otherLocation.trim());
+              }
+            }}
+          >
+            <input
+              value={otherLocation}
+              onChange={(e) => setOtherLocation(e.target.value)}
+              placeholder="e.g. Tobago, Sangre Grande"
+              className="flex-1 px-3 py-1.5 text-sm bg-slate-700 border border-blue-500/50 text-white placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autoFocus
+            />
+            <button
+              type="submit"
+              className="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-500 transition-colors"
+            >
+              Go
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

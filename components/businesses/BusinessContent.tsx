@@ -132,7 +132,7 @@ export function BusinessContent({ businesses }: { businesses: BusinessEntry[] })
     : businesses.filter((b) => b.categories.includes(active));
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-slate-800">
       {/* Industry info strips */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
         {(["Real Estate", "Vehicles", "Services"] as const).map((cat, i) => {
@@ -143,13 +143,13 @@ export function BusinessContent({ businesses }: { businesses: BusinessEntry[] })
             ? "border-cyan-400/60 hover:border-cyan-400"
             : "border-purple-400/60 hover:border-purple-400";
           return (
-            <div key={cat} className={`relative bg-white rounded-xl border-2 ${borderColor} p-4 flex gap-3 items-start transition-all duration-200 group`}>
+            <div key={cat} className={`relative bg-slate-700/60 rounded-xl border-2 ${borderColor} p-4 flex gap-3 items-start transition-all duration-200 group`}>
               {/* Subtle neon inner glow on hover */}
               <div className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${neonClass}`} style={{ pointerEvents: "none" }} />
               <span className="text-2xl relative z-10">{categoryStyles[cat].icon}</span>
               <div className="relative z-10">
-                <h3 className="font-display font-semibold text-sm text-gray-900">{cat}</h3>
-                <p className="text-xs text-gray-400 leading-relaxed mt-0.5">{industryDescriptions[cat]}</p>
+                <h3 className="font-display font-semibold text-sm text-slate-100">{cat}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed mt-0.5">{industryDescriptions[cat]}</p>
               </div>
             </div>
           );
@@ -166,7 +166,7 @@ export function BusinessContent({ businesses }: { businesses: BusinessEntry[] })
               "px-4 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
               active === f
                 ? "bg-blue-700 text-white"
-                : "bg-gray-50 border border-gray-300 text-gray-600 hover:border-blue-300 hover:text-blue-700",
+                : "bg-slate-700 border border-slate-600 text-slate-300 hover:border-blue-400 hover:text-blue-300",
             ].join(" ")}
           >
             {f === "All" ? "All Businesses" : `${categoryStyles[f]?.icon} ${f}`}
@@ -179,7 +179,7 @@ export function BusinessContent({ businesses }: { businesses: BusinessEntry[] })
 
       {/* Grid */}
       {filtered.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">No businesses in this category yet.</div>
+        <div className="text-center py-20 text-slate-400">No businesses in this category yet.</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((b) => (
