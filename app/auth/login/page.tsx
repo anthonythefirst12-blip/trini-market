@@ -81,11 +81,19 @@ export default function LoginPage() {
         {/* Neon border glow */}
         <div className="absolute -inset-0.5 rounded-2xl neon-blue opacity-60" />
         <div className="relative glass-dark rounded-2xl p-8">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center neon-blue">
-              <span className="text-white font-bold text-sm">TM</span>
-            </div>
-            <span className="font-display font-bold text-xl text-white">TriniMarket</span>
+          <div className="flex items-center gap-2.5 mb-6">
+            <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="34" height="34" rx="9" fill="url(#loginLogoGrad)" />
+              <path d="M7 24V11l5.5 7 4.5-6 4.5 6 5.5-7v13" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <rect x="7" y="26" width="20" height="2" rx="1" fill="rgba(255,255,255,0.4)" />
+              <defs>
+                <linearGradient id="loginLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#2563eb" />
+                  <stop offset="100%" stopColor="#1d4ed8" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <span className="font-display font-bold text-xl text-white tracking-tight">Trini<span className="text-blue-400">Market</span></span>
           </div>
 
           <h1 className="font-display font-bold text-2xl text-white mb-1">Welcome back</h1>
