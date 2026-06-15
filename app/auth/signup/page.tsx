@@ -6,6 +6,17 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase-browser";
 import { Button } from "@/components/ui/Button";
 
+const floatingIcons = [
+  { icon: "🌴", top: "8%", left: "6%", animation: "animate-float-slow", size: "text-5xl", opacity: "opacity-20", delay: "0s" },
+  { icon: "🚗", top: "25%", left: "85%", animation: "animate-float", size: "text-4xl", opacity: "opacity-15", delay: "0.7s" },
+  { icon: "🏠", top: "65%", left: "4%", animation: "animate-float-reverse", size: "text-4xl", opacity: "opacity-20", delay: "1.2s" },
+  { icon: "💎", top: "80%", left: "88%", animation: "animate-float-slow", size: "text-3xl", opacity: "opacity-15", delay: "2s" },
+  { icon: "📱", top: "45%", left: "92%", animation: "animate-float", size: "text-3xl", opacity: "opacity-20", delay: "0.4s" },
+  { icon: "🛍️", top: "88%", left: "20%", animation: "animate-float-reverse", size: "text-4xl", opacity: "opacity-15", delay: "1.6s" },
+  { icon: "⚡", top: "12%", left: "70%", animation: "animate-float", size: "text-3xl", opacity: "opacity-20", delay: "2.3s" },
+  { icon: "🎵", top: "55%", left: "1%", animation: "animate-float-slow", size: "text-3xl", opacity: "opacity-10", delay: "0.9s" },
+];
+
 export default function SignupPage() {
   const router = useRouter();
   const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
@@ -60,7 +71,6 @@ export default function SignupPage() {
       });
     }
 
-    // Send welcome email (fire and forget)
     if (data.user) {
       fetch("/api/email/welcome", {
         method: "POST",
@@ -81,92 +91,135 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl border border-gray-200 p-8 max-w-md w-full text-center">
-          <div className="text-4xl mb-4">📧</div>
-          <h2 className="font-display font-bold text-xl text-gray-900 mb-2">Check your email</h2>
-          <p className="text-sm text-gray-500">
-            We sent a confirmation link to <strong>{form.email}</strong>. Click it to activate your account.
-          </p>
+      <div className="min-h-screen relative flex items-center justify-center px-4 overflow-hidden bg-slate-900">
+        <div className="absolute inset-0" style={{
+          background: "radial-gradient(ellipse at 60% 30%, #1e3a5f 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, #1d4ed8 0%, transparent 45%)",
+        }} />
+        <div className="relative z-10 w-full max-w-md">
+          <div className="absolute -inset-0.5 rounded-2xl neon-cyan opacity-50" />
+          <div className="relative glass-dark rounded-2xl p-8 text-center">
+            <div className="text-5xl mb-4">📧</div>
+            <h2 className="font-display font-bold text-xl text-white mb-2">Check your email</h2>
+            <p className="text-sm text-slate-400">
+              We sent a confirmation link to <strong className="text-white">{form.email}</strong>. Click it to activate your account.
+            </p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center px-4 py-12">
-      <div className="bg-white rounded-2xl border border-gray-200 p-8 max-w-md w-full">
-        <div className="flex items-center gap-2 mb-6">
-          <div className="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">TM</span>
-          </div>
-          <span className="font-display font-bold text-xl text-gray-900">TriniMarket</span>
+    <div className="min-h-screen relative flex items-center justify-center px-4 py-12 overflow-hidden bg-slate-900">
+      {/* Mesh gradient */}
+      <div className="absolute inset-0" style={{
+        background: "radial-gradient(ellipse at 70% 30%, #1e3a5f 0%, transparent 55%), radial-gradient(ellipse at 20% 70%, #0f4c75 0%, transparent 45%), radial-gradient(ellipse at 90% 80%, #0f172a 0%, transparent 50%)",
+      }} />
+
+      {/* Dot grid */}
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: `radial-gradient(circle, #7dd3fc 1px, transparent 1px)`,
+        backgroundSize: "28px 28px",
+      }} />
+
+      {/* Neon glow orbs */}
+      <div className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full animate-pulse-glow" style={{
+        background: "radial-gradient(circle, rgba(34,211,238,0.15) 0%, transparent 70%)",
+        filter: "blur(35px)",
+      }} />
+      <div className="absolute bottom-1/3 left-1/4 w-64 h-64 rounded-full animate-pulse-glow" style={{
+        background: "radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%)",
+        filter: "blur(30px)",
+        animationDelay: "2s",
+      }} />
+
+      {/* Floating icons */}
+      {floatingIcons.map((item, i) => (
+        <div
+          key={i}
+          className={`absolute ${item.animation} ${item.size} ${item.opacity} pointer-events-none select-none`}
+          style={{ top: item.top, left: item.left, animationDelay: item.delay, filter: "drop-shadow(0 0 8px rgba(34,211,238,0.5))" }}
+        >
+          {item.icon}
         </div>
+      ))}
 
-        <h1 className="font-display font-bold text-2xl text-gray-900 mb-1">Create your account</h1>
-        <p className="text-sm text-gray-500 mb-6">Start buying and selling across Trinidad &amp; Tobago.</p>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-5">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-            <input
-              type="text"
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="e.g. Marcus Phillip"
-              className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-            <input
-              type="email"
-              required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="you@example.com"
-              className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              required
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              placeholder="At least 6 characters"
-              className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-            <input
-              type="password"
-              required
-              value={form.confirm}
-              onChange={(e) => setForm({ ...form, confirm: e.target.value })}
-              placeholder="Repeat your password"
-              className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+      {/* Card */}
+      <div className="relative z-10 w-full max-w-md">
+        <div className="absolute -inset-0.5 rounded-2xl neon-cyan opacity-50" />
+        <div className="relative glass-dark rounded-2xl p-8">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center neon-blue">
+              <span className="text-white font-bold text-sm">TM</span>
+            </div>
+            <span className="font-display font-bold text-xl text-white">TriniMarket</span>
           </div>
 
-          <Button type="submit" fullWidth size="lg" disabled={loading}>
-            {loading ? "Creating account…" : "Create Account"}
-          </Button>
-        </form>
+          <h1 className="font-display font-bold text-2xl text-white mb-1">Create your account</h1>
+          <p className="text-sm text-slate-400 mb-6">Start buying and selling across Trinidad &amp; Tobago.</p>
 
-        <p className="text-sm text-center text-gray-500 mt-5">
-          Already have an account?{" "}
-          <Link href="/auth/login" className="text-blue-600 hover:underline font-medium">Log in</Link>
-        </p>
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl mb-5">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Full Name</label>
+              <input
+                type="text"
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="e.g. Marcus Phillip"
+                className="w-full px-4 py-2.5 text-sm bg-slate-800/60 border border-slate-600 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Email Address</label>
+              <input
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                placeholder="you@example.com"
+                className="w-full px-4 py-2.5 text-sm bg-slate-800/60 border border-slate-600 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
+              <input
+                type="password"
+                required
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                placeholder="At least 6 characters"
+                className="w-full px-4 py-2.5 text-sm bg-slate-800/60 border border-slate-600 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Confirm Password</label>
+              <input
+                type="password"
+                required
+                value={form.confirm}
+                onChange={(e) => setForm({ ...form, confirm: e.target.value })}
+                placeholder="Repeat your password"
+                className="w-full px-4 py-2.5 text-sm bg-slate-800/60 border border-slate-600 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              />
+            </div>
+
+            <Button type="submit" fullWidth size="lg" disabled={loading}>
+              {loading ? "Creating account…" : "Create Account"}
+            </Button>
+          </form>
+
+          <p className="text-sm text-center text-slate-400 mt-5">
+            Already have an account?{" "}
+            <Link href="/auth/login" className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors">Log in</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
