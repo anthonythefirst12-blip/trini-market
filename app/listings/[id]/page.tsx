@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { ShareButton } from "@/components/listings/ShareButton";
 import { ViewCounter } from "@/components/listings/ViewCounter";
+import { RatingForm } from "@/components/listings/RatingForm";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -223,6 +224,9 @@ export default async function ListingDetailPage({ params }: Props) {
                 </Link>
               )}
             </div>
+
+            {/* Seller rating */}
+            <RatingForm sellerId={listing.seller.id} sellerName={listing.seller.name} listingId={listing.id} />
 
             {/* Safety tip */}
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">

@@ -28,42 +28,42 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero — deliberate design risk: diagonal split background with dot-grid texture */}
-      <section className="relative overflow-hidden bg-white">
-        {/* Dot-grid background */}
-        <div
-          className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage: `radial-gradient(circle, #CBD5E1 1px, transparent 1px)`,
-            backgroundSize: "24px 24px",
-          }}
-        />
-        {/* Diagonal blue shape */}
-        <div
-          className="absolute right-0 top-0 h-full w-1/2 bg-blue-700 hidden lg:block"
-          style={{ clipPath: "polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
-        />
-        <div className="absolute right-0 top-0 h-full w-1/2 hidden lg:block opacity-10"
-          style={{
-            clipPath: "polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)",
-            backgroundImage: `radial-gradient(circle, #fff 1px, transparent 1px)`,
-            backgroundSize: "20px 20px",
-          }}
-        />
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-slate-900">
+        {/* Mesh gradient background */}
+        <div className="absolute inset-0" style={{
+          background: "radial-gradient(ellipse at 20% 50%, #1e3a5f 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, #1d4ed8 0%, transparent 50%), radial-gradient(ellipse at 60% 80%, #0f172a 0%, transparent 60%)",
+        }} />
+        {/* Dot grid */}
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `radial-gradient(circle, #93c5fd 1px, transparent 1px)`,
+          backgroundSize: "28px 28px",
+        }} />
+        {/* Diagonal blue accent */}
+        <div className="absolute right-0 top-0 h-full w-1/2 hidden lg:block" style={{
+          clipPath: "polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%)",
+          background: "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #60a5fa 100%)",
+          opacity: 0.35,
+        }} />
+        {/* Glow */}
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 rounded-full hidden lg:block" style={{
+          background: "radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)",
+          filter: "blur(40px)",
+        }} />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="max-w-xl">
-            <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-5">
+            <span className="inline-block bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-5">
               Trinidad &amp; Tobago
             </span>
-            <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-gray-900 leading-tight">
+            <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">
               Buy &amp; Sell
               <br />
-              <span className="text-blue-700">Locally.</span>
+              <span className="text-blue-400">Locally.</span>
               <br />
               Right Here.
             </h1>
-            <p className="mt-5 text-gray-600 text-lg leading-relaxed max-w-md">
+            <p className="mt-5 text-slate-300 text-lg leading-relaxed max-w-md">
               TriniMarket connects buyers and sellers across Trinidad &amp; Tobago — vehicles, real estate, tech, food, services and more.
             </p>
 
@@ -77,7 +77,7 @@ export default async function HomePage() {
                 <Link
                   key={cat}
                   href={`/listings?category=${encodeURIComponent(cat)}`}
-                  className="text-xs text-gray-500 border border-gray-300 rounded-full px-3 py-1 hover:border-blue-400 hover:text-blue-600 transition-colors"
+                  className="text-xs text-slate-300 border border-slate-600 rounded-full px-3 py-1 hover:border-blue-400 hover:text-blue-300 transition-colors"
                 >
                   {cat}
                 </Link>
@@ -88,9 +88,10 @@ export default async function HomePage() {
       </section>
 
       {/* Categories */}
-      <section className="bg-[#F1F3F5] py-14">
+      <section className="bg-slate-900 py-14 border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-display font-bold text-2xl text-gray-900 mb-6">Browse by Category</h2>
+          <h2 className="font-display font-bold text-2xl text-white mb-2">Browse by Category</h2>
+          <p className="text-slate-400 text-sm mb-6">Find exactly what you&apos;re looking for</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
             {categories.map((cat) => (
               <Link
@@ -112,7 +113,7 @@ export default async function HomePage() {
       </section>
 
       {/* Premium Picks */}
-      <section className="py-14 bg-white">
+      <section className="py-14 bg-white" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e2e8f0' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
@@ -133,7 +134,7 @@ export default async function HomePage() {
       </section>
 
       {/* Featured listings */}
-      <section className="py-14 bg-[#F1F3F5]">
+      <section className="py-14 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-display font-bold text-2xl text-gray-900">Featured Listings</h2>
@@ -150,7 +151,7 @@ export default async function HomePage() {
       </section>
 
       {/* Recent listings */}
-      <section className="bg-[#F1F3F5] py-14">
+      <section className="bg-white py-14" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e2e8f0' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-display font-bold text-2xl text-gray-900">Recent Listings</h2>
@@ -167,8 +168,15 @@ export default async function HomePage() {
       </section>
 
       {/* CTA banner */}
-      <section className="py-16 bg-blue-700">
-        <div className="max-w-3xl mx-auto px-4 text-center">
+      <section className="py-16 relative overflow-hidden bg-slate-900">
+        <div className="absolute inset-0" style={{
+          background: "radial-gradient(ellipse at center, #1d4ed8 0%, transparent 70%)",
+        }} />
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `radial-gradient(circle, #93c5fd 1px, transparent 1px)`,
+          backgroundSize: "28px 28px",
+        }} />
+        <div className="relative max-w-3xl mx-auto px-4 text-center">
           <h2 className="font-display font-bold text-3xl text-white mb-3">
             Ready to sell something?
           </h2>
@@ -185,6 +193,7 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+
     </>
   );
 }

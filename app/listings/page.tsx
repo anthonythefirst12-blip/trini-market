@@ -37,13 +37,15 @@ interface ListingsPageProps {
     location?: string;
     minPrice?: string;
     maxPrice?: string;
+    condition?: string;
+    sort?: string;
     view?: "grid" | "list";
   }>;
 }
 
 export default async function ListingsPage({ searchParams }: ListingsPageProps) {
   const params = await searchParams;
-  const { q, category, location, minPrice, maxPrice, view = "grid" } = params;
+  const { q, category, location, minPrice, maxPrice, condition, sort, view = "grid" } = params;
 
   const results = await getListings({
     q,
@@ -51,6 +53,8 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
     location,
     minPrice: minPrice ? Number(minPrice) : undefined,
     maxPrice: maxPrice ? Number(maxPrice) : undefined,
+    condition,
+    sort,
   });
 
   return (
@@ -72,6 +76,8 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
               locations={LOCATIONS}
               activeCategory={category}
               activeLocation={location}
+              activeCondition={condition}
+              activeSort={sort}
               minPrice={minPrice}
               maxPrice={maxPrice}
               q={q}

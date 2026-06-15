@@ -5,11 +5,20 @@ import { useCallback } from "react";
 import { Category } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 
+const CONDITIONS = ["New", "Like New", "Good", "Fair"];
+const SORT_OPTIONS = [
+  { value: "newest", label: "Newest First" },
+  { value: "price_asc", label: "Price: Low to High" },
+  { value: "price_desc", label: "Price: High to Low" },
+];
+
 interface FilterSidebarProps {
   categories: Category[];
   locations: string[];
   activeCategory?: string;
   activeLocation?: string;
+  activeCondition?: string;
+  activeSort?: string;
   minPrice?: string;
   maxPrice?: string;
   q?: string;
@@ -20,6 +29,8 @@ export function FilterSidebar({
   locations,
   activeCategory,
   activeLocation,
+  activeCondition,
+  activeSort,
   minPrice,
   maxPrice,
   q,
@@ -44,7 +55,7 @@ export function FilterSidebar({
     router.push("/listings");
   };
 
-  const hasFilters = !!(activeCategory || activeLocation || minPrice || maxPrice || q);
+  const hasFilters = !!(activeCategory || activeLocation || activeCondition || activeSort || minPrice || maxPrice || q);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-6">
@@ -117,6 +128,52 @@ export function FilterSidebar({
           </div>
           <Button type="submit" variant="secondary" size="sm" fullWidth>Apply</Button>
         </form>
+      </div>
+
+      {/* Sort */}
+      <div>
+        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Sort By</h4>
+        <ul className="space-y-1">
+          {SORT_OPTIONS.map((opt) => (
+            <li key={opt.value}>
+              <button
+                onClick={() => updateParam("sort", activeSort === opt.value ? undefined : opt.value)}
+                className={[
+                  "w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+                  activeSort === opt.value
+                    ? "bg-blue-700 text-white font-medium"
+                    : "text-gray-700 hover:bg-gray-100",
+                ].join(" ")}
+              >
+                {opt.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Condition */}
+      <div>
+        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Condition</h4>
+        <ul className="space-y-1">
+          {CONDITIONS.map((cond) => (
+            <li key={cond}>
+              <button
+                onClick={() => updateParam("condition", activeCondition === cond ? undefined : cond)}
+                className={[
+                  "w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+                  activeCondition === cond
+                    ? "bg-blue-700 text-white font-medium"
+                    : "text-gray-700 hover:bg-gray-100",
+                ].join(" ")}
+              >
+                {cond}
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Location */}

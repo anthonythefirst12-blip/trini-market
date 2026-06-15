@@ -130,11 +130,16 @@ export async function getListings(filters?: {
   location?: string;
   minPrice?: number;
   maxPrice?: number;
+  condition?: string;
+  sort?: string;
 }): Promise<Listing[]> {
+  const sortColumn = filters?.sort === "price_asc" || filters?.sort === "price_desc" ? "price" : "created_at";
+  const ascending = filters?.sort === "price_asc";
+
   let query = supabase
     .from("listings")
     .select("*, sellers(*)")
-    .order("created_at", { ascending: false });
+    .order(sortColumn, { ascending });
 
   if (filters?.q) {
     query = query.ilike("title", `%${filters.q}%`);
@@ -150,6 +155,9 @@ export async function getListings(filters?: {
   }
   if (filters?.maxPrice !== undefined) {
     query = query.lte("price", filters.maxPrice);
+  }
+  if (filters?.condition) {
+    query = query.eq("condition", filters.condition);
   }
 
   const { data, error } = await query;
