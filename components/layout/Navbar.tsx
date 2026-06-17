@@ -38,6 +38,9 @@ export function Navbar() {
             <Link href="/dashboard" className="text-sm text-gray-600 hover:text-blue-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1">
               Dashboard
             </Link>
+            <Link href="/dashboard/analytics" className="text-sm text-gray-600 hover:text-blue-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1">
+              Analytics
+            </Link>
           </nav>
 
           {/* Desktop actions */}
@@ -123,6 +126,7 @@ export function Navbar() {
           <Link href="/listings?category=Services" className="block text-sm text-gray-700 py-2 hover:text-blue-700" onClick={() => setMenuOpen(false)}>Services</Link>
           <Link href="/pricing" className="block text-sm text-gray-700 py-2 hover:text-blue-700" onClick={() => setMenuOpen(false)}>Pricing</Link>
           <Link href="/dashboard" className="block text-sm text-gray-700 py-2 hover:text-blue-700" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+          <Link href="/dashboard/analytics" className="block text-sm text-gray-700 py-2 hover:text-blue-700" onClick={() => setMenuOpen(false)}>Analytics</Link>
           <Link href="/wallet" className="block text-sm text-gray-700 py-2 hover:text-blue-700" onClick={() => setMenuOpen(false)}>Wallet — TT$95</Link>
           <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
             <Link href="/auth/login" onClick={() => setMenuOpen(false)}>

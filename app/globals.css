@@ -4,6 +4,25 @@
   --color-background: #FAFAFA;
   --color-foreground: #111827;
 
+  /* shadcn design tokens */
+  --color-card: #FFFFFF;
+  --color-card-foreground: #111827;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #111827;
+  --color-primary: #1D4ED8;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #F1F5F9;
+  --color-secondary-foreground: #111827;
+  --color-muted: #F1F5F9;
+  --color-muted-foreground: #6B7280;
+  --color-accent: #F1F5F9;
+  --color-accent-foreground: #111827;
+  --color-destructive: #DC2626;
+  --color-destructive-foreground: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-input: #E5E7EB;
+  --color-ring: #1D4ED8;
+
   --font-display: var(--font-space-grotesk);
   --font-sans: var(--font-inter);
 }

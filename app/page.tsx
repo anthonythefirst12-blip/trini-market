@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listings, categories } from "@/lib/data";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { Button } from "@/components/ui/Button";
+import { IslandMarketHero } from "@/components/ui/island-market-hero";
 
 export default function HomePage() {
   const featured = listings.filter((l) => l.featured);
@@ -9,78 +10,8 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero — deliberate design risk: diagonal split background with dot-grid texture */}
-      <section className="relative overflow-hidden bg-white">
-        {/* Dot-grid background */}
-        <div
-          className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage: `radial-gradient(circle, #CBD5E1 1px, transparent 1px)`,
-            backgroundSize: "24px 24px",
-          }}
-        />
-        {/* Diagonal blue shape */}
-        <div
-          className="absolute right-0 top-0 h-full w-1/2 bg-blue-700 hidden lg:block"
-          style={{ clipPath: "polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
-        />
-        <div className="absolute right-0 top-0 h-full w-1/2 hidden lg:block opacity-10"
-          style={{
-            clipPath: "polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)",
-            backgroundImage: `radial-gradient(circle, #fff 1px, transparent 1px)`,
-            backgroundSize: "20px 20px",
-          }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-          <div className="max-w-xl">
-            <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-5">
-              Trinidad &amp; Tobago
-            </span>
-            <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-gray-900 leading-tight">
-              Buy &amp; Sell
-              <br />
-              <span className="text-blue-700">Locally.</span>
-              <br />
-              Right Here.
-            </h1>
-            <p className="mt-5 text-gray-600 text-lg leading-relaxed max-w-md">
-              TriniMarket connects buyers and sellers across Trinidad &amp; Tobago — vehicles, real estate, tech, food, services and more.
-            </p>
-
-            {/* Search bar */}
-            <form action="/listings" method="GET" className="mt-8 flex gap-2 max-w-lg">
-              <div className="flex-1 relative">
-                <svg
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  name="q"
-                  placeholder="Search listings…"
-                  className="w-full pl-9 pr-4 py-3 rounded-lg border border-gray-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <Button type="submit" size="lg">Search</Button>
-            </form>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              {["Vehicles", "Electronics", "Real Estate", "Services"].map((cat) => (
-                <Link
-                  key={cat}
-                  href={`/listings?category=${encodeURIComponent(cat)}`}
-                  className="text-xs text-gray-500 border border-gray-300 rounded-full px-3 py-1 hover:border-blue-400 hover:text-blue-600 transition-colors"
-                >
-                  {cat}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero */}
+      <IslandMarketHero />
 
       {/* Categories */}
       <section className="bg-[#F1F3F5] py-14">
