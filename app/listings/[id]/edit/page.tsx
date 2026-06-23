@@ -49,6 +49,7 @@ export default function EditListingPage() {
         .single();
 
       if (err || !data) { router.push("/dashboard"); return; }
+      setUserId(user.id);
 
       setForm({
         title: data.title ?? "",
