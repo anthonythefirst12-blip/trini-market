@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const appUrl = process.env.APP_URL ?? "http://localhost:3000";
 
   // Log payment as pending
   const payment = await logPayment({
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     country_code: "TT",
     currency: "TTD",
     developer_mode: process.env.WIPAY_DEV_MODE ?? "1",
-    environment: process.env.NEXT_PUBLIC_WIPAY_ENV === "production" ? "production" : "sandbox",
+    environment: process.env.WIPAY_ENV === "production" ? "production" : "sandbox",
     fee_structure: "customer_pays",   // merchant absorbs fee: "merchant_pays"
     order_id: payment?.id ?? crypto.randomUUID(),
     origin: appUrl,
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
   });
 
   const wipayUrl =
-    process.env.NEXT_PUBLIC_WIPAY_ENV === "production"
+    process.env.WIPAY_ENV === "production"
       ? "https://wipayfinancial.com/v1/gateway_live"
       : "https://sandbox.wipayfinancial.com/v1/gateway";
 

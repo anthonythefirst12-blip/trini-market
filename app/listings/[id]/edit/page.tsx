@@ -25,6 +25,7 @@ export default function EditListingPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "", category: "", condition: "", price: "", currency: "TTD",
     location: "", negotiable: false, description: "", tags: "",
@@ -38,6 +39,7 @@ export default function EditListingPage() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.push("/auth/login"); return; }
+      setUserId(user.id);
 
       const { data, error: err } = await supabase
         .from("listings")
@@ -82,7 +84,8 @@ export default function EditListingPage() {
         description: form.description,
         tags: tagsArray,
       })
-      .eq("id", id);
+      .eq("id", id)
+      .eq("user_id", userId ?? "");
 
     setSaving(false);
     if (err) { setError(err.message); return; }
