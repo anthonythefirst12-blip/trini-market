@@ -145,6 +145,7 @@ export async function getListings(filters?: {
   let query = supabase
     .from("listings")
     .select("*, sellers(*)")
+    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
     .order(sortColumn, { ascending })
     .range(from, to);
 

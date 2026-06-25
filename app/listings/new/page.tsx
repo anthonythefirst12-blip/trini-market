@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase-browser";
+import { compressImage } from "@/lib/compress-image";
 
 type Step = 1 | 2 | 3;
 
@@ -191,8 +192,9 @@ export default function NewListingPage() {
 
     // Upload images to Supabase Storage
     if (imageFiles.length > 0) {
-      for (const file of imageFiles) {
-        const ext = file.name.split(".").pop();
+      for (const rawFile of imageFiles) {
+        const file = await compressImage(rawFile);
+        const ext = file.name.split(".").pop() ?? "webp";
         const path = `listings/${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from("listing-images")
@@ -239,6 +241,7 @@ export default function NewListingPage() {
       tier: form.tier,
       featured: form.tier !== "free",
       created_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     });
 
     if (error) {
