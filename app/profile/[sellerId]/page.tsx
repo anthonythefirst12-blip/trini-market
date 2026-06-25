@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getSeller, getSellerListings } from "@/lib/db";
-import ListingCard from "@/components/listings/ListingCard";
+import { ListingCard } from "@/components/listings/ListingCard";
 
 export async function generateMetadata({ params }: { params: Promise<{ sellerId: string }> }) {
   const { sellerId } = await params;
