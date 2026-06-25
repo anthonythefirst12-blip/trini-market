@@ -244,11 +244,11 @@ export default async function ListingDetailPage({ params }: Props) {
                     Message Seller
                   </Button>
                 </Link>
-                {listing.seller.isPro && (
-                  <Link href={`/store/${listing.seller.id}`}>
-                    <Button variant="ghost" fullWidth size="sm">View Storefront →</Button>
-                  </Link>
-                )}
+                <Link href={`/profile/${listing.seller.id}`}>
+                  <Button variant="ghost" fullWidth size="sm">
+                    {listing.seller.isPro ? "View Storefront →" : "View All Listings →"}
+                  </Button>
+                </Link>
               </div>
             </div>
 

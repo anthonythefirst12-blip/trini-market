@@ -184,6 +184,17 @@ export async function getListing(id: string): Promise<Listing | null> {
   return mapListing(data as ListingRow);
 }
 
+export async function getSeller(sellerId: string): Promise<Seller | null> {
+  const { data, error } = await supabase
+    .from("sellers")
+    .select("*")
+    .eq("id", sellerId)
+    .single();
+
+  if (error) { console.error("getSeller:", error.message); return null; }
+  return mapSeller(data as SellerRow);
+}
+
 export async function getSellerListings(sellerId: string): Promise<Listing[]> {
   const { data, error } = await supabase
     .from("listings")
