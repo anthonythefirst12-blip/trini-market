@@ -117,6 +117,25 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Social proof stats */}
+      <section className="bg-slate-800 border-t border-slate-700 py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {[
+              { value: "10,000+", label: "Listings Posted" },
+              { value: "5,000+", label: "Active Sellers" },
+              { value: "8", label: "Categories" },
+              { value: "🇹🇹", label: "Made for T&T" },
+            ].map((stat) => (
+              <div key={stat.label}>
+                <div className="font-display font-bold text-2xl sm:text-3xl text-white mb-1">{stat.value}</div>
+                <div className="text-slate-400 text-sm">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Premium Picks */}
       <section className="py-14 bg-white" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e2e8f0' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

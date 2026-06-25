@@ -124,6 +124,8 @@ function mapComment(row: CommentRow): Comment {
 
 // ── Listings ──────────────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 24;
+
 export async function getListings(filters?: {
   q?: string;
   category?: string;
@@ -132,14 +134,19 @@ export async function getListings(filters?: {
   maxPrice?: number;
   condition?: string;
   sort?: string;
+  page?: number;
 }): Promise<Listing[]> {
   const sortColumn = filters?.sort === "price_asc" || filters?.sort === "price_desc" ? "price" : "created_at";
   const ascending = filters?.sort === "price_asc";
+  const page = filters?.page ?? 1;
+  const from = (page - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
 
   let query = supabase
     .from("listings")
     .select("*, sellers(*)")
-    .order(sortColumn, { ascending });
+    .order(sortColumn, { ascending })
+    .range(from, to);
 
   if (filters?.q) {
     query = query.ilike("title", `%${filters.q}%`);

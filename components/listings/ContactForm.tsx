@@ -44,7 +44,21 @@ export function ContactForm({ listingId, listingTitle, price, sellerId, listingI
     });
 
     setSending(false);
-    if (err) { setError(err.message); return; }
+    if (err) { setError("Failed to send message. Please try again."); return; }
+
+    // Notify seller by email (fire-and-forget)
+    const { data: { user: sender } } = await createClient().auth.getUser();
+    fetch("/api/email/new-message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        receiverId: sellerId,
+        fromName: sender?.user_metadata?.name ?? "A buyer",
+        listingTitle,
+        messagePreview: message.trim(),
+      }),
+    }).catch(() => {});
+
     setSubmitted(true);
   };
 

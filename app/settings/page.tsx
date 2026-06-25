@@ -1,13 +1,81 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { createClient } from "@/lib/supabase-browser";
 
 export default function SettingsPage() {
-  const [isPro, setIsPro] = useState(false);
-  const [showUpgrade, setShowUpgrade] = useState(false);
-  const [upgraded, setUpgraded] = useState(false);
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [toast, setToast] = useState<{ type: "success" | "error"; msg: string } | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: "", phone: "", location: "" });
+  const [email, setEmail] = useState("");
+
+  const showToast = (type: "success" | "error", msg: string) => {
+    setToast({ type, msg });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  useEffect(() => {
+    const load = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { router.push("/auth/login"); return; }
+      setUserId(user.id);
+      setEmail(user.email ?? "");
+
+      const { data: seller } = await supabase
+        .from("sellers")
+        .select("name, phone, location")
+        .eq("id", user.id)
+        .single();
+
+      if (seller) {
+        setForm({
+          name: seller.name ?? "",
+          phone: seller.phone ?? "",
+          location: seller.location ?? "",
+        });
+      }
+      setLoading(false);
+    };
+    load();
+  }, [router]);
+
+  const handleSave = async () => {
+    if (!userId) return;
+    setSaving(true);
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("sellers")
+      .update({ name: form.name, phone: form.phone, location: form.location })
+      .eq("id", userId);
+    setSaving(false);
+    if (error) showToast("error", "Failed to save. Please try again.");
+    else showToast("success", "Profile updated successfully.");
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!confirm("Are you sure you want to permanently delete your account? This cannot be undone.")) return;
+    if (!confirm("Final confirmation: all your listings, messages, and data will be deleted.")) return;
+    setDeleting(true);
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
+        <p className="text-sm text-gray-400">Loading…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen py-10">
@@ -17,118 +85,76 @@ export default function SettingsPage() {
           <p className="text-sm text-gray-500 mt-1">Manage your account and preferences.</p>
         </div>
 
-        {/* Profile section */}
+        {toast && (
+          <div className={`px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2 ${toast.type === "success" ? "bg-green-50 border border-green-200 text-green-700" : "bg-red-50 border border-red-200 text-red-700"}`}>
+            {toast.type === "success" ? "✅" : "⚠️"} {toast.msg}
+          </div>
+        )}
+
+        {/* Profile */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
           <h2 className="font-display font-semibold text-base text-gray-900">Profile</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
-              <input defaultValue="Marcus Phillip" className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input defaultValue="marcus.phillip@email.com" className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input
+                value={email}
+                disabled
+                className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50 text-gray-400 cursor-not-allowed"
+              />
+              <p className="text-xs text-gray-400 mt-1">Email cannot be changed here.</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-              <input defaultValue="+1 868 xxx-xxxx" className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                placeholder="+1 868 xxx-xxxx"
+                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-              <input defaultValue="Port of Spain" className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input
+                value={form.location}
+                onChange={(e) => setForm({ ...form, location: e.target.value })}
+                placeholder="Port of Spain"
+                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
           </div>
-          <Button size="sm">Save Changes</Button>
+          <Button size="sm" onClick={handleSave} disabled={saving}>
+            {saving ? "Saving…" : "Save Changes"}
+          </Button>
+        </div>
+
+        {/* Password */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 className="font-display font-semibold text-base text-gray-900 mb-2">Password</h2>
+          <p className="text-sm text-gray-500 mb-4">Change your password via the secure reset flow.</p>
+          <Link href="/auth/forgot-password">
+            <Button variant="secondary" size="sm">Change Password →</Button>
+          </Link>
         </div>
 
         {/* Pro Account */}
-        <div className={`rounded-2xl border-2 p-6 ${isPro || upgraded ? "border-blue-400 bg-blue-50" : "border-gray-200 bg-white"}`}>
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h2 className="font-display font-semibold text-base text-gray-900">Pro Account</h2>
-                {(isPro || upgraded) && (
-                  <span className="bg-blue-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    Active
-                  </span>
-                )}
-              </div>
-              <p className="text-sm text-gray-500 mb-3">
-                Get a branded storefront, Verified Business badge, unlimited listings, and analytics for <strong className="text-gray-700">TT$150/month</strong>.
-              </p>
-              <ul className="space-y-1.5 mb-4">
-                {[
-                  "Branded storefront at /store/your-name",
-                  "Verified Business badge on all listings",
-                  "Unlimited active listings",
-                  "Priority support & analytics",
-                ].map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
-                    <svg className="w-4 h-4 text-blue-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              {!isPro && !upgraded ? (
-                showUpgrade ? (
-                  <div className="bg-white border border-blue-200 rounded-xl p-4 space-y-3">
-                    <p className="text-sm font-medium text-gray-800">Confirm upgrade to Pro — TT$150/month</p>
-                    <p className="text-xs text-gray-400">UI demo only — no real charge.</p>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={() => { setUpgraded(true); setShowUpgrade(false); setIsPro(true); }}
-                      >
-                        Confirm Upgrade
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => setShowUpgrade(false)}>Cancel</Button>
-                    </div>
-                  </div>
-                ) : (
-                  <Button onClick={() => setShowUpgrade(true)}>Upgrade to Pro</Button>
-                )
-              ) : (
-                <div className="flex items-center gap-3">
-                  <Link href="/store/s1">
-                    <Button variant="secondary" size="sm">View My Storefront</Button>
-                  </Link>
-                  <button
-                    onClick={() => { setIsPro(false); setUpgraded(false); }}
-                    className="text-xs text-red-500 hover:text-red-700 transition-colors"
-                  >
-                    Cancel Pro
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 className="font-display font-semibold text-base text-gray-900 mb-2">Pro Account</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Get a branded storefront, Verified Business badge, unlimited listings, and analytics for <strong className="text-gray-700">TT$150/month</strong>.
+          </p>
+          <Link href="/pricing">
+            <Button size="sm">View Plans →</Button>
+          </Link>
         </div>
-
-        {/* Business details (shown when pro) */}
-        {(isPro || upgraded) && (
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-            <h2 className="font-display font-semibold text-base text-gray-900">Business Profile</h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Business name</label>
-              <input placeholder="e.g. Marcus Auto Sales" className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Bio / About</label>
-              <textarea rows={3} placeholder="Tell buyers about your business…" className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Store banner image URL</label>
-              <input placeholder="https://..." className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <Button size="sm">Save Business Profile</Button>
-          </div>
-        )}
 
         {/* Notifications */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
@@ -137,7 +163,6 @@ export default function SettingsPage() {
             {[
               { label: "New message received", defaultOn: true },
               { label: "Listing inquiry", defaultOn: true },
-              { label: "Listing expiring soon", defaultOn: true },
               { label: "Promotions and tips", defaultOn: false },
             ].map((n) => (
               <label key={n.label} className="flex items-center justify-between cursor-pointer">
@@ -154,9 +179,11 @@ export default function SettingsPage() {
 
         {/* Danger zone */}
         <div className="bg-white rounded-2xl border border-red-200 p-6">
-          <h2 className="font-display font-semibold text-base text-red-600 mb-3">Danger Zone</h2>
-          <p className="text-sm text-gray-500 mb-4">Permanently delete your account and all listings. This cannot be undone.</p>
-          <Button variant="danger" size="sm">Delete Account</Button>
+          <h2 className="font-display font-semibold text-base text-red-600 mb-2">Danger Zone</h2>
+          <p className="text-sm text-gray-500 mb-4">Permanently delete your account and all your listings. This cannot be undone.</p>
+          <Button variant="danger" size="sm" onClick={handleDeleteAccount} disabled={deleting}>
+            {deleting ? "Deleting…" : "Delete Account"}
+          </Button>
         </div>
       </div>
     </div>

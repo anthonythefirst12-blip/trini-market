@@ -43,6 +43,8 @@ const LOCATIONS = [
   "Maraval",
 ];
 
+const PAGE_SIZE = 24;
+
 interface ListingsPageProps {
   searchParams: Promise<{
     q?: string;
@@ -53,12 +55,14 @@ interface ListingsPageProps {
     condition?: string;
     sort?: string;
     view?: "grid" | "list";
+    page?: string;
   }>;
 }
 
 export default async function ListingsPage({ searchParams }: ListingsPageProps) {
   const params = await searchParams;
-  const { q, category, location, minPrice, maxPrice, condition, sort, view = "grid" } = params;
+  const { q, category, location, minPrice, maxPrice, condition, sort, view = "grid", page: pageParam } = params;
+  const page = Math.max(1, Number(pageParam ?? 1));
 
   const results = await getListings({
     q,
@@ -68,7 +72,25 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
     maxPrice: maxPrice ? Number(maxPrice) : undefined,
     condition,
     sort,
+    page,
   });
+
+  const hasNextPage = results.length === PAGE_SIZE;
+  const hasPrevPage = page > 1;
+
+  const buildPageUrl = (p: number) => {
+    const sp = new URLSearchParams();
+    if (q) sp.set("q", q);
+    if (category) sp.set("category", category);
+    if (location) sp.set("location", location);
+    if (minPrice) sp.set("minPrice", minPrice);
+    if (maxPrice) sp.set("maxPrice", maxPrice);
+    if (condition) sp.set("condition", condition);
+    if (sort) sp.set("sort", sort);
+    if (view !== "grid") sp.set("view", view);
+    sp.set("page", String(p));
+    return `/listings?${sp.toString()}`;
+  };
 
   const pageTitle = category
     ? `${CATEGORY_ICONS[category] ?? ""} ${category}`
@@ -193,6 +215,27 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                 {results.map((listing) => (
                   <ListingCard key={listing.id} listing={listing} />
                 ))}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {(hasPrevPage || hasNextPage) && (
+              <div className="flex items-center justify-center gap-3 mt-8">
+                {hasPrevPage ? (
+                  <Link href={buildPageUrl(page - 1)} className="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold rounded-xl transition-colors">
+                    ← Previous
+                  </Link>
+                ) : (
+                  <span className="px-5 py-2.5 bg-slate-800 text-slate-600 text-sm font-semibold rounded-xl cursor-not-allowed">← Previous</span>
+                )}
+                <span className="text-slate-400 text-sm">Page {page}</span>
+                {hasNextPage ? (
+                  <Link href={buildPageUrl(page + 1)} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition-colors">
+                    Next →
+                  </Link>
+                ) : (
+                  <span className="px-5 py-2.5 bg-slate-800 text-slate-600 text-sm font-semibold rounded-xl cursor-not-allowed">Next →</span>
+                )}
               </div>
             )}
           </div>

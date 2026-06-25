@@ -3,6 +3,7 @@ import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { CookieBanner } from "@/components/ui/CookieBanner";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
+        <CookieBanner />
       </body>
     </html>
   );

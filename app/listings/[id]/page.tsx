@@ -82,8 +82,31 @@ export default async function ListingDetailPage({ params }: Props) {
 
   const isPremium = listing.tier === "premium";
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: listing.title,
+    description: listing.description,
+    image: listing.images,
+    offers: {
+      "@type": "Offer",
+      price: listing.price,
+      priceCurrency: listing.currency,
+      availability: "https://schema.org/InStock",
+      seller: { "@type": "Person", name: listing.seller.name },
+    },
+    ...(listing.seller.reviewCount > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: listing.seller.rating,
+        reviewCount: listing.seller.reviewCount,
+      },
+    }),
+  };
+
   return (
     <div className="bg-[#FAFAFA] min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-400 mb-6" aria-label="Breadcrumb">
