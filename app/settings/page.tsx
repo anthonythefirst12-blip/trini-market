@@ -15,6 +15,8 @@ export default function SettingsPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", phone: "", location: "" });
   const [email, setEmail] = useState("");
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   const showToast = (type: "success" | "error", msg: string) => {
     setToast({ type, msg });
@@ -31,7 +33,7 @@ export default function SettingsPage() {
 
       const { data: seller } = await supabase
         .from("sellers")
-        .select("name, phone, location")
+        .select("name, phone, location, avatar")
         .eq("id", user.id)
         .single();
 
@@ -41,11 +43,28 @@ export default function SettingsPage() {
           phone: seller.phone ?? "",
           location: seller.location ?? "",
         });
+        setAvatar(seller.avatar ?? null);
       }
       setLoading(false);
     };
     load();
   }, [router]);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !userId) return;
+    setAvatarUploading(true);
+    const supabase = createClient();
+    const ext = file.name.split(".").pop() ?? "jpg";
+    const path = `avatars/${userId}.${ext}`;
+    const { error: uploadErr } = await supabase.storage.from("listing-images").upload(path, file, { upsert: true });
+    if (uploadErr) { showToast("error", "Failed to upload photo."); setAvatarUploading(false); return; }
+    const { data: { publicUrl } } = supabase.storage.from("listing-images").getPublicUrl(path);
+    await supabase.from("sellers").update({ avatar: publicUrl }).eq("id", userId);
+    setAvatar(publicUrl);
+    setAvatarUploading(false);
+    showToast("success", "Profile photo updated.");
+  };
 
   const handleSave = async () => {
     if (!userId) return;
@@ -94,6 +113,27 @@ export default function SettingsPage() {
         {/* Profile */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
           <h2 className="font-display font-semibold text-base text-gray-900">Profile</h2>
+
+          {/* Avatar */}
+          <div className="flex items-center gap-4">
+            <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100 shrink-0">
+              {avatar ? (
+                <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-gray-400">
+                  {form.name.charAt(0) || "?"}
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+                {avatarUploading ? "Uploading…" : "Change Photo"}
+                <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} disabled={avatarUploading} />
+              </label>
+              <p className="text-xs text-gray-400 mt-1">JPG or PNG, max 5MB</p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>

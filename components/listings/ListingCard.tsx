@@ -116,8 +116,13 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
             title={listing.title}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
+          {listing.sold && (
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+              <span className="bg-red-600 text-white text-sm font-bold px-4 py-1.5 rounded-full tracking-wide">SOLD</span>
+            </div>
+          )}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
-            <JustListedBadge createdAt={listing.createdAt} />
+            {!listing.sold && <JustListedBadge createdAt={listing.createdAt} />}
             <TierBadge tier={listing.tier} />
           </div>
           <div className="absolute top-2 right-2 flex flex-col items-end gap-1">

@@ -82,8 +82,7 @@ export default function SignupPage() {
     setLoading(false);
 
     if (data.session) {
-      router.push("/dashboard");
-      router.refresh();
+      window.location.href = "/dashboard";
     } else {
       setSuccess(true);
     }

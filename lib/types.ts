@@ -46,6 +46,7 @@ export interface Listing {
   negotiable: boolean;
   commentCount?: number;
   views?: number;
+  sold?: boolean;
 }
 
 export interface Inquiry {

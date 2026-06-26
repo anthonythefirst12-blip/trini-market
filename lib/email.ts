@@ -309,6 +309,67 @@ export async function sendNewMessageEmail({
   });
 }
 
+// ─── Contact form submission ──────────────────────────────────────────────────
+
+export async function sendContactEmail({
+  fromName,
+  fromEmail,
+  subject,
+  message,
+}: {
+  fromName: string;
+  fromEmail: string;
+  subject: string;
+  message: string;
+}) {
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;padding:40px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden;max-width:600px;width:100%;">
+        <tr><td style="background:#1d4ed8;padding:28px 32px;">
+          <table cellpadding="0" cellspacing="0"><tr>
+            <td style="background:#2563eb;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
+              <span style="color:#fff;font-weight:700;font-size:14px;">TM</span>
+            </td>
+            <td style="padding-left:10px;"><span style="color:#fff;font-size:20px;font-weight:700;">TriniMarket</span></td>
+          </tr></table>
+        </td></tr>
+        <tr><td style="padding:32px;">
+          <p style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;">New Contact Form Submission</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;border-radius:12px;padding:20px;margin:20px 0;">
+            <tr><td>
+              <p style="margin:0 0 4px;font-size:12px;color:#9ca3af;text-transform:uppercase;">From</p>
+              <p style="margin:0 0 16px;font-size:15px;font-weight:600;color:#111827;">${fromName} &lt;${fromEmail}&gt;</p>
+              <p style="margin:0 0 4px;font-size:12px;color:#9ca3af;text-transform:uppercase;">Subject</p>
+              <p style="margin:0 0 16px;font-size:15px;font-weight:600;color:#111827;">${subject}</p>
+              <p style="margin:0 0 4px;font-size:12px;color:#9ca3af;text-transform:uppercase;">Message</p>
+              <p style="margin:0;font-size:15px;color:#374151;line-height:1.6;">${message.replace(/\n/g, "<br>")}</p>
+            </td></tr>
+          </table>
+          <p style="margin:0;font-size:13px;color:#9ca3af;">Reply directly to this email to respond to ${fromName}.</p>
+        </td></tr>
+        <tr><td style="padding:20px 32px;border-top:1px solid #f3f4f6;">
+          <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">© ${new Date().getFullYear()} TriniMarket · Trinidad &amp; Tobago's Marketplace</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`.trim();
+
+  return resend.emails.send({
+    from: FROM,
+    to: "ezekiel.larose14@icloud.com",
+    replyTo: fromEmail,
+    subject: `[Contact] ${subject} — from ${fromName}`,
+    html,
+  });
+}
+
 // ─── Listing posted confirmation ──────────────────────────────────────────────
 
 export async function sendListingPostedEmail({

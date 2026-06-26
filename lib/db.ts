@@ -99,6 +99,7 @@ function mapListing(row: ListingRow): Listing {
     negotiable: row.negotiable,
     commentCount: row.comment_count,
     views: row.views ?? 0,
+    sold: (row as ListingRow & { sold?: boolean }).sold ?? false,
   };
 }
 

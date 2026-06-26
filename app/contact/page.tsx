@@ -11,7 +11,11 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    await new Promise((r) => setTimeout(r, 1000));
+    await fetch("/api/email/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fromName: form.name, fromEmail: form.email, subject: form.subject, message: form.message }),
+    });
     setSending(false);
     setDone(true);
   };
