@@ -34,29 +34,15 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded">
-            {/* Creative TM monogram — T crossbar forms the roof of M */}
+            {/* Shopping bag logo mark */}
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect width="36" height="36" rx="9" fill="url(#tmGrad)" />
-              {/* T crossbar — spans full width, doubles as top of M */}
-              <rect x="6" y="9" width="24" height="3" rx="1.5" fill="white" />
-              {/* T vertical stem */}
-              <rect x="16.5" y="9" width="3" height="9" rx="1" fill="white" />
-              {/* M left leg */}
-              <rect x="6" y="12" width="3" height="15" rx="1" fill="white" />
-              {/* M right leg */}
-              <rect x="27" y="12" width="3" height="15" rx="1" fill="white" />
-              {/* M center-left diagonal */}
-              <path d="M9 12 L18 21" stroke="white" strokeWidth="3" strokeLinecap="round" />
-              {/* M center-right diagonal */}
-              <path d="M27 12 L18 21" stroke="white" strokeWidth="3" strokeLinecap="round" />
-              {/* T&T flag red dot accent */}
-              <circle cx="29" cy="8" r="3" fill="#CE1126" />
-              <defs>
-                <linearGradient id="tmGrad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#1e40af" />
-                  <stop offset="100%" stopColor="#1d4ed8" />
-                </linearGradient>
-              </defs>
+              {/* Bag body */}
+              <rect x="4" y="13" width="28" height="20" rx="5" fill="#1d4ed8" />
+              {/* Bag handle */}
+              <path d="M12 13 C12 7 24 7 24 13" stroke="#1d4ed8" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <path d="M12 13 C12 7 24 7 24 13" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeOpacity="0.9" />
+              {/* TM text */}
+              <text x="18" y="28" textAnchor="middle" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="11" fill="white" letterSpacing="-0.5">TM</text>
             </svg>
             <span className="font-display font-bold text-xl text-gray-900 tracking-tight">
               Trini<span className="text-blue-600">Market</span>
