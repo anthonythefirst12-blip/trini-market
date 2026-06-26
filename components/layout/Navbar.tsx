@@ -29,16 +29,7 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
-      {/* Trinidad & Tobago flag accent bar */}
-      <div className="flex h-[3px] w-full">
-        <div className="flex-1 bg-[#CE1126]" />
-        <div className="w-[3px] bg-white" />
-        <div className="w-6 bg-black" />
-        <div className="w-[3px] bg-white" />
-        <div className="flex-1 bg-[#CE1126]" />
-      </div>
-
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
