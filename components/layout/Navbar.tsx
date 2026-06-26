@@ -34,15 +34,17 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded">
-            {/* Shopping bag logo mark */}
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              {/* Bag body */}
-              <rect x="4" y="13" width="28" height="20" rx="5" fill="#1d4ed8" />
-              {/* Bag handle */}
-              <path d="M12 13 C12 7 24 7 24 13" stroke="#1d4ed8" strokeWidth="3" fill="none" strokeLinecap="round" />
-              <path d="M12 13 C12 7 24 7 24 13" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeOpacity="0.9" />
-              {/* TM text */}
-              <text x="18" y="28" textAnchor="middle" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="11" fill="white" letterSpacing="-0.5">TM</text>
+            {/* Crown/M logo mark */}
+            <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="34" height="34" rx="9" fill="url(#logoGrad)" />
+              <path d="M7 24V11l5.5 7 4.5-6 4.5 6 5.5-7v13" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <rect x="7" y="26" width="20" height="2" rx="1" fill="rgba(255,255,255,0.4)" />
+              <defs>
+                <linearGradient id="logoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#2563eb" />
+                  <stop offset="100%" stopColor="#1d4ed8" />
+                </linearGradient>
+              </defs>
             </svg>
             <span className="font-display font-bold text-xl text-gray-900 tracking-tight">
               Trini<span className="text-blue-600">Market</span>
