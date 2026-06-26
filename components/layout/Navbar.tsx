@@ -29,21 +29,40 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-white shadow-sm">
+      {/* Trinidad & Tobago flag accent bar */}
+      <div className="flex h-[3px] w-full">
+        <div className="flex-1 bg-[#CE1126]" />
+        <div className="w-[3px] bg-white" />
+        <div className="w-6 bg-black" />
+        <div className="w-[3px] bg-white" />
+        <div className="flex-1 bg-[#CE1126]" />
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded">
-            {/* Logo mark */}
-            <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect width="34" height="34" rx="9" fill="url(#logoGrad)" />
-              {/* M shape */}
-              <path d="M7 24V11l5.5 7 4.5-6 4.5 6 5.5-7v13" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-              {/* Underline accent */}
-              <rect x="7" y="26" width="20" height="2" rx="1" fill="rgba(255,255,255,0.4)" />
+            {/* Creative TM monogram — T crossbar forms the roof of M */}
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="36" height="36" rx="9" fill="url(#tmGrad)" />
+              {/* T crossbar — spans full width, doubles as top of M */}
+              <rect x="6" y="9" width="24" height="3" rx="1.5" fill="white" />
+              {/* T vertical stem */}
+              <rect x="16.5" y="9" width="3" height="9" rx="1" fill="white" />
+              {/* M left leg */}
+              <rect x="6" y="12" width="3" height="15" rx="1" fill="white" />
+              {/* M right leg */}
+              <rect x="27" y="12" width="3" height="15" rx="1" fill="white" />
+              {/* M center-left diagonal */}
+              <path d="M9 12 L18 21" stroke="white" strokeWidth="3" strokeLinecap="round" />
+              {/* M center-right diagonal */}
+              <path d="M27 12 L18 21" stroke="white" strokeWidth="3" strokeLinecap="round" />
+              {/* T&T flag red dot accent */}
+              <circle cx="29" cy="8" r="3" fill="#CE1126" />
               <defs>
-                <linearGradient id="logoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#2563eb" />
+                <linearGradient id="tmGrad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#1e40af" />
                   <stop offset="100%" stopColor="#1d4ed8" />
                 </linearGradient>
               </defs>
