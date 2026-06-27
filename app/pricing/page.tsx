@@ -303,7 +303,7 @@ export default function PricingPage() {
             },
             {
               q: "What payment methods do you accept?",
-              a: "We accept Visa, Mastercard, and local bank transfers. Linx and WiPay integration coming soon.",
+              a: "We accept payments via WiPay, which supports Visa, Mastercard, and local bank cards including Linx.",
             },
           ].map((item) => (
             <details key={item.q} className="glass-dark rounded-xl group border border-slate-700">

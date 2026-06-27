@@ -38,6 +38,7 @@ interface ListingRow {
   negotiable: boolean;
   comment_count: number;
   views: number;
+  sold?: boolean;
   sellers: SellerRow;
 }
 
@@ -99,7 +100,7 @@ function mapListing(row: ListingRow): Listing {
     negotiable: row.negotiable,
     commentCount: row.comment_count,
     views: row.views ?? 0,
-    sold: (row as ListingRow & { sold?: boolean }).sold ?? false,
+    sold: row.sold ?? false,
   };
 }
 

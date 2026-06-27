@@ -151,8 +151,11 @@ export function Navbar() {
           {user && (
             <>
               <Link href="/dashboard" className="block text-sm text-gray-700 py-2 hover:text-blue-700" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-              <Link href="/saved" className="block text-sm text-gray-700 py-2 hover:text-blue-700" onClick={() => setMenuOpen(false)}>Saved Listings</Link>
-              <Link href="/messages" className="block text-sm text-gray-700 py-2 hover:text-blue-700" onClick={() => setMenuOpen(false)}>Messages</Link>
+              <Link href="/saved" className="block text-sm text-gray-700 py-2 hover:text-blue-700" onClick={() => setMenuOpen(false)}>❤️ Saved Listings</Link>
+              <Link href="/messages" className="flex items-center justify-between text-sm text-gray-700 py-2 hover:text-blue-700" onClick={() => setMenuOpen(false)}>
+                <span>💬 Messages</span>
+                {unread > 0 && <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{unread}</span>}
+              </Link>
             </>
           )}
           <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">

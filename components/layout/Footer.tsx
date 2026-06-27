@@ -56,8 +56,9 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-800 mt-10 pt-6 text-xs text-center">
-          © {new Date().getFullYear()} TriniMarket. Built for Trinidad &amp; Tobago.
+        <div className="border-t border-gray-800 mt-10 pt-6 text-xs text-center space-y-1">
+          <p>© {new Date().getFullYear()} TriniMarket. Built for Trinidad &amp; Tobago.</p>
+          <p><Link href="/contact" className="hover:text-white transition-colors">Contact Support</Link></p>
         </div>
       </div>
     </footer>

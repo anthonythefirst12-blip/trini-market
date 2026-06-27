@@ -127,12 +127,19 @@ export default async function ListingDetailPage({ params }: Props) {
             {/* Details */}
             <div className={`bg-white rounded-xl border-2 ${isPremium ? "border-blue-400" : "border-gray-200"} p-6`}>
               {isPremium && <div className="h-1 -mx-6 -mt-6 mb-5 rounded-t-xl bg-gradient-to-r from-blue-700 via-blue-500 to-blue-400" />}
+              {listing.sold && (
+                <div className="mb-4 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm font-semibold px-4 py-2.5 rounded-xl">
+                  <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+                  This item has been sold and is no longer available.
+                </div>
+              )}
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap mb-2">
                     <span className="text-xs text-blue-600 font-semibold uppercase tracking-wide">{listing.category}</span>
                     <TierBadge tier={listing.tier} />
                     <Badge variant={conditionVariant[listing.condition]}>{listing.condition}</Badge>
+                    {listing.sold && <span className="text-xs font-bold bg-red-600 text-white px-2 py-0.5 rounded-full">SOLD</span>}
                   </div>
                   <h1 className="font-display font-bold text-2xl text-gray-900">{listing.title}</h1>
                 </div>

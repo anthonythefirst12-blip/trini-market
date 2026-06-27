@@ -174,6 +174,19 @@ export default function MessagesPage() {
       c.key === activeKey ? { ...c, messages: [...c.messages, newMsg] } : c
     ));
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+
+    // Fire email notification to receiver (fire-and-forget)
+    const senderName = userNames[userId] ?? "Someone";
+    fetch("/api/email/new-message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        receiverId: conv.otherId,
+        fromName: senderName,
+        listingTitle: conv.listingTitle,
+        messagePreview: text,
+      }),
+    }).catch(() => {});
   };
 
   const active = conversations.find((c) => c.key === activeKey);

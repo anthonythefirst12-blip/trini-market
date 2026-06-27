@@ -64,6 +64,11 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
         <article className={`flex gap-4 bg-white border ${borderClass} rounded-xl p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 focus-within:ring-2 focus-within:ring-blue-500`}>
           <div className="relative shrink-0 w-36 h-28 rounded-lg overflow-hidden bg-gray-100">
             <CardImageCarousel images={listing.images} title={listing.title} sizes="144px" />
+            {listing.sold && (
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">SOLD</span>
+              </div>
+            )}
           </div>
           <div className="flex flex-col justify-between flex-1 min-w-0">
             <div>
