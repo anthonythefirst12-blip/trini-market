@@ -60,7 +60,7 @@ export default function SignupPage() {
         id: data.user.id,
         user_id: data.user.id,
         name: form.name,
-        avatar: `https://i.pravatar.cc/80?u=${data.user.id}`,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(form.name)}&background=1d4ed8&color=fff&size=80`,
         joined_date: new Date().toISOString().slice(0, 10),
         rating: 0,
         review_count: 0,

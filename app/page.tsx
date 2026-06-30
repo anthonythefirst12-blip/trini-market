@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { categories } from "@/lib/data";
+
 import { getPremiumListings, getFeaturedListings, getRecentListings, getCategoryCounts } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { Button } from "@/components/ui/Button";
@@ -98,7 +98,16 @@ export default async function HomePage() {
           <h2 className="font-display font-bold text-2xl text-white mb-2">Browse by Category</h2>
           <p className="text-slate-400 text-sm mb-6">Find exactly what you&apos;re looking for</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {categories.map((cat) => (
+            {[
+              { name: "Electronics", icon: "💻" },
+              { name: "Vehicles", icon: "🚗" },
+              { name: "Real Estate", icon: "🏠" },
+              { name: "Fashion", icon: "👗" },
+              { name: "Food & Beverage", icon: "🍰" },
+              { name: "Services", icon: "🔧" },
+              { name: "Home & Garden", icon: "🪴" },
+              { name: "Sports & Outdoors", icon: "🏄" },
+            ].map((cat) => (
               <Link
                 key={cat.name}
                 href={`/listings?category=${encodeURIComponent(cat.name)}`}

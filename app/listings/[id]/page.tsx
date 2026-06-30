@@ -259,19 +259,26 @@ export default async function ListingDetailPage({ params }: Props) {
               </div>
             </div>
 
-            {/* Contact form */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <h3 className="font-display font-semibold text-sm text-gray-900 uppercase tracking-wide mb-4">
-                Send a Message
-              </h3>
-              <ContactForm
-                listingId={listing.id}
-                listingTitle={listing.title}
-                price={formatted}
-                sellerId={listing.seller.id}
-                listingImage={listing.images[0]}
-              />
-            </div>
+            {/* Contact form — hidden when sold */}
+            {listing.sold ? (
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 text-center">
+                <p className="text-gray-500 text-sm font-medium">This item has been sold.</p>
+                <p className="text-gray-400 text-xs mt-1">Check out similar listings below.</p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl border border-gray-200 p-5">
+                <h3 className="font-display font-semibold text-sm text-gray-900 uppercase tracking-wide mb-4">
+                  Send a Message
+                </h3>
+                <ContactForm
+                  listingId={listing.id}
+                  listingTitle={listing.title}
+                  price={formatted}
+                  sellerId={listing.seller.id}
+                  listingImage={listing.images[0]}
+                />
+              </div>
+            )}
 
             {/* Boost this listing (own listing) */}
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
