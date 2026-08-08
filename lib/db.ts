@@ -305,17 +305,18 @@ export async function getSellerReviews(sellerId: string): Promise<SellerReview[]
     .limit(20);
 
   if (error) { console.error("getSellerReviews:", error.message); return []; }
-  return (data ?? []).map((r: {
-    id: string; rating: number; comment: string | null; created_at: string;
-    reviewers: { name: string; avatar: string | null } | null;
-  }) => ({
-    id: r.id,
-    rating: r.rating,
-    comment: r.comment,
-    createdAt: r.created_at,
-    reviewerName: r.reviewers?.name ?? "Anonymous",
-    reviewerAvatar: r.reviewers?.avatar ?? null,
-  }));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (data ?? []).map((r: any) => {
+    const reviewer = Array.isArray(r.reviewers) ? r.reviewers[0] : r.reviewers;
+    return {
+      id: r.id as string,
+      rating: r.rating as number,
+      comment: r.comment as string | null,
+      createdAt: r.created_at as string,
+      reviewerName: reviewer?.name ?? "Anonymous",
+      reviewerAvatar: reviewer?.avatar ?? null,
+    };
+  });
 }
 
 // ── Seller Response Rate ──────────────────────────────────────────────────────
