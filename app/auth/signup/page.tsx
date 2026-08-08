@@ -24,6 +24,14 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const handleOAuth = async (provider: "google" | "apple") => {
+    const supabase = createClient();
+    await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -90,16 +98,13 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen relative flex items-center justify-center px-4 overflow-hidden bg-slate-900">
-        <div className="absolute inset-0" style={{
-          background: "radial-gradient(ellipse at 60% 30%, #1e3a5f 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, #1d4ed8 0%, transparent 45%)",
-        }} />
-        <div className="relative z-10 w-full max-w-md">
-          <div className="absolute -inset-0.5 rounded-2xl neon-cyan opacity-50" />
-          <div className="relative glass-dark rounded-2xl p-8 text-center">
+      <div className="min-h-screen relative flex items-center justify-center px-4 overflow-hidden" style={{ background: "#1a0000" }}>
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 30% 40%, #3b0000 0%, transparent 55%), radial-gradient(ellipse at 80% 70%, #7f1d1d 0%, transparent 45%)" }} />
+        <div className="relative z-10 w-full max-w-md text-center">
+          <div className="relative rounded-2xl p-8" style={{ background: "rgba(20,0,0,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(185,28,28,0.25)" }}>
             <div className="text-5xl mb-4">📧</div>
             <h2 className="font-display font-bold text-xl text-white mb-2">Check your email</h2>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-red-200/60">
               We sent a confirmation link to <strong className="text-white">{form.email}</strong>. Click it to activate your account.
             </p>
           </div>
@@ -109,122 +114,79 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center px-4 py-12 overflow-hidden bg-slate-900">
-      {/* Mesh gradient */}
+    <div className="min-h-screen relative flex items-center justify-center px-4 py-12 overflow-hidden" style={{ background: "#1a0000" }}>
       <div className="absolute inset-0" style={{
-        background: "radial-gradient(ellipse at 70% 30%, #1e3a5f 0%, transparent 55%), radial-gradient(ellipse at 20% 70%, #0f4c75 0%, transparent 45%), radial-gradient(ellipse at 90% 80%, #0f172a 0%, transparent 50%)",
+        background: "radial-gradient(ellipse at 30% 40%, #3b0000 0%, transparent 55%), radial-gradient(ellipse at 80% 70%, #7f1d1d 0%, transparent 45%)",
       }} />
-
-      {/* Dot grid */}
       <div className="absolute inset-0 opacity-10" style={{
-        backgroundImage: `radial-gradient(circle, #7dd3fc 1px, transparent 1px)`,
+        backgroundImage: `radial-gradient(circle, #fca5a5 1px, transparent 1px)`,
         backgroundSize: "28px 28px",
       }} />
-
-      {/* Neon glow orbs */}
-      <div className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full animate-pulse-glow" style={{
-        background: "radial-gradient(circle, rgba(34,211,238,0.15) 0%, transparent 70%)",
-        filter: "blur(35px)",
-      }} />
-      <div className="absolute bottom-1/3 left-1/4 w-64 h-64 rounded-full animate-pulse-glow" style={{
-        background: "radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%)",
+      <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full animate-pulse-glow" style={{
+        background: "radial-gradient(circle, rgba(185,28,28,0.3) 0%, transparent 70%)",
         filter: "blur(30px)",
-        animationDelay: "2s",
       }} />
 
-      {/* Floating icons */}
       {floatingIcons.map((item, i) => (
-        <div
-          key={i}
-          className={`absolute ${item.animation} ${item.size} ${item.opacity} pointer-events-none select-none`}
-          style={{ top: item.top, left: item.left, animationDelay: item.delay, filter: "drop-shadow(0 0 8px rgba(34,211,238,0.5))" }}
-        >
+        <div key={i} className={`absolute ${item.animation} ${item.size} ${item.opacity} pointer-events-none select-none`}
+          style={{ top: item.top, left: item.left, animationDelay: item.delay, filter: "drop-shadow(0 0 8px rgba(220,38,38,0.5))" }}>
           {item.icon}
         </div>
       ))}
 
-      {/* Card */}
       <div className="relative z-10 w-full max-w-md">
-        <div className="absolute -inset-0.5 rounded-2xl neon-cyan opacity-50" />
-        <div className="relative glass-dark rounded-2xl p-8">
+        <div className="absolute -inset-0.5 rounded-2xl opacity-60" style={{ boxShadow: "0 0 20px rgba(185,28,28,0.6), 0 0 40px rgba(185,28,28,0.2)" }} />
+        <div className="relative rounded-2xl p-8" style={{ background: "rgba(20,0,0,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(185,28,28,0.25)" }}>
+
           <div className="flex items-center gap-2.5 mb-6">
-            <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect width="34" height="34" rx="9" fill="url(#signupLogoGrad)" />
-              <path d="M7 24V11l5.5 7 4.5-6 4.5 6 5.5-7v13" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-              <rect x="7" y="26" width="20" height="2" rx="1" fill="rgba(255,255,255,0.4)" />
-              <defs>
-                <linearGradient id="signupLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#2563eb" />
-                  <stop offset="100%" stopColor="#1d4ed8" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <span className="font-display font-bold text-xl text-white tracking-tight">Trini<span className="text-cyan-400">Market</span></span>
+            <img src="/icon-192.png" alt="TriniMarket" width={34} height={34} className="rounded-[9px]" />
+            <span className="font-display font-bold text-xl tracking-tight text-white">Trini<span className="text-red-500">Market</span></span>
           </div>
 
           <h1 className="font-display font-bold text-2xl text-white mb-1">Create your account</h1>
-          <p className="text-sm text-slate-400 mb-6">Start buying and selling across Trinidad &amp; Tobago.</p>
+          <p className="text-sm text-red-200/60 mb-5">Start buying and selling across Trinidad &amp; Tobago.</p>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl mb-5">
-              {error}
-            </div>
+            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl mb-5">{error}</div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Full Name</label>
-              <input
-                type="text"
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              <label className="block text-sm font-medium text-red-100/80 mb-1">Full Name</label>
+              <input type="text" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
                 placeholder="e.g. Marcus Phillip"
-                className="w-full px-4 py-2.5 text-sm bg-slate-800/60 border border-slate-600 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-              />
+                className="w-full px-4 py-2.5 text-sm border text-white placeholder-red-200/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent transition-all"
+                style={{ background: "rgba(60,0,0,0.5)", borderColor: "rgba(185,28,28,0.3)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Email Address</label>
-              <input
-                type="email"
-                required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              <label className="block text-sm font-medium text-red-100/80 mb-1">Email Address</label>
+              <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
                 placeholder="you@example.com"
-                className="w-full px-4 py-2.5 text-sm bg-slate-800/60 border border-slate-600 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-              />
+                className="w-full px-4 py-2.5 text-sm border text-white placeholder-red-200/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent transition-all"
+                style={{ background: "rgba(60,0,0,0.5)", borderColor: "rgba(185,28,28,0.3)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
-              <input
-                type="password"
-                required
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              <label className="block text-sm font-medium text-red-100/80 mb-1">Password</label>
+              <input type="password" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
                 placeholder="At least 6 characters"
-                className="w-full px-4 py-2.5 text-sm bg-slate-800/60 border border-slate-600 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-              />
+                className="w-full px-4 py-2.5 text-sm border text-white placeholder-red-200/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent transition-all"
+                style={{ background: "rgba(60,0,0,0.5)", borderColor: "rgba(185,28,28,0.3)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Confirm Password</label>
-              <input
-                type="password"
-                required
-                value={form.confirm}
-                onChange={(e) => setForm({ ...form, confirm: e.target.value })}
+              <label className="block text-sm font-medium text-red-100/80 mb-1">Confirm Password</label>
+              <input type="password" required value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })}
                 placeholder="Repeat your password"
-                className="w-full px-4 py-2.5 text-sm bg-slate-800/60 border border-slate-600 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-              />
+                className="w-full px-4 py-2.5 text-sm border text-white placeholder-red-200/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent transition-all"
+                style={{ background: "rgba(60,0,0,0.5)", borderColor: "rgba(185,28,28,0.3)" }} />
             </div>
-
             <Button type="submit" fullWidth size="lg" disabled={loading}>
               {loading ? "Creating account…" : "Create Account"}
             </Button>
           </form>
 
-          <p className="text-sm text-center text-slate-400 mt-5">
+          <p className="text-sm text-center text-red-200/50 mt-5">
             Already have an account?{" "}
-            <Link href="/auth/login" className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors">Log in</Link>
+            <Link href="/auth/login" className="text-red-400 hover:text-red-300 font-medium transition-colors">Log in</Link>
           </p>
         </div>
       </div>

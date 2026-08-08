@@ -1,6 +1,27 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { getListings } from "@/lib/db";
+
+export async function generateMetadata({ searchParams }: { searchParams: Promise<Record<string, string>> }): Promise<Metadata> {
+  const params = await searchParams;
+  const category = params.category ?? "";
+  const search = params.search ?? "";
+  const title = category
+    ? `${category} for Sale in Trinidad & Tobago | TriniMarket`
+    : search
+    ? `"${search}" — TriniMarket Search Results`
+    : "Browse Listings | TriniMarket";
+  const description = category
+    ? `Find the best ${category.toLowerCase()} deals in Trinidad & Tobago on TriniMarket. Buy and sell locally.`
+    : "Browse thousands of listings across all categories on TriniMarket — Trinidad & Tobago's local marketplace.";
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: "website" },
+    twitter: { card: "summary", title, description },
+  };
+}
 import { ListingCard } from "@/components/listings/ListingCard";
 import { FilterSidebar } from "@/components/listings/FilterSidebar";
 import { ViewToggle } from "@/components/listings/ViewToggle";
@@ -99,32 +120,15 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
     : "All Listings";
 
   return (
-    <div className="min-h-screen bg-slate-800">
-      {/* Header band — diagonal stripe texture, no floating icons */}
-      <div className="relative overflow-hidden bg-slate-900 border-b border-slate-700">
-        {/* Diagonal stripe overlay */}
-        <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              -45deg,
-              #60a5fa 0px,
-              #60a5fa 1px,
-              transparent 1px,
-              transparent 12px
-            )`,
-          }}
-        />
-        {/* Blue bottom accent line */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div className="min-h-screen bg-[#FAFAFA]">
+      {/* Header */}
+      <div className="bg-white border-b border-amber-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <p className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-1">Marketplace</p>
-              <h1 className="font-display font-bold text-3xl text-white">{pageTitle}</h1>
-              <p className="text-slate-400 text-sm mt-1">
-                {results.length} listing{results.length !== 1 ? "s" : ""} found
+              <h1 className="font-display font-bold text-2xl text-gray-900">{pageTitle}</h1>
+              <p className="text-gray-500 text-sm mt-0.5">
+                {results.length} listing{results.length !== 1 ? "s" : ""}
                 {location ? ` in ${location}` : ""}
                 {condition ? ` · ${condition}` : ""}
               </p>
@@ -132,15 +136,15 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             <ViewToggle currentView={view} />
           </div>
 
-          {/* Category quick-filter chips */}
-          <div className="mt-5 flex gap-2 flex-wrap">
+          {/* Category chips */}
+          <div className="mt-4 flex gap-2 flex-wrap">
             <Link
               href="/listings"
               className={[
                 "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all",
                 !category
-                  ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-900/40"
-                  : "border-slate-600 text-slate-400 hover:border-slate-400 hover:text-slate-200",
+                  ? "bg-red-700 border-red-700 text-white"
+                  : "border-gray-300 text-gray-600 hover:border-red-400 hover:text-red-700 bg-white",
               ].join(" ")}
             >
               All
@@ -152,8 +156,8 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                 className={[
                   "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all",
                   category === cat
-                    ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-900/40"
-                    : "border-slate-600 text-slate-400 hover:border-slate-400 hover:text-slate-200",
+                    ? "bg-red-600 border-red-600 text-white"
+                    : "border-gray-300 text-gray-600 hover:border-red-600 hover:text-red-600 bg-white",
                 ].join(" ")}
               >
                 <span>{CATEGORY_ICONS[cat]}</span>
@@ -165,10 +169,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       </div>
 
       {/* Body */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex gap-6 items-start">
           {/* Sidebar */}
-          <aside className="hidden lg:block w-60 shrink-0">
+          <aside className="hidden lg:block w-56 shrink-0">
             <FilterSidebar
               categories={CATEGORIES}
               locations={LOCATIONS}
@@ -184,7 +188,6 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
           {/* Results */}
           <div className="flex-1 min-w-0">
-            {/* Mobile filter trigger */}
             <div className="mb-4 lg:hidden">
               <MobileFilterDrawer
                 categories={CATEGORIES}
@@ -199,10 +202,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
               />
             </div>
             {results.length === 0 ? (
-              <div className="text-center py-20 bg-slate-700/50 rounded-2xl border border-slate-600">
+              <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
                 <div className="text-4xl mb-3">🔍</div>
-                <h3 className="font-display font-semibold text-lg text-slate-200">No listings found</h3>
-                <p className="text-slate-400 text-sm mt-1">Try adjusting your filters or search terms.</p>
+                <h3 className="font-display font-semibold text-lg text-gray-700">No listings found</h3>
+                <p className="text-gray-400 text-sm mt-1">Try adjusting your filters or search terms.</p>
               </div>
             ) : view === "list" ? (
               <div className="flex flex-col gap-3">
@@ -211,7 +214,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {results.map((listing) => (
                   <ListingCard key={listing.id} listing={listing} />
                 ))}
@@ -222,19 +225,19 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             {(hasPrevPage || hasNextPage) && (
               <div className="flex items-center justify-center gap-3 mt-8">
                 {hasPrevPage ? (
-                  <Link href={buildPageUrl(page - 1)} className="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold rounded-xl transition-colors">
+                  <Link href={buildPageUrl(page - 1)} className="px-5 py-2.5 bg-white border border-gray-300 hover:border-red-400 text-gray-700 text-sm font-semibold rounded-xl transition-colors">
                     ← Previous
                   </Link>
                 ) : (
-                  <span className="px-5 py-2.5 bg-slate-800 text-slate-600 text-sm font-semibold rounded-xl cursor-not-allowed">← Previous</span>
+                  <span className="px-5 py-2.5 bg-white border border-gray-200 text-gray-300 text-sm font-semibold rounded-xl cursor-not-allowed">← Previous</span>
                 )}
-                <span className="text-slate-400 text-sm">Page {page}</span>
+                <span className="text-gray-500 text-sm">Page {page}</span>
                 {hasNextPage ? (
-                  <Link href={buildPageUrl(page + 1)} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition-colors">
+                  <Link href={buildPageUrl(page + 1)} className="px-5 py-2.5 bg-red-700 hover:bg-red-800 text-white text-sm font-semibold rounded-xl transition-colors">
                     Next →
                   </Link>
                 ) : (
-                  <span className="px-5 py-2.5 bg-slate-800 text-slate-600 text-sm font-semibold rounded-xl cursor-not-allowed">Next →</span>
+                  <span className="px-5 py-2.5 bg-white border border-gray-200 text-gray-300 text-sm font-semibold rounded-xl cursor-not-allowed">Next →</span>
                 )}
               </div>
             )}

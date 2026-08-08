@@ -11,25 +11,39 @@ interface Props {
 
 export function CardImageCarousel({ images, title, sizes = "(max-width: 640px) 100vw, 33vw" }: Props) {
   const [idx, setIdx] = useState(0);
+  const [errored, setErrored] = useState(false);
 
   const prev = (e: React.MouseEvent) => {
     e.preventDefault();
     setIdx((i) => (i - 1 + images.length) % images.length);
+    setErrored(false);
   };
 
   const next = (e: React.MouseEvent) => {
     e.preventDefault();
     setIdx((i) => (i + 1) % images.length);
+    setErrored(false);
   };
+
+  const src = images[idx] ?? images[0];
+
+  if (!src || errored) {
+    return (
+      <div className="relative h-full w-full flex items-center justify-center bg-gray-100 text-4xl text-gray-300 select-none">
+        📦
+      </div>
+    );
+  }
 
   return (
     <div className="relative h-full w-full group/carousel">
       <Image
-        src={images[idx] ?? images[0]}
+        src={src}
         alt={title}
         fill
         className="object-cover transition-transform duration-500 group-hover:scale-105"
         sizes={sizes}
+        onError={() => setErrored(true)}
       />
       {images.length > 1 && (
         <>
@@ -51,7 +65,7 @@ export function CardImageCarousel({ images, title, sizes = "(max-width: 640px) 1
             {images.map((_, i) => (
               <button
                 key={i}
-                onClick={(e) => { e.preventDefault(); setIdx(i); }}
+                onClick={(e) => { e.preventDefault(); setIdx(i); setErrored(false); }}
                 className={`w-1.5 h-1.5 rounded-full transition-all ${i === idx ? "bg-white scale-125" : "bg-white/50"}`}
                 aria-label={`Image ${i + 1}`}
               />

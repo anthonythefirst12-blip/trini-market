@@ -95,7 +95,7 @@ export function RatingForm({ sellerId, sellerName, listingId }: Props) {
           {comment && <p className="text-xs text-gray-400 mt-1 italic">&ldquo;{comment}&rdquo;</p>}
           <button
             onClick={() => setSubmitted(false)}
-            className="mt-3 text-xs text-blue-600 hover:underline"
+            className="mt-3 text-xs text-red-600 hover:underline"
           >
             Edit review
           </button>
@@ -125,12 +125,12 @@ export function RatingForm({ sellerId, sellerName, listingId }: Props) {
             onChange={(e) => setComment(e.target.value)}
             placeholder="Leave a comment (optional)…"
             rows={3}
-            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
           />
           <button
             onClick={submit}
             disabled={!rating || saving}
-            className="w-full bg-blue-700 text-white text-sm font-semibold py-2 rounded-lg hover:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-red-600 text-white text-sm font-semibold py-2 rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? "Submitting…" : "Submit Review"}
           </button>

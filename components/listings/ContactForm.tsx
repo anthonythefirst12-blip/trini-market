@@ -70,7 +70,7 @@ export function ContactForm({ listingId, listingTitle, price, sellerId, listingI
         <p className="text-gray-400 text-xs mt-1">The seller will get back to you soon.</p>
         <button
           onClick={() => router.push("/messages")}
-          className="mt-3 text-xs text-blue-600 hover:underline"
+          className="mt-3 text-xs text-red-600 hover:underline"
         >
           View in Messages →
         </button>
@@ -90,7 +90,7 @@ export function ContactForm({ listingId, listingTitle, price, sellerId, listingI
         rows={4}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+        className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
       />
       {!userId && (
         <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg">

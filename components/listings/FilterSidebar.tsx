@@ -66,19 +66,19 @@ export function FilterSidebar({
   const isOtherActive = !!activeLocation && !locations.includes(activeLocation);
   const hasFilters = !!(activeCategory || activeLocation || activeCondition || activeSort || minPrice || maxPrice || q);
 
-  const sectionLabel = "text-xs font-bold text-slate-400 uppercase tracking-widest mb-3";
-  const activeBtn = "bg-blue-600 text-white font-semibold shadow-sm shadow-blue-900/40";
-  const inactiveBtn = "text-slate-300 hover:bg-slate-700 hover:text-white";
+  const sectionLabel = "text-xs font-bold text-gray-500 uppercase tracking-widest mb-3";
+  const activeBtn = "bg-red-700 text-white font-semibold";
+  const inactiveBtn = "text-gray-600 hover:bg-gray-100 hover:text-gray-900";
   const btn = "w-full text-left text-sm px-3 py-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
 
   return (
-    <div className="bg-slate-800 rounded-2xl border border-slate-700 p-5 space-y-6 shadow-xl">
+    <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest">Filters</h3>
+        <h3 className="font-display font-bold text-sm text-gray-900 uppercase tracking-widest">Filters</h3>
         {hasFilters && (
           <button
             onClick={clearAll}
-            className="text-xs text-blue-400 hover:text-blue-300 transition-colors focus-visible:outline-none rounded"
+            className="text-xs text-red-700 hover:text-red-900 transition-colors focus-visible:outline-none rounded"
           >
             Clear all
           </button>
@@ -103,7 +103,7 @@ export function FilterSidebar({
       </div>
 
       {/* Divider */}
-      <div className="border-t border-slate-700" />
+      <div className="border-t border-gray-200" />
 
       {/* Price range */}
       <div>
@@ -127,21 +127,21 @@ export function FilterSidebar({
               type="number"
               defaultValue={minPrice}
               placeholder="Min"
-              className="w-full px-3 py-1.5 text-sm bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               name="maxPrice"
               type="number"
               defaultValue={maxPrice}
               placeholder="Max"
-              className="w-full px-3 py-1.5 text-sm bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <Button type="submit" variant="secondary" size="sm" fullWidth>Apply</Button>
         </form>
       </div>
 
-      <div className="border-t border-slate-700" />
+      <div className="border-t border-gray-200" />
 
       {/* Sort */}
       <div>
@@ -160,7 +160,7 @@ export function FilterSidebar({
         </ul>
       </div>
 
-      <div className="border-t border-slate-700" />
+      <div className="border-t border-gray-200" />
 
       {/* Condition */}
       <div>
@@ -179,7 +179,7 @@ export function FilterSidebar({
         </ul>
       </div>
 
-      <div className="border-t border-slate-700" />
+      <div className="border-t border-gray-200" />
 
       {/* Location */}
       <div>
@@ -226,12 +226,12 @@ export function FilterSidebar({
               value={otherLocation}
               onChange={(e) => setOtherLocation(e.target.value)}
               placeholder="e.g. Tobago, Sangre Grande"
-              className="flex-1 px-3 py-1.5 text-sm bg-slate-700 border border-blue-500/50 text-white placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-3 py-1.5 text-sm bg-white border border-amber-400 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
               autoFocus
             />
             <button
               type="submit"
-              className="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-500 transition-colors"
+              className="px-3 py-1.5 bg-red-700 text-white text-xs font-semibold rounded-lg hover:bg-red-800 transition-colors"
             >
               Go
             </button>

@@ -1,11 +1,21 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #FAFAFA;
+  --color-background: #ffffff;
   --color-foreground: #111827;
 
   --font-display: var(--font-space-grotesk);
   --font-sans: var(--font-inter);
+}
+
+:root {
+  --bg-base: #ffffff;
+  --text-base: #111827;
+}
+
+[data-theme="dark"] {
+  --bg-base: #111111;
+  --text-base: #e8e8e8;
 }
 
 @layer base {
@@ -14,10 +24,11 @@
   }
 
   body {
-    background-color: #FAFAFA;
-    color: #111827;
+    background-color: var(--bg-base);
+    color: var(--text-base);
     font-family: var(--font-inter, system-ui, sans-serif);
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -25,7 +36,7 @@
   }
 
   *:focus-visible {
-    outline: 2px solid #1D4ED8;
+    outline: 2px solid #dc2626;
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -56,6 +67,11 @@
   50% { opacity: 0.8; }
 }
 
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
 .animate-float { animation: float 4s ease-in-out infinite; }
 .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
 .animate-float-reverse { animation: float-reverse 5s ease-in-out infinite; }
@@ -76,3 +92,171 @@
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255,255,255,0.08);
 }
+
+.glow-red { box-shadow: 0 0 18px rgba(220,38,38,0.35); }
+.glow-red-lg { box-shadow: 0 0 32px rgba(220,38,38,0.4); }
+.glow-amber { box-shadow: 0 0 18px rgba(251,191,36,0.4); }
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(220,38,38,0.15), 0 0 20px rgba(220,38,38,0.1);
+}
+.card-hover:active {
+  transform: translateY(-1px);
+}
+
+/* ── Heartbeat animation for save button ── */
+@keyframes heartbeat {
+  0%   { transform: scale(1.1); }
+  30%  { transform: scale(1.4); }
+  60%  { transform: scale(1.2); }
+  100% { transform: scale(1.1); }
+}
+
+/* ── Quick view modal entrance ── */
+@keyframes quickViewIn {
+  from { opacity: 0; transform: scale(0.94) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Hero fade-up on load ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fadeUp 0.6s ease-out forwards; }
+.animate-fade-up-delay-1 { animation: fadeUp 0.6s 0.1s ease-out both; }
+.animate-fade-up-delay-2 { animation: fadeUp 0.6s 0.2s ease-out both; }
+.animate-fade-up-delay-3 { animation: fadeUp 0.6s 0.35s ease-out both; }
+
+/* ── Skeleton shimmer ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 8px;
+}
+[data-theme="dark"] .skeleton {
+  background: linear-gradient(90deg, #242424 25%, #2e2e2e 50%, #242424 75%);
+  background-size: 200% 100%;
+}
+
+/* ── Category chip press ripple ── */
+.ripple-chip {
+  position: relative;
+  overflow: hidden;
+}
+.ripple-chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(220, 38, 38, 0.15);
+  border-radius: inherit;
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.ripple-chip:active::after {
+  opacity: 1;
+  transform: scale(1);
+  transition: none;
+}
+
+/* ════════════════════════════════════════════
+   DARK THEME
+   ════════════════════════════════════════════ */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* ── Backgrounds (attribute-selector approach catches all combos) ── */
+[data-theme="dark"] [class~="bg-white"]      { background-color: #1c1c1c !important; }
+[data-theme="dark"] [class~="bg-gray-50"]    { background-color: #161616 !important; }
+[data-theme="dark"] [class~="bg-gray-100"]   { background-color: #242424 !important; }
+[data-theme="dark"] [class~="bg-gray-200"]   { background-color: #2e2e2e !important; }
+
+/* Arbitrary hex backgrounds — use exact word match to avoid CSS bracket parsing issues */
+[data-theme="dark"] [class~="bg-[#FAFAFA]"] { background-color: #111 !important; }
+[data-theme="dark"] [class~="bg-[#fafafa]"] { background-color: #111 !important; }
+[data-theme="dark"] [class~="bg-[#f6fff8]"] { background-color: #161616 !important; }
+[data-theme="dark"] [class~="bg-[#1a0000]"] { background-color: #0a0000 !important; }
+
+/* Light-coloured accent backgrounds */
+[data-theme="dark"] [class~="bg-red-50"]    { background-color: #1a0c0c !important; }
+[data-theme="dark"] [class~="bg-red-100"]   { background-color: #2a1010 !important; }
+[data-theme="dark"] [class~="bg-amber-100"] { background-color: #1e1608 !important; }
+[data-theme="dark"] [class~="bg-green-50"]  { background-color: #0d1a0f !important; }
+[data-theme="dark"] [class~="bg-blue-50"]   { background-color: #0d1320 !important; }
+
+/* ── Text colours ── */
+[data-theme="dark"] [class~="text-gray-900"] { color: #f0f0f0 !important; }
+[data-theme="dark"] [class~="text-gray-800"] { color: #e0e0e0 !important; }
+[data-theme="dark"] [class~="text-gray-700"] { color: #c8c8c8 !important; }
+[data-theme="dark"] [class~="text-gray-600"] { color: #a8a8a8 !important; }
+[data-theme="dark"] [class~="text-gray-500"] { color: #888 !important; }
+[data-theme="dark"] [class~="text-gray-400"] { color: #666 !important; }
+[data-theme="dark"] [class~="text-gray-300"] { color: #555 !important; }
+[data-theme="dark"] [class~="text-black"]    { color: #f0f0f0 !important; }
+
+/* ── Borders ── */
+[data-theme="dark"] [class~="border-gray-100"] { border-color: #222 !important; }
+[data-theme="dark"] [class~="border-gray-200"] { border-color: #2a2a2a !important; }
+[data-theme="dark"] [class~="border-gray-300"] { border-color: #333 !important; }
+[data-theme="dark"] [class~="border-gray-400"] { border-color: #444 !important; }
+[data-theme="dark"] [class~="divide-gray-200"] > * + * { border-color: #2a2a2a !important; }
+[data-theme="dark"] hr { border-color: #2a2a2a !important; }
+
+/* ── Hover states ── */
+[data-theme="dark"] [class~="hover:bg-gray-50"]:hover  { background-color: #1f1f1f !important; }
+[data-theme="dark"] [class~="hover:bg-gray-100"]:hover { background-color: #252525 !important; }
+[data-theme="dark"] [class~="hover:bg-gray-200"]:hover { background-color: #2e2e2e !important; }
+[data-theme="dark"] [class~="hover:bg-red-50"]:hover   { background-color: #1a0c0c !important; }
+[data-theme="dark"] [class~="hover:border-red-200"]:hover { border-color: #5a1515 !important; }
+
+/* ── Navbar ── */
+[data-theme="dark"] header {
+  background-color: #161616 !important;
+  border-bottom-color: #2a2a2a !important;
+}
+
+/* ── Footer ── */
+[data-theme="dark"] footer {
+  background-color: #0d0d0d !important;
+  border-top-color: #222 !important;
+}
+
+/* ── Inputs, textareas, selects ── */
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: #1c1c1c !important;
+  border-color: #333 !important;
+  color: #f0f0f0 !important;
+}
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder { color: #555 !important; }
+
+/* ── Buttons that use gray backgrounds ── */
+[data-theme="dark"] [class~="bg-gray-100"][class~="hover:bg-gray-200"] {
+  background-color: #242424 !important;
+}
+
+/* ── Ring / focus borders ── */
+[data-theme="dark"] [class~="ring-gray-200"] { --tw-ring-color: #2a2a2a; }
+
+/* ── Overlay modals / drawers ── */
+[data-theme="dark"] [class~="bg-black\/50"] { background-color: rgba(0,0,0,0.75) !important; }
+
+/* ── Scrollbar ── */
+[data-theme="dark"] ::-webkit-scrollbar { width: 8px; }
+[data-theme="dark"] ::-webkit-scrollbar-track { background: #161616; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #444; }

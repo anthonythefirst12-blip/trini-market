@@ -24,7 +24,8 @@ const tiers = [
     href: "/auth/signup",
     highlight: false,
     badge: null,
-    neon: "neon-blue",
+    glowColor: "rgba(185,28,28,0.3)",
+    borderColor: "rgba(185,28,28,0.25)",
   },
   {
     name: "Featured",
@@ -48,7 +49,8 @@ const tiers = [
     cta: "Subscribe — TT$150/mo",
     href: "/wallet",
     highlight: true,
-    neon: "neon-cyan",
+    glowColor: "rgba(234,179,8,0.4)",
+    borderColor: "rgba(234,179,8,0.4)",
   },
   {
     name: "Premium",
@@ -72,7 +74,8 @@ const tiers = [
     cta: "Subscribe — TT$350/mo",
     href: "/wallet",
     highlight: false,
-    neon: "neon-purple",
+    glowColor: "rgba(220,38,38,0.35)",
+    borderColor: "rgba(220,38,38,0.3)",
   },
 ];
 
@@ -96,45 +99,41 @@ const heroFloating = [
 
 export default function PricingPage() {
   return (
-    <div className="bg-slate-900 min-h-screen">
+    <div className="min-h-screen" style={{ background: "#1a0000" }}>
       {/* Hero */}
       <section className="relative py-20 px-4 text-center overflow-hidden">
-        {/* Background */}
         <div className="absolute inset-0" style={{
-          background: "radial-gradient(ellipse at 50% 0%, #1e3a5f 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, #0f4c75 0%, transparent 50%)",
+          background: "radial-gradient(ellipse at 50% 0%, #3b0000 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, #7f1d1d 0%, transparent 50%)",
         }} />
         <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `radial-gradient(circle, #93c5fd 1px, transparent 1px)`,
+          backgroundImage: `radial-gradient(circle, #fca5a5 1px, transparent 1px)`,
           backgroundSize: "28px 28px",
         }} />
-        {/* Glow orbs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-64 rounded-full animate-pulse-glow pointer-events-none" style={{
-          background: "radial-gradient(circle, rgba(59,130,246,0.25) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(185,28,28,0.3) 0%, transparent 70%)",
           filter: "blur(40px)",
         }} />
 
-        {/* Floating icons */}
         {heroFloating.map((item, i) => (
           <div
             key={i}
             className={`absolute ${item.anim} ${item.size} opacity-20 pointer-events-none select-none`}
-            style={{ top: item.top, left: item.left, animationDelay: item.delay, filter: "drop-shadow(0 0 10px rgba(59,130,246,0.7))" }}
+            style={{ top: item.top, left: item.left, animationDelay: item.delay, filter: "drop-shadow(0 0 10px rgba(220,38,38,0.7))" }}
           >
             {item.icon}
           </div>
         ))}
 
         <div className="relative z-10">
-          <span className="inline-block bg-blue-500/20 text-blue-300 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5 border border-blue-500/30">
+          <span className="inline-block bg-red-900/40 text-red-300 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5 border border-red-700/40">
             Pricing
           </span>
           <h1 className="font-display font-bold text-4xl md:text-5xl text-white mb-4">
             Simple, honest pricing.
           </h1>
-          <p className="text-slate-400 text-lg max-w-xl mx-auto">
+          <p className="text-red-200/60 text-lg max-w-xl mx-auto">
             Monthly subscriptions with no lock-in. Upgrade, downgrade, or cancel anytime — no questions asked.
           </p>
-
           <div className="flex items-center justify-center gap-3 flex-wrap mt-6">
             {[
               { icon: "✅", text: "Cancel anytime" },
@@ -142,7 +141,7 @@ export default function PricingPage() {
               { icon: "💳", text: "Billed monthly" },
               { icon: "🔒", text: "No hidden fees" },
             ].map((p) => (
-              <span key={p.text} className="inline-flex items-center gap-1.5 bg-slate-800/80 text-slate-300 text-xs font-medium px-3 py-1.5 rounded-full border border-slate-700">
+              <span key={p.text} className="inline-flex items-center gap-1.5 text-red-100/70 text-xs font-medium px-3 py-1.5 rounded-full border border-red-800/50" style={{ background: "rgba(60,0,0,0.5)" }}>
                 {p.icon} {p.text}
               </span>
             ))}
@@ -155,12 +154,19 @@ export default function PricingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {tiers.map((tier) => (
             <div key={tier.name} className="relative">
-              {/* Neon border glow */}
-              <div className={`absolute -inset-0.5 rounded-2xl ${tier.neon} ${tier.highlight ? "opacity-70" : "opacity-30"}`} />
-              <div className={`relative glass-dark rounded-2xl p-7 flex flex-col h-full ${tier.highlight ? "border border-cyan-500/30" : ""}`}>
+              <div className="absolute -inset-0.5 rounded-2xl" style={{
+                boxShadow: `0 0 20px ${tier.glowColor}, 0 0 40px ${tier.glowColor.replace("0.3", "0.1").replace("0.4", "0.15").replace("0.35", "0.1")}`,
+                opacity: tier.highlight ? 0.8 : 0.4,
+                borderRadius: "16px",
+              }} />
+              <div className="relative rounded-2xl p-7 flex flex-col h-full" style={{
+                background: "rgba(20,0,0,0.75)",
+                backdropFilter: "blur(16px)",
+                border: `1px solid ${tier.borderColor}`,
+              }}>
                 {tier.badge && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="bg-cyan-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                    <span className="bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
                       {tier.badge}
                     </span>
                   </div>
@@ -170,16 +176,16 @@ export default function PricingPage() {
                   <div className="flex items-center gap-2">
                     <h2 className="font-display font-bold text-xl text-white">{tier.name}</h2>
                     {tier.subscription && (
-                      <span className="text-xs font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded-full">
+                      <span className="text-xs font-medium text-red-300 px-2 py-0.5 rounded-full border border-red-700/40" style={{ background: "rgba(185,28,28,0.15)" }}>
                         Subscription
                       </span>
                     )}
                   </div>
                   <div className="flex items-baseline gap-1 mt-2">
                     <span className="font-display font-bold text-3xl text-white">{tier.price}</span>
-                    <span className="text-slate-400 text-sm">{tier.period}</span>
+                    <span className="text-red-200/50 text-sm">{tier.period}</span>
                   </div>
-                  <p className="text-slate-400 text-sm mt-2">{tier.description}</p>
+                  <p className="text-red-200/60 text-sm mt-2">{tier.description}</p>
                   {tier.subscription && (
                     <p className="text-xs text-green-400 font-medium mt-1.5 flex items-center gap-1">
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
@@ -194,15 +200,15 @@ export default function PricingPage() {
                   {tier.features.map((f) => (
                     <li key={f.text} className="flex items-start gap-2.5">
                       {f.included ? (
-                        <svg className="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-4 h-4 text-red-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                       ) : (
-                        <svg className="w-4 h-4 text-slate-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-red-900/70 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       )}
-                      <span className={`text-sm ${f.included ? "text-slate-200" : "text-slate-500"}`}>{f.text}</span>
+                      <span className={`text-sm ${f.included ? "text-red-100/90" : "text-red-200/30"}`}>{f.text}</span>
                     </li>
                   ))}
                 </ul>
@@ -214,7 +220,7 @@ export default function PricingPage() {
                 </Link>
 
                 {tier.subscription && (
-                  <p className="text-xs text-center text-slate-500 mt-3">
+                  <p className="text-xs text-center text-red-200/30 mt-3">
                     Billed monthly · Cancel before next billing date to stop charges
                   </p>
                 )}
@@ -224,11 +230,11 @@ export default function PricingPage() {
         </div>
 
         {/* Subscription explainer */}
-        <div className="mt-10 glass-dark rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+        <div className="mt-10 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5" style={{ background: "rgba(40,0,0,0.6)", border: "1px solid rgba(185,28,28,0.2)" }}>
           <div className="text-3xl shrink-0">🔄</div>
           <div>
             <h3 className="font-display font-semibold text-white mb-1">How subscriptions work</h3>
-            <p className="text-sm text-slate-400 leading-relaxed">
+            <p className="text-sm text-red-200/50 leading-relaxed">
               Featured and Premium are monthly subscriptions billed on the same date each month. Cancel anytime from your dashboard — your plan stays active until the end of the current billing period, then stops automatically. No penalties, no awkward calls.
             </p>
           </div>
@@ -238,44 +244,44 @@ export default function PricingPage() {
       {/* Pro Account section */}
       <section className="relative py-16 px-4 overflow-hidden">
         <div className="absolute inset-0" style={{
-          background: "linear-gradient(135deg, #1e3a5f 0%, #0f172a 50%, #1d4ed8 100%)",
+          background: "linear-gradient(135deg, #3b0000 0%, #1a0000 50%, #7f1d1d 100%)",
         }} />
         <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `radial-gradient(circle, #7dd3fc 1px, transparent 1px)`,
+          backgroundImage: `radial-gradient(circle, #fca5a5 1px, transparent 1px)`,
           backgroundSize: "24px 24px",
         }} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full animate-pulse-glow pointer-events-none" style={{
-          background: "radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(185,28,28,0.3) 0%, transparent 70%)",
           filter: "blur(50px)",
         }} />
 
         <div className="relative z-10 max-w-5xl mx-auto">
           <div className="text-center mb-10">
-            <span className="inline-block bg-blue-500/20 text-blue-300 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-blue-500/30">
+            <span className="inline-block bg-red-900/40 text-red-300 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-red-700/40">
               For Businesses
             </span>
             <h2 className="font-display font-bold text-3xl text-white mb-3">Pro Account — TT$150/month</h2>
-            <p className="text-slate-300 max-w-xl mx-auto">
+            <p className="text-red-200/60 max-w-xl mx-auto">
               Everything in Premium, plus a full branded storefront, analytics, and a Verified Business badge. Cancel anytime.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
             {proFeatures.map((f) => (
-              <div key={f.title} className="glass rounded-xl p-5 hover:-translate-y-1 transition-transform duration-200">
+              <div key={f.title} className="rounded-xl p-5 hover:-translate-y-1 transition-transform duration-200" style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.08)" }}>
                 <div className="text-2xl mb-2">{f.icon}</div>
                 <h3 className="font-display font-semibold text-white text-sm mb-1">{f.title}</h3>
-                <p className="text-slate-300 text-xs leading-relaxed">{f.desc}</p>
+                <p className="text-red-200/50 text-xs leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
           <div className="text-center">
             <Link
               href="/settings"
-              className="inline-flex items-center gap-2 bg-white text-blue-700 font-semibold text-base px-8 py-3.5 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.35)] active:scale-95"
+              className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold text-base px-8 py-3.5 rounded-xl transition-all duration-200 hover:bg-red-700 hover:shadow-[0_0_30px_rgba(220,38,38,0.4)] active:scale-95"
             >
               ⚡ Upgrade to Pro
             </Link>
-            <p className="text-slate-400 text-xs mt-4">Monthly subscription · Cancel anytime from Settings</p>
+            <p className="text-red-200/40 text-xs mt-4">Monthly subscription · Cancel anytime from Settings</p>
           </div>
         </div>
       </section>
@@ -285,35 +291,20 @@ export default function PricingPage() {
         <h2 className="font-display font-bold text-2xl text-white mb-8 text-center">Frequently Asked Questions</h2>
         <div className="space-y-4">
           {[
-            {
-              q: "How do I cancel my subscription?",
-              a: "Go to Dashboard → Subscriptions and click \"Cancel Plan\". Your plan remains active until the end of the current billing period. You won't be charged again after that.",
-            },
-            {
-              q: "What happens to my listings if I cancel?",
-              a: "Your listings stay live until the end of your paid period. After that they revert to Free tier placement — they won't be deleted.",
-            },
-            {
-              q: "Can I switch between Featured and Premium?",
-              a: "Yes. You can upgrade or downgrade at any time. Upgrades take effect immediately; downgrades take effect at the next billing date.",
-            },
-            {
-              q: "How does TriniMarket's pricing compare to other local platforms?",
-              a: "Many local platforms charge high rates with little transparency. TriniMarket's Featured tier starts at TT$150/month with clear, predictable costs and prominent placement across the site.",
-            },
-            {
-              q: "What payment methods do you accept?",
-              a: "We accept payments via WiPay, which supports Visa, Mastercard, and local bank cards including Linx.",
-            },
+            { q: "How do I cancel my subscription?", a: "Go to Dashboard → Subscriptions and click \"Cancel Plan\". Your plan remains active until the end of the current billing period. You won't be charged again after that." },
+            { q: "What happens to my listings if I cancel?", a: "Your listings stay live until the end of your paid period. After that they revert to Free tier placement — they won't be deleted." },
+            { q: "Can I switch between Featured and Premium?", a: "Yes. You can upgrade or downgrade at any time. Upgrades take effect immediately; downgrades take effect at the next billing date." },
+            { q: "How does TriniMarket's pricing compare to other local platforms?", a: "Many local platforms charge high rates with little transparency. TriniMarket's Featured tier starts at TT$150/month with clear, predictable costs and prominent placement across the site." },
+            { q: "What payment methods do you accept?", a: "We accept payments via WiPay, which supports Visa, Mastercard, and local bank cards including Linx." },
           ].map((item) => (
-            <details key={item.q} className="glass-dark rounded-xl group border border-slate-700">
-              <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-200 text-sm list-none hover:text-white transition-colors">
+            <details key={item.q} className="rounded-xl group" style={{ background: "rgba(40,0,0,0.6)", border: "1px solid rgba(185,28,28,0.2)" }}>
+              <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-red-100/80 text-sm list-none hover:text-white transition-colors">
                 {item.q}
-                <svg className="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform shrink-0 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-red-400 group-open:rotate-180 transition-transform shrink-0 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </summary>
-              <div className="px-5 pb-4 text-sm text-slate-400 leading-relaxed">{item.a}</div>
+              <div className="px-5 pb-4 text-sm text-red-200/50 leading-relaxed">{item.a}</div>
             </details>
           ))}
         </div>

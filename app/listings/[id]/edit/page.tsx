@@ -128,7 +128,7 @@ export default function EditListingPage() {
     router.push("/dashboard?edited=1");
   };
 
-  const inputCls = "w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white";
+  const inputCls = "w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white";
   const selectCls = `${inputCls} cursor-pointer`;
 
   if (loading) {
@@ -180,14 +180,14 @@ export default function EditListingPage() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Price *</label>
             <div className="flex gap-2">
-              <select value={form.currency} onChange={(e) => update("currency", e.target.value)} className="px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+              <select value={form.currency} onChange={(e) => update("currency", e.target.value)} className="px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white">
                 <option value="TTD">TTD</option>
                 <option value="USD">USD</option>
               </select>
-              <input type="number" value={form.price} onChange={(e) => update("price", e.target.value)} min="0" className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="number" value={form.price} onChange={(e) => update("price", e.target.value)} min="0" className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" />
             </div>
             <label className="flex items-center gap-2 mt-2 cursor-pointer">
-              <input type="checkbox" checked={form.negotiable} onChange={(e) => update("negotiable", e.target.checked)} className="rounded border-gray-300 text-blue-600" />
+              <input type="checkbox" checked={form.negotiable} onChange={(e) => update("negotiable", e.target.checked)} className="rounded border-gray-300 text-red-600" />
               <span className="text-sm text-gray-600">Price is negotiable</span>
             </label>
           </div>
@@ -207,7 +207,7 @@ export default function EditListingPage() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
             <textarea value={form.description} onChange={(e) => update("description", e.target.value)} rows={6} maxLength={1000}
-              className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+              className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none" />
             <p className="text-xs text-gray-400 mt-1">{form.description.length}/1000</p>
           </div>
 
@@ -225,7 +225,7 @@ export default function EditListingPage() {
                 </div>
               ))}
               {newImagePreviews.map((src, idx) => (
-                <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border border-blue-300 group">
+                <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border border-red-300 group">
                   <img src={src} alt="" className="w-full h-full object-cover" />
                   <button onClick={() => removeNewImage(idx)}
                     className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xl font-bold">
@@ -234,7 +234,7 @@ export default function EditListingPage() {
                 </div>
               ))}
               {images.length + newImageFiles.length < 8 && (
-                <label className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition-colors text-gray-400 hover:text-blue-500">
+                <label className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-red-400 transition-colors text-gray-400 hover:text-blue-500">
                   <span className="text-2xl">+</span>
                   <span className="text-xs mt-0.5">Add</span>
                   <input type="file" accept="image/*" multiple className="hidden" onChange={handleNewImages} />

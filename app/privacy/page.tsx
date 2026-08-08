@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | TriniMarket",
+  description: "Read TriniMarket's Privacy Policy — how we collect, use, and protect your personal data.",
+};
 
 export default function PrivacyPage() {
   const sections = [
@@ -40,40 +46,34 @@ export default function PrivacyPage() {
     },
     {
       title: "10. Contact",
-      body: "For privacy-related questions or requests, contact us at support@trinimarket.tt.",
+      body: "For privacy-related questions or requests, please use our contact page or email support@trinimarket.tt.",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      {/* Header */}
-      <div className="relative border-b border-slate-700 py-14 px-4 text-center overflow-hidden">
-        <div className="absolute inset-0" style={{
-          background: "radial-gradient(ellipse at 50% 0%, #1e3a5f 0%, transparent 65%)",
-        }} />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
-        <div className="relative z-10">
-          <span className="inline-block bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4 border border-blue-500/30">Legal</span>
-          <h1 className="font-display font-bold text-3xl text-white mb-2">Privacy Policy</h1>
-          <p className="text-slate-400 text-sm">Last updated: June 2026</p>
-        </div>
+    <div className="min-h-screen bg-[#FAFAFA]">
+      <div className="bg-gradient-to-br from-red-900 via-red-800 to-gray-900 py-14 px-4 text-center">
+        <span className="inline-block bg-white/10 border border-white/20 text-white/80 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">Legal</span>
+        <h1 className="font-display font-bold text-3xl text-white mb-2">Privacy Policy</h1>
+        <p className="text-white/60 text-sm">Last updated: July 2026</p>
       </div>
 
-      {/* Body */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-14">
         <div className="space-y-8">
           {sections.map((s) => (
-            <div key={s.title}>
-              <h2 className="font-display font-semibold text-white text-base mb-2">{s.title}</h2>
-              <p className="text-slate-400 text-sm leading-relaxed">{s.body}</p>
+            <div key={s.title} className="bg-white border border-gray-200 rounded-xl p-6">
+              <h2 className="font-display font-semibold text-gray-900 text-base mb-2">{s.title}</h2>
+              <p className="text-gray-500 text-sm leading-relaxed">{s.body}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-12 pt-8 border-t border-slate-700 flex items-center gap-4 flex-wrap text-sm text-slate-500">
-          <Link href="/terms" className="hover:text-slate-300 transition-colors">Terms of Service</Link>
+        <div className="mt-12 pt-8 border-t border-gray-200 flex items-center gap-4 flex-wrap text-sm text-gray-400">
+          <Link href="/terms" className="hover:text-red-600 transition-colors">Terms of Service</Link>
           <span>·</span>
-          <Link href="/" className="hover:text-slate-300 transition-colors">← Back to TriniMarket</Link>
+          <Link href="/contact" className="hover:text-red-600 transition-colors">Contact Us</Link>
+          <span>·</span>
+          <Link href="/" className="hover:text-red-600 transition-colors">← Back to TriniMarket</Link>
         </div>
       </div>
     </div>

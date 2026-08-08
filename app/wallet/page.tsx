@@ -173,10 +173,10 @@ function WalletContent() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
           {/* Balance card */}
-          <div className="bg-blue-700 rounded-2xl p-6 text-white">
-            <p className="text-blue-200 text-sm font-medium mb-2">Available Balance</p>
+          <div className="bg-red-700 rounded-2xl p-6 text-white">
+            <p className="text-red-200 text-sm font-medium mb-2">Available Balance</p>
             <p className="font-display font-bold text-4xl">TT${balance?.toFixed(2) ?? "0.00"}</p>
-            <p className="text-blue-200 text-xs mt-3">Credits never expire · For one-off top-ups</p>
+            <p className="text-red-200 text-xs mt-3">Credits never expire · For one-off top-ups</p>
           </div>
 
           {/* Quick stats */}
@@ -220,9 +220,9 @@ function WalletContent() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       {sub.tier === "featured" ? (
-                        <span className="text-xs bg-blue-100 text-blue-700 border border-blue-300 font-semibold px-2 py-0.5 rounded">◆ Featured</span>
+                        <span className="text-xs bg-red-100 text-red-700 border border-red-300 font-semibold px-2 py-0.5 rounded">◆ Featured</span>
                       ) : (
-                        <span className="text-xs bg-blue-700 text-white font-bold px-2 py-0.5 rounded">★ Premium</span>
+                        <span className="text-xs bg-red-700 text-white font-bold px-2 py-0.5 rounded">★ Premium</span>
                       )}
                       <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" /> Active
@@ -263,11 +263,11 @@ function WalletContent() {
           <p className="text-sm text-gray-400 mb-5">Add credits to your wallet. Minimum TT$50.</p>
 
           {/* Payment provider */}
-          <div className="flex items-center gap-2 mb-5 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+          <div className="flex items-center gap-2 mb-5 p-3 bg-red-50 border border-red-200 rounded-xl">
             <span className="text-xl">🇹🇹</span>
             <div>
-              <p className="text-sm font-semibold text-blue-800">WiPay — Secure Local Payment</p>
-              <p className="text-xs text-blue-600">Visa, Mastercard & local TT bank cards accepted</p>
+              <p className="text-sm font-semibold text-red-800">WiPay — Secure Local Payment</p>
+              <p className="text-xs text-red-600">Visa, Mastercard & local TT bank cards accepted</p>
             </div>
           </div>
 
@@ -278,7 +278,7 @@ function WalletContent() {
                 onClick={() => { setSelected(amt); setCustom(""); }}
                 className={[
                   "py-2.5 rounded-xl text-sm font-semibold border-2 transition-all",
-                  selected === amt && !custom ? "border-blue-700 bg-blue-700 text-white" : "border-gray-200 text-gray-700 hover:border-blue-300",
+                  selected === amt && !custom ? "border-red-700 bg-red-700 text-white" : "border-gray-200 text-gray-700 hover:border-red-300",
                 ].join(" ")}
               >
                 TT${amt}
@@ -294,7 +294,7 @@ function WalletContent() {
               value={custom}
               onChange={(e) => { setCustom(e.target.value); setSelected(0); }}
               min="50"
-              className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
 
@@ -317,7 +317,7 @@ function WalletContent() {
               {transactions.map((tx) => (
                 <div key={tx.id} className="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-0">
                   <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${tx.type === "topup" ? "bg-green-100" : tx.type === "refund" ? "bg-yellow-100" : "bg-blue-100"}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${tx.type === "topup" ? "bg-green-100" : tx.type === "refund" ? "bg-yellow-100" : "bg-red-100"}`}>
                       {tx.type === "topup" ? "↑" : tx.type === "refund" ? "↩" : "↓"}
                     </div>
                     <div>
@@ -325,7 +325,7 @@ function WalletContent() {
                       <p className="text-xs text-gray-400">{new Date(tx.created_at).toLocaleDateString("en-TT", { month: "short", day: "numeric", year: "numeric" })}</p>
                     </div>
                   </div>
-                  <span className={`text-sm font-bold ${tx.type === "topup" || tx.type === "refund" ? "text-green-600" : "text-blue-700"}`}>
+                  <span className={`text-sm font-bold ${tx.type === "topup" || tx.type === "refund" ? "text-green-600" : "text-red-700"}`}>
                     {tx.type === "topup" || tx.type === "refund" ? "+" : "-"}TT${tx.amount_ttd.toFixed(2)}
                   </span>
                 </div>

@@ -46,10 +46,10 @@ export async function sendSubscriptionReminder({
 
           <!-- Header -->
           <tr>
-            <td style="background:#1d4ed8;padding:28px 32px;">
+            <td style="background:#dc2626;padding:28px 32px;">
               <table cellpadding="0" cellspacing="0">
                 <tr>
-                  <td style="background:#2563eb;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
+                  <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
                     <span style="color:#ffffff;font-weight:700;font-size:14px;">TM</span>
                   </td>
                   <td style="padding-left:10px;">
@@ -80,7 +80,7 @@ export async function sendSubscriptionReminder({
                     <table cellpadding="0" cellspacing="0">
                       <tr>
                         <td style="background:#dbeafe;border:1px solid #bfdbfe;border-radius:6px;padding:3px 10px;">
-                          <span style="font-size:12px;font-weight:600;color:#1d4ed8;">${tierLabel}</span>
+                          <span style="font-size:12px;font-weight:600;color:#dc2626;">${tierLabel}</span>
                         </td>
                       </tr>
                     </table>
@@ -102,7 +102,7 @@ export async function sendSubscriptionReminder({
               <!-- CTA Button -->
               <table cellpadding="0" cellspacing="0">
                 <tr>
-                  <td style="background:#1d4ed8;border-radius:10px;">
+                  <td style="background:#dc2626;border-radius:10px;">
                     <a href="${renewUrl}" style="display:inline-block;padding:14px 28px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;">
                       Renew Plan — TT$${amountTTD}
                     </a>
@@ -111,7 +111,7 @@ export async function sendSubscriptionReminder({
               </table>
 
               <p style="margin:20px 0 0;font-size:13px;color:#9ca3af;">
-                Or log in to your <a href="${APP_URL}/dashboard" style="color:#2563eb;">Dashboard</a> to manage your subscription.
+                Or log in to your <a href="${APP_URL}/dashboard" style="color:#ef4444;">Dashboard</a> to manage your subscription.
                 You can cancel anytime with no penalty.
               </p>
             </td>
@@ -162,9 +162,9 @@ export async function sendWelcomeEmail({
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden;max-width:600px;width:100%;">
           <tr>
-            <td style="background:#1d4ed8;padding:28px 32px;">
+            <td style="background:#dc2626;padding:28px 32px;">
               <table cellpadding="0" cellspacing="0"><tr>
-                <td style="background:#2563eb;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
+                <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
                   <span style="color:#ffffff;font-weight:700;font-size:14px;">TM</span>
                 </td>
                 <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniMarket</span></td>
@@ -189,14 +189,14 @@ export async function sendWelcomeEmail({
                   <td>
                     <p style="margin:0 0 2px;font-size:15px;font-weight:600;color:#111827;">${title}</p>
                     <p style="margin:0 0 4px;font-size:14px;color:#6b7280;">${desc}</p>
-                    <a href="${APP_URL}${href}" style="font-size:13px;color:#2563eb;text-decoration:none;">Get started →</a>
+                    <a href="${APP_URL}${href}" style="font-size:13px;color:#ef4444;text-decoration:none;">Get started →</a>
                   </td>
                 </tr>
               </table>`).join("")}
 
               <table cellpadding="0" cellspacing="0" style="margin-top:8px;">
                 <tr>
-                  <td style="background:#1d4ed8;border-radius:10px;">
+                  <td style="background:#dc2626;border-radius:10px;">
                     <a href="${APP_URL}/listings/new" style="display:inline-block;padding:14px 28px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;">
                       Post Your First Listing →
                     </a>
@@ -255,9 +255,9 @@ export async function sendNewMessageEmail({
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden;max-width:600px;width:100%;">
         <tr>
-          <td style="background:#1d4ed8;padding:28px 32px;">
+          <td style="background:#dc2626;padding:28px 32px;">
             <table cellpadding="0" cellspacing="0"><tr>
-              <td style="background:#2563eb;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
+              <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
                 <span style="color:#ffffff;font-weight:700;font-size:14px;">TM</span>
               </td>
               <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniMarket</span></td>
@@ -280,7 +280,7 @@ export async function sendNewMessageEmail({
 
             <table cellpadding="0" cellspacing="0">
               <tr>
-                <td style="background:#1d4ed8;border-radius:10px;">
+                <td style="background:#dc2626;border-radius:10px;">
                   <a href="${url}" style="display:inline-block;padding:14px 28px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;">
                     Reply in Messages →
                   </a>
@@ -330,9 +330,9 @@ export async function sendContactEmail({
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;padding:40px 0;">
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden;max-width:600px;width:100%;">
-        <tr><td style="background:#1d4ed8;padding:28px 32px;">
+        <tr><td style="background:#dc2626;padding:28px 32px;">
           <table cellpadding="0" cellspacing="0"><tr>
-            <td style="background:#2563eb;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
+            <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
               <span style="color:#fff;font-weight:700;font-size:14px;">TM</span>
             </td>
             <td style="padding-left:10px;"><span style="color:#fff;font-size:20px;font-weight:700;">TriniMarket</span></td>
@@ -394,9 +394,9 @@ export async function sendListingPostedEmail({
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden;max-width:600px;width:100%;">
         <tr>
-          <td style="background:#1d4ed8;padding:28px 32px;">
+          <td style="background:#dc2626;padding:28px 32px;">
             <table cellpadding="0" cellspacing="0"><tr>
-              <td style="background:#2563eb;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
+              <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
                 <span style="color:#ffffff;font-weight:700;font-size:14px;">TM</span>
               </td>
               <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniMarket</span></td>
@@ -418,7 +418,7 @@ export async function sendListingPostedEmail({
 
             <table cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
               <tr>
-                <td style="background:#1d4ed8;border-radius:10px;">
+                <td style="background:#dc2626;border-radius:10px;">
                   <a href="${APP_URL}/listings/${listingId}" style="display:inline-block;padding:14px 28px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;">
                     View Your Listing →
                   </a>
@@ -426,7 +426,7 @@ export async function sendListingPostedEmail({
               </tr>
             </table>
 
-            ${tier === "free" ? `<p style="margin:0;font-size:13px;color:#9ca3af;">Want more visibility? <a href="${APP_URL}/pricing" style="color:#2563eb;">Upgrade to Featured or Premium</a> to appear at the top of search results.</p>` : ""}
+            ${tier === "free" ? `<p style="margin:0;font-size:13px;color:#9ca3af;">Want more visibility? <a href="${APP_URL}/pricing" style="color:#ef4444;">Upgrade to Featured or Premium</a> to appear at the top of search results.</p>` : ""}
           </td>
         </tr>
         <tr>

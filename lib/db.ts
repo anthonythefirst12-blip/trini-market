@@ -18,6 +18,7 @@ interface SellerRow {
   bio: string | null;
   banner: string | null;
   listing_count: number;
+  phone: string | null;
 }
 
 interface ListingRow {
@@ -78,6 +79,7 @@ function mapSeller(row: SellerRow): Seller {
     bio: row.bio ?? undefined,
     banner: row.banner ?? undefined,
     listingCount: row.listing_count ?? undefined,
+    phone: row.phone ?? undefined,
   };
 }
 
@@ -152,7 +154,10 @@ export async function getListings(filters?: {
     .range(from, to);
 
   if (filters?.q) {
-    query = query.ilike("title", `%${filters.q}%`);
+    const term = filters.q.trim();
+    query = query.or(
+      `title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`
+    );
   }
   if (filters?.category) {
     query = query.eq("category", filters.category);
@@ -241,6 +246,18 @@ export async function getRecentListings(limit = 6): Promise<Listing[]> {
   return (data as ListingRow[]).map(mapListing);
 }
 
+/** Site-wide stats for the homepage */
+export async function getSiteStats(): Promise<{ listings: number; sellers: number }> {
+  const [listingsRes, sellersRes] = await Promise.all([
+    supabase.from("listings").select("id", { count: "exact", head: true }),
+    supabase.from("sellers").select("id", { count: "exact", head: true }),
+  ]);
+  return {
+    listings: listingsRes.count ?? 0,
+    sellers: sellersRes.count ?? 0,
+  };
+}
+
 /** Count of listings per category — used for the homepage category grid */
 export async function getCategoryCounts(): Promise<Record<string, number>> {
   const { data, error } = await supabase
@@ -266,6 +283,64 @@ export async function getComments(listingId: string): Promise<Comment[]> {
 
   if (error) { console.error("getComments:", error.message); return []; }
   return (data as CommentRow[]).map(mapComment);
+}
+
+// ── Seller Reviews ────────────────────────────────────────────────────────────
+
+export interface SellerReview {
+  id: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  reviewerName: string;
+  reviewerAvatar: string | null;
+}
+
+export async function getSellerReviews(sellerId: string): Promise<SellerReview[]> {
+  const { data, error } = await supabase
+    .from("seller_reviews")
+    .select("id, rating, comment, created_at, reviewers:sellers!seller_reviews_user_id_fkey(name, avatar)")
+    .eq("seller_id", sellerId)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  if (error) { console.error("getSellerReviews:", error.message); return []; }
+  return (data ?? []).map((r: {
+    id: string; rating: number; comment: string | null; created_at: string;
+    reviewers: { name: string; avatar: string | null } | null;
+  }) => ({
+    id: r.id,
+    rating: r.rating,
+    comment: r.comment,
+    createdAt: r.created_at,
+    reviewerName: r.reviewers?.name ?? "Anonymous",
+    reviewerAvatar: r.reviewers?.avatar ?? null,
+  }));
+}
+
+// ── Seller Response Rate ──────────────────────────────────────────────────────
+
+export async function getSellerResponseRate(sellerId: string): Promise<number | null> {
+  // Threads where seller was messaged (as receiver)
+  const { data: received } = await supabase
+    .from("messages")
+    .select("listing_id")
+    .eq("receiver_id", sellerId)
+    .neq("sender_id", sellerId);
+
+  if (!received || received.length === 0) return null;
+
+  const threadIds = [...new Set(received.map((m) => m.listing_id).filter(Boolean))];
+
+  // Threads where seller replied (as sender)
+  const { data: replied } = await supabase
+    .from("messages")
+    .select("listing_id")
+    .eq("sender_id", sellerId)
+    .in("listing_id", threadIds);
+
+  const repliedIds = new Set((replied ?? []).map((m) => m.listing_id));
+  return Math.round((repliedIds.size / threadIds.length) * 100);
 }
 
 // ── Business Directory ────────────────────────────────────────────────────────

@@ -33,7 +33,7 @@ export function MobileFilterDrawer(props: Props) {
         </svg>
         Filters
         {activeCount > 0 && (
-          <span className="bg-blue-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+          <span className="bg-red-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
             {activeCount}
           </span>
         )}

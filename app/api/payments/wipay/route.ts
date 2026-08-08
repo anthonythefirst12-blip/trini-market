@@ -48,8 +48,8 @@ export async function POST(request: Request) {
 
   const wipayUrl =
     process.env.WIPAY_ENV === "production"
-      ? "https://wipayfinancial.com/v1/gateway_live"
-      : "https://sandbox.wipayfinancial.com/v1/gateway";
+      ? "https://tt.wipayfinancial.com/v1/gateway_live"
+      : "https://tt.wipayfinancial.com/v1/gateway";
 
   // WiPay requires a POST form submission — return the fields and URL
   // so the client can build and submit a hidden form

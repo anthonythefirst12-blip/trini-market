@@ -1,232 +1,200 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-
-import { getPremiumListings, getFeaturedListings, getRecentListings, getCategoryCounts } from "@/lib/db";
+import { getPremiumListings, getFeaturedListings, getRecentListings, getCategoryCounts, getSiteStats } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
-import { Button } from "@/components/ui/Button";
 import { LiveSearch } from "@/components/search/LiveSearch";
+import { RecentlyViewed } from "@/components/home/RecentlyViewed";
+import { CountUp } from "@/components/ui/CountUp";
 
-const categoryGradients: Record<string, string> = {
-  "Electronics":      "from-blue-500 to-cyan-400",
-  "Vehicles":         "from-gray-700 to-gray-500",
-  "Real Estate":      "from-green-500 to-emerald-400",
-  "Fashion":          "from-pink-500 to-rose-400",
-  "Food & Beverage":  "from-orange-500 to-amber-400",
-  "Services":         "from-violet-500 to-purple-400",
-  "Home & Garden":    "from-teal-500 to-green-400",
-  "Sports & Outdoors":"from-red-500 to-orange-400",
-};
+const CATEGORIES = [
+  { name: "Electronics", icon: "💻" },
+  { name: "Vehicles", icon: "🚗" },
+  { name: "Real Estate", icon: "🏠" },
+  { name: "Fashion", icon: "👗" },
+  { name: "Food & Beverage", icon: "🍰" },
+  { name: "Services", icon: "🔧" },
+  { name: "Home & Garden", icon: "🪴" },
+  { name: "Sports & Outdoors", icon: "🏄" },
+];
 
 export default async function HomePage() {
-  const [premium, featured, recent, categoryCounts] = await Promise.all([
+  const [premium, featured, recent, categoryCounts, stats] = await Promise.all([
     getPremiumListings(),
     getFeaturedListings(),
-    getRecentListings(6),
+    getRecentListings(8),
     getCategoryCounts(),
+    getSiteStats(),
   ]);
 
   return (
-    <>
+    <div className="bg-white min-h-screen">
+
       {/* Hero */}
-      <section className="relative overflow-hidden bg-slate-900">
-        {/* Mesh gradient background */}
-        <div className="absolute inset-0" style={{
-          background: "radial-gradient(ellipse at 20% 50%, #1e3a5f 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, #1d4ed8 0%, transparent 50%), radial-gradient(ellipse at 60% 80%, #0f172a 0%, transparent 60%)",
-        }} />
-        {/* Dot grid */}
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `radial-gradient(circle, #93c5fd 1px, transparent 1px)`,
-          backgroundSize: "28px 28px",
-        }} />
-        {/* Diagonal blue accent */}
-        <div className="absolute right-0 top-0 h-full w-1/2 hidden lg:block" style={{
-          clipPath: "polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%)",
-          background: "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #60a5fa 100%)",
-          opacity: 0.35,
-        }} />
-        {/* Glow */}
-        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 rounded-full hidden lg:block" style={{
-          background: "radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)",
-          filter: "blur(40px)",
-        }} />
-
-        {/* Floating hero icons — right side only, behind the diagonal */}
-        <div className="absolute right-[12%] top-[15%] text-6xl opacity-60 animate-float pointer-events-none select-none hidden lg:block" style={{ filter: "drop-shadow(0 0 14px rgba(96,165,250,0.9))", animationDelay: "0s" }}>🚗</div>
-        <div className="absolute right-[22%] top-[55%] text-5xl opacity-50 animate-float-slow pointer-events-none select-none hidden lg:block" style={{ filter: "drop-shadow(0 0 14px rgba(96,165,250,0.9))", animationDelay: "1.2s" }}>🏠</div>
-        <div className="absolute right-[6%] top-[50%] text-4xl opacity-50 animate-float-reverse pointer-events-none select-none hidden lg:block" style={{ filter: "drop-shadow(0 0 12px rgba(96,165,250,0.8))", animationDelay: "0.6s" }}>📱</div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-          <div className="max-w-xl">
-            <span className="inline-block bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-5">
-              Trinidad &amp; Tobago
+      <section className="bg-gray-50 border-b border-gray-100">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-gray-900 mb-4 leading-tight tracking-tight animate-fade-up">
+            Buy &amp; Sell{" "}
+            <span className="text-red-600">
+              Locally
             </span>
-            <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">
-              Buy &amp; Sell
-              <br />
-              <span className="text-blue-400">Locally.</span>
-              <br />
-              Right Here.
-            </h1>
-            <p className="mt-5 text-slate-300 text-lg leading-relaxed max-w-md">
-              TriniMarket connects buyers and sellers across Trinidad &amp; Tobago — vehicles, real estate, tech, food, services and more.
-            </p>
+            <br />
+            <span className="text-gray-400 font-normal text-3xl sm:text-4xl">across T&amp;T</span>
+          </h1>
+          <p className="text-gray-500 text-lg mb-8 max-w-lg mx-auto animate-fade-up-delay-1">
+            Find great deals on vehicles, electronics, real estate, and more — from Port of Spain to Tobago.
+          </p>
 
-            {/* Search bar */}
-            <div className="mt-8">
-              <LiveSearch />
-            </div>
+          <div className="max-w-2xl mx-auto mb-6 animate-fade-up-delay-2">
+            <LiveSearch />
+          </div>
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              {["Vehicles", "Electronics", "Real Estate", "Services"].map((cat) => (
-                <Link
-                  key={cat}
-                  href={`/listings?category=${encodeURIComponent(cat)}`}
-                  className="text-xs text-slate-300 border border-slate-600 rounded-full px-3 py-1 hover:border-blue-400 hover:text-blue-300 transition-colors"
-                >
-                  {cat}
-                </Link>
-              ))}
-            </div>
+          <div className="flex items-center justify-center gap-3 flex-wrap animate-fade-up-delay-3">
+            <Link
+              href="/listings/new"
+              className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold px-6 py-3 rounded-full hover:bg-red-700 hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] active:scale-95 transition-all duration-200"
+            >
+              + Post a Listing
+            </Link>
+            <Link
+              href="/listings"
+              className="inline-flex items-center gap-2 bg-white text-gray-700 font-semibold px-6 py-3 rounded-full border border-gray-200 hover:border-red-300 hover:text-red-600 hover:shadow-[0_0_16px_rgba(220,38,38,0.15)] active:scale-95 transition-all duration-200"
+            >
+              Browse Listings
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Categories */}
-      <section className="bg-slate-900 py-14 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-display font-bold text-2xl text-white mb-2">Browse by Category</h2>
-          <p className="text-slate-400 text-sm mb-6">Find exactly what you&apos;re looking for</p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {[
-              { name: "Electronics", icon: "💻" },
-              { name: "Vehicles", icon: "🚗" },
-              { name: "Real Estate", icon: "🏠" },
-              { name: "Fashion", icon: "👗" },
-              { name: "Food & Beverage", icon: "🍰" },
-              { name: "Services", icon: "🔧" },
-              { name: "Home & Garden", icon: "🪴" },
-              { name: "Sports & Outdoors", icon: "🏄" },
-            ].map((cat) => (
+      <section className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-display font-bold text-xl text-gray-900">Shop by Category</h2>
+            <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">
+              View All →
+            </Link>
+          </div>
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+            {CATEGORIES.map((cat) => (
               <Link
                 key={cat.name}
                 href={`/listings?category=${encodeURIComponent(cat.name)}`}
-                className="group rounded-xl overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                className="ripple-chip group flex flex-col items-center gap-2 p-3 rounded-2xl border border-transparent hover:border-red-200 hover:bg-red-50 hover:shadow-[0_0_16px_rgba(220,38,38,0.12)] active:scale-95 transition-all duration-200 text-center"
               >
-                <div className={`bg-gradient-to-br ${categoryGradients[cat.name] ?? "from-blue-500 to-blue-400"} p-4 text-center`}>
-                  <div className="text-3xl mb-1 drop-shadow">{cat.icon}</div>
-                </div>
-                <div className="bg-white px-2 py-2 text-center border border-t-0 border-gray-200 rounded-b-xl">
-                  <div className="text-xs font-semibold text-gray-700 group-hover:text-blue-700 transition-colors leading-tight">{cat.name}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{categoryCounts[cat.name] ?? 0} listings</div>
-                </div>
+                <span className="text-3xl group-hover:scale-110 transition-transform duration-200">{cat.icon}</span>
+                <span className="text-xs font-medium text-gray-600 group-hover:text-red-600 leading-tight transition-colors">{cat.name}</span>
+                <span className="text-xs text-gray-300 group-hover:text-red-300 transition-colors">{categoryCounts[cat.name] ?? 0}</span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Social proof stats */}
-      <section className="bg-slate-800 border-t border-slate-700 py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {[
-              { value: "10,000+", label: "Listings Posted" },
-              { value: "5,000+", label: "Active Sellers" },
-              { value: "8", label: "Categories" },
-              { value: "🇹🇹", label: "Made for T&T" },
-            ].map((stat) => (
-              <div key={stat.label}>
-                <div className="font-display font-bold text-2xl sm:text-3xl text-white mb-1">{stat.value}</div>
-                <div className="text-slate-400 text-sm">{stat.label}</div>
+      {/* Stats */}
+      <section className="bg-gray-50 border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-center gap-10 sm:gap-20 flex-wrap">
+            <div className="text-center">
+              <div className="font-display font-bold text-xl text-gray-900">
+                <CountUp to={stats.listings} suffix="+" />
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Premium Picks */}
-      <section className="py-14 bg-white" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e2e8f0' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <h2 className="font-display font-bold text-2xl text-gray-900">Premium Picks</h2>
-              <span className="bg-blue-700 text-white text-xs font-bold px-2.5 py-0.5 rounded">★ Premium</span>
+              <div className="text-gray-400 text-xs mt-0.5">Active Listings</div>
             </div>
-            <Link href="/listings" className="text-sm text-blue-700 hover:text-blue-800 font-medium transition-colors">
-              View all →
-            </Link>
-          </div>
-          <p className="text-sm text-gray-400 mb-6">Top-tier listings from our most serious sellers.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {premium.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured listings */}
-      <section className="py-14 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display font-bold text-2xl text-gray-900">Featured Listings</h2>
-            <Link href="/listings" className="text-sm text-blue-700 hover:text-blue-800 font-medium transition-colors">
-              View all →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {featured.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
+            <div className="text-center">
+              <div className="font-display font-bold text-xl text-gray-900">
+                <CountUp to={stats.sellers} suffix="+" />
+              </div>
+              <div className="text-gray-400 text-xs mt-0.5">Sellers</div>
+            </div>
+            <div className="text-center">
+              <div className="font-display font-bold text-xl text-gray-900">
+                <CountUp to={8} />
+              </div>
+              <div className="text-gray-400 text-xs mt-0.5">Categories</div>
+            </div>
+            <div className="text-center">
+              <div className="font-display font-bold text-xl text-gray-900">🇹🇹</div>
+              <div className="text-gray-400 text-xs mt-0.5">Made for T&T</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Recent listings */}
-      <section className="bg-white py-14" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e2e8f0' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display font-bold text-2xl text-gray-900">Recent Listings</h2>
-            <Link href="/listings" className="text-sm text-blue-700 hover:text-blue-800 font-medium transition-colors">
-              View all →
-            </Link>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+
+        {/* Premium */}
+        {premium.length > 0 && (
+          <section>
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <h2 className="font-display font-bold text-xl text-gray-900">Premium Picks</h2>
+                <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">★ Premium</span>
+              </div>
+              <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">View all →</Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {premium.map((l) => <ListingCard key={l.id} listing={l} />)}
+            </div>
+          </section>
+        )}
+
+        {/* Featured */}
+        {featured.length > 0 && (
+          <section>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-display font-bold text-xl text-gray-900">Featured Listings</h2>
+              <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">View all →</Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {featured.map((l) => <ListingCard key={l.id} listing={l} />)}
+            </div>
+          </section>
+        )}
+
+        {/* Recent */}
+        <section>
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-display font-bold text-xl text-gray-900">Recently Listed</h2>
+            <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">View all →</Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {recent.slice(0, 4).map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-        </div>
-      </section>
+          {recent.length === 0 ? (
+            <div className="text-center py-16 bg-gray-50 rounded-2xl border border-gray-100">
+              <div className="text-4xl mb-3">🏪</div>
+              <p className="font-display font-semibold text-gray-700">No listings yet</p>
+              <p className="text-gray-400 text-sm mt-1 mb-5">Be the first to post something!</p>
+              <Link href="/listings/new" className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-red-700 hover:shadow-[0_0_20px_rgba(220,38,38,0.35)] active:scale-95 transition-all">
+                Post a Listing
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {recent.map((l) => <ListingCard key={l.id} listing={l} />)}
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* Recently viewed */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+        <RecentlyViewed />
+      </div>
 
       {/* CTA banner */}
-      <section className="py-16 relative overflow-hidden bg-slate-900">
-        <div className="absolute inset-0" style={{
-          background: "radial-gradient(ellipse at center, #1d4ed8 0%, transparent 70%)",
-        }} />
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `radial-gradient(circle, #93c5fd 1px, transparent 1px)`,
-          backgroundSize: "28px 28px",
-        }} />
-        <div className="relative max-w-3xl mx-auto px-4 text-center">
-          <h2 className="font-display font-bold text-3xl text-white mb-3">
+      <section className="bg-gray-50 border-t border-gray-100 mt-8">
+        <div className="max-w-3xl mx-auto px-4 py-14 text-center">
+          <h2 className="font-display font-bold text-2xl sm:text-3xl text-gray-900 mb-3">
             Ready to sell something?
           </h2>
-          <p className="text-blue-200 mb-6 text-base">
-            Post your listing in minutes. Reach thousands of buyers across T&amp;T.
-          </p>
-          <Link href="/listings/new">
-            <Button
-              size="lg"
-              className="bg-white text-blue-700 hover:bg-blue-50 focus-visible:ring-white"
-            >
-              Post a Free Listing
-            </Button>
+          <p className="text-gray-500 mb-7">Post your listing in minutes. Reach buyers across T&amp;T for free.</p>
+          <Link
+            href="/listings/new"
+            className="inline-flex items-center gap-2 bg-red-600 text-white font-bold px-8 py-3.5 rounded-full hover:bg-red-700 hover:shadow-[0_0_24px_rgba(220,38,38,0.4)] active:scale-95 transition-all duration-200"
+          >
+            + Post a Free Listing
           </Link>
         </div>
       </section>
-
-    </>
+    </div>
   );
 }

@@ -18,8 +18,8 @@ export function ViewToggle({ currentView }: { currentView: string }) {
         onClick={() => setView("grid")}
         aria-label="Grid view"
         className={[
-          "p-1.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
-          currentView === "grid" ? "bg-white text-blue-700 shadow-sm" : "text-gray-400 hover:text-gray-600",
+          "p-1.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500",
+          currentView === "grid" ? "bg-white text-red-600 shadow-sm" : "text-gray-400 hover:text-gray-600",
         ].join(" ")}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,8 +30,8 @@ export function ViewToggle({ currentView }: { currentView: string }) {
         onClick={() => setView("list")}
         aria-label="List view"
         className={[
-          "p-1.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
-          currentView === "list" ? "bg-white text-blue-700 shadow-sm" : "text-gray-400 hover:text-gray-600",
+          "p-1.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500",
+          currentView === "list" ? "bg-white text-red-600 shadow-sm" : "text-gray-400 hover:text-gray-600",
         ].join(" ")}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

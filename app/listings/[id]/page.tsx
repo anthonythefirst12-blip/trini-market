@@ -2,7 +2,8 @@ export const dynamic = "force-dynamic";
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getListing, getListings, getComments } from "@/lib/db";
+import { getListing, getListings, getComments, getSellerResponseRate } from "@/lib/db";
+import { createClient } from "@/lib/supabase-server";
 import { ImageGallery } from "@/components/listings/ImageGallery";
 import { ContactForm } from "@/components/listings/ContactForm";
 import { CommentsSection } from "@/components/listings/CommentsSection";
@@ -13,6 +14,11 @@ import { ShareButton } from "@/components/listings/ShareButton";
 import { ViewCounter } from "@/components/listings/ViewCounter";
 import { RatingForm } from "@/components/listings/RatingForm";
 import { ReportButton } from "@/components/listings/ReportButton";
+import { WhatsAppButton } from "@/components/listings/WhatsAppButton";
+import { MakeOfferButton } from "@/components/listings/MakeOfferButton";
+import { ViewTracker } from "@/components/listings/ViewTracker";
+import { SellerPresence } from "@/components/listings/SellerPresence";
+import { ListingStickyCTA } from "@/components/listings/ListingStickyCTA";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -55,10 +61,10 @@ const conditionVariant = {
 
 function TierBadge({ tier }: { tier: string }) {
   if (tier === "premium") {
-    return <span className="inline-flex items-center gap-1 bg-blue-700 text-white text-xs font-bold px-2.5 py-1 rounded">★ Premium</span>;
+    return <span className="inline-flex items-center gap-1 bg-red-700 text-white text-xs font-bold px-2.5 py-1 rounded">★ Premium</span>;
   }
   if (tier === "featured") {
-    return <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 border border-blue-300 text-xs font-semibold px-2.5 py-1 rounded">◆ Featured</span>;
+    return <span className="inline-flex items-center gap-1 bg-red-100 text-red-700 border border-red-300 text-xs font-semibold px-2.5 py-1 rounded">◆ Featured</span>;
   }
   return null;
 }
@@ -68,9 +74,14 @@ export default async function ListingDetailPage({ params }: Props) {
   const listing = await getListing(id);
   if (!listing) notFound();
 
-  const [allListings, listingComments] = await Promise.all([
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isOwner = !!user && user.id === listing.seller.id;
+
+  const [allListings, listingComments, responseRate] = await Promise.all([
     getListings({ category: listing.category }),
     getComments(id),
+    getSellerResponseRate(listing.seller.id),
   ]);
   const related = allListings.filter((l) => l.id !== listing.id).slice(0, 3);
 
@@ -107,14 +118,28 @@ export default async function ListingDetailPage({ params }: Props) {
   return (
     <div className="bg-[#FAFAFA] min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <ListingStickyCTA
+        price={formatted}
+        listingTitle={listing.title}
+        sold={listing.sold}
+        watchSelector="#listing-price-heading"
+      />
+      <ViewTracker
+        id={listing.id}
+        title={listing.title}
+        price={listing.price}
+        currency={listing.currency}
+        image={listing.images[0] ?? ""}
+        category={listing.category}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-400 mb-6" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+          <Link href="/" className="hover:text-red-600 transition-colors">Home</Link>
           <span>/</span>
-          <Link href="/listings" className="hover:text-blue-600 transition-colors">Listings</Link>
+          <Link href="/listings" className="hover:text-red-600 transition-colors">Listings</Link>
           <span>/</span>
-          <Link href={`/listings?category=${listing.category}`} className="hover:text-blue-600 transition-colors">{listing.category}</Link>
+          <Link href={`/listings?category=${listing.category}`} className="hover:text-red-600 transition-colors">{listing.category}</Link>
           <span>/</span>
           <span className="text-gray-600 truncate max-w-[200px]">{listing.title}</span>
         </nav>
@@ -125,8 +150,8 @@ export default async function ListingDetailPage({ params }: Props) {
             <ImageGallery images={listing.images} title={listing.title} />
 
             {/* Details */}
-            <div className={`bg-white rounded-xl border-2 ${isPremium ? "border-blue-400" : "border-gray-200"} p-6`}>
-              {isPremium && <div className="h-1 -mx-6 -mt-6 mb-5 rounded-t-xl bg-gradient-to-r from-blue-700 via-blue-500 to-blue-400" />}
+            <div className={`bg-white rounded-xl border-2 ${isPremium ? "border-red-400" : "border-gray-200"} p-6`}>
+              {isPremium && <div className="h-1 -mx-6 -mt-6 mb-5 rounded-t-xl bg-gradient-to-r from-red-700 via-red-500 to-red-400" />}
               {listing.sold && (
                 <div className="mb-4 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm font-semibold px-4 py-2.5 rounded-xl">
                   <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
@@ -136,7 +161,7 @@ export default async function ListingDetailPage({ params }: Props) {
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap mb-2">
-                    <span className="text-xs text-blue-600 font-semibold uppercase tracking-wide">{listing.category}</span>
+                    <span className="text-xs text-red-600 font-semibold uppercase tracking-wide">{listing.category}</span>
                     <TierBadge tier={listing.tier} />
                     <Badge variant={conditionVariant[listing.condition]}>{listing.condition}</Badge>
                     {listing.sold && <span className="text-xs font-bold bg-red-600 text-white px-2 py-0.5 rounded-full">SOLD</span>}
@@ -144,7 +169,7 @@ export default async function ListingDetailPage({ params }: Props) {
                   <h1 className="font-display font-bold text-2xl text-gray-900">{listing.title}</h1>
                 </div>
                 <div className="text-right">
-                  <div className="font-display font-bold text-3xl text-blue-700">{formatted}</div>
+                  <div id="listing-price-heading" className="font-display font-bold text-3xl text-red-700">{formatted}</div>
                   {listing.negotiable && <span className="text-xs text-gray-400 italic">Price negotiable</span>}
                 </div>
               </div>
@@ -202,7 +227,7 @@ export default async function ListingDetailPage({ params }: Props) {
           <div className="space-y-4">
             {/* Price + CTA (mobile) */}
             <div className="lg:hidden bg-white rounded-xl border border-gray-200 p-5">
-              <div className="font-display font-bold text-2xl text-blue-700 mb-3">{formatted}</div>
+              <div className="font-display font-bold text-2xl text-red-700 mb-3">{formatted}</div>
               <div className="flex gap-2">
                 <Button fullWidth size="lg">Contact Seller</Button>
                 <Link href="/messages">
@@ -226,12 +251,12 @@ export default async function ListingDetailPage({ params }: Props) {
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="font-semibold text-sm text-gray-900">{listing.seller.name}</span>
                     {listing.seller.verified && (
-                      <svg className="w-4 h-4 text-blue-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4 text-red-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     )}
                     {listing.seller.isPro && (
-                      <span className="text-xs bg-blue-700 text-white font-bold px-1.5 py-0.5 rounded">PRO</span>
+                      <span className="text-xs bg-red-700 text-white font-bold px-1.5 py-0.5 rounded">PRO</span>
                     )}
                   </div>
                   <div className="flex items-center gap-1 mt-0.5">
@@ -239,6 +264,14 @@ export default async function ListingDetailPage({ params }: Props) {
                     <span className="text-xs text-gray-400">{listing.seller.rating} ({listing.seller.reviewCount})</span>
                   </div>
                   <div className="text-xs text-gray-400 mt-0.5">Since {new Date(listing.seller.joinedDate).getFullYear()}</div>
+                  <SellerPresence sellerId={listing.seller.id} />
+                  {responseRate !== null && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className={`text-xs font-semibold ${responseRate >= 80 ? "text-green-600" : responseRate >= 50 ? "text-amber-600" : "text-gray-400"}`}>
+                        {responseRate}% response rate
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -251,6 +284,23 @@ export default async function ListingDetailPage({ params }: Props) {
                     Message Seller
                   </Button>
                 </Link>
+                {listing.seller.phone && (
+                  <WhatsAppButton
+                    phone={listing.seller.phone}
+                    listingTitle={listing.title}
+                    price={formatted}
+                  />
+                )}
+                {!isOwner && !listing.sold && listing.negotiable && (
+                  <MakeOfferButton
+                    listingId={listing.id}
+                    sellerId={listing.seller.id}
+                    listingTitle={listing.title}
+                    listingImage={listing.images[0] ?? undefined}
+                    askingPrice={listing.price}
+                    currency={listing.currency}
+                  />
+                )}
                 <Link href={`/profile/${listing.seller.id}`}>
                   <Button variant="ghost" fullWidth size="sm">
                     {listing.seller.isPro ? "View Storefront →" : "View All Listings →"}
@@ -280,10 +330,10 @@ export default async function ListingDetailPage({ params }: Props) {
               </div>
             )}
 
-            {/* Boost this listing (own listing) */}
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            {/* Boost this listing (own listing only) */}
+            {isOwner && <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
               <p className="text-sm font-semibold text-blue-800 mb-1">Is this your listing?</p>
-              <p className="text-xs text-blue-600 mb-3">
+              <p className="text-xs text-red-600 mb-3">
                 {listing.tier === "free"
                   ? "Boost it to Featured (TT$150/mo) or Premium (TT$350/mo) for more visibility."
                   : listing.tier === "featured"
@@ -297,7 +347,7 @@ export default async function ListingDetailPage({ params }: Props) {
                   </Button>
                 </Link>
               )}
-            </div>
+            </div>}
 
             {/* Seller rating */}
             <RatingForm sellerId={listing.seller.id} sellerName={listing.seller.name} listingId={listing.id} />
@@ -325,7 +375,7 @@ export default async function ListingDetailPage({ params }: Props) {
                 <h2 className="font-display font-bold text-xl text-gray-900">More in {listing.category}</h2>
                 <p className="text-sm text-gray-400 mt-0.5">Similar listings you might like</p>
               </div>
-              <Link href={`/listings?category=${encodeURIComponent(listing.category)}`} className="text-sm text-blue-700 hover:text-blue-800 font-medium transition-colors">
+              <Link href={`/listings?category=${encodeURIComponent(listing.category)}`} className="text-sm text-red-700 hover:text-blue-800 font-medium transition-colors">
                 View all →
               </Link>
             </div>

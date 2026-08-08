@@ -60,7 +60,7 @@ export function ReportButton({ listingId }: { listingId: string }) {
                 <h3 className="font-display font-bold text-gray-900 text-lg mb-1">Report submitted</h3>
                 <p className="text-sm text-gray-500 mb-5">Thanks for helping keep TriniMarket safe. We&apos;ll review this listing.</p>
                 <button onClick={() => { setOpen(false); setDone(false); setReason(""); setDetails(""); }}
-                  className="text-sm text-blue-600 hover:underline">Close</button>
+                  className="text-sm text-red-600 hover:underline">Close</button>
               </div>
             ) : (
               <>
@@ -76,7 +76,7 @@ export function ReportButton({ listingId }: { listingId: string }) {
                         value={r}
                         checked={reason === r}
                         onChange={() => setReason(r)}
-                        className="text-blue-600 focus:ring-blue-500"
+                        className="text-red-600 focus:ring-red-500"
                       />
                       <span className="text-sm text-gray-700 group-hover:text-gray-900">{r}</span>
                     </label>
@@ -88,7 +88,7 @@ export function ReportButton({ listingId }: { listingId: string }) {
                   onChange={(e) => setDetails(e.target.value)}
                   rows={2}
                   placeholder="Additional details (optional)"
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none mb-4"
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none mb-4"
                 />
 
                 <div className="flex gap-2">

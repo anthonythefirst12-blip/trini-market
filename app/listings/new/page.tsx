@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase-browser";
 import { compressImage } from "@/lib/compress-image";
+import { Confetti } from "@/components/ui/Confetti";
 
 type Step = 1 | 2 | 3;
 
@@ -140,6 +141,7 @@ export default function NewListingPage() {
   const [dragOver, setDragOver] = useState(false);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [confetti, setConfetti] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -171,7 +173,19 @@ export default function NewListingPage() {
   }, [router]);
 
   const addImages = (files: File[]) => {
-    const newFiles = [...imageFiles, ...files].slice(0, 5);
+    const MAX_SIZE_MB = 10;
+    const maxImages = form.tier === "free" ? 2 : 5;
+    const valid = files.filter((f) => {
+      if (f.size > MAX_SIZE_MB * 1024 * 1024) {
+        alert(`"${f.name}" is over ${MAX_SIZE_MB}MB and was skipped.`);
+        return false;
+      }
+      return true;
+    });
+    const newFiles = [...imageFiles, ...valid].slice(0, maxImages);
+    if (form.tier === "free" && imageFiles.length + valid.length > maxImages) {
+      alert(`Free listings are limited to ${maxImages} photos. Upgrade to Featured or Premium to add up to 5.`);
+    }
     setImageFiles(newFiles);
     setImagePreviews(newFiles.map((f) => URL.createObjectURL(f)));
   };
@@ -268,13 +282,25 @@ export default function NewListingPage() {
         }),
       });
       const data = await res.json();
-      if (data.redirectUrl) {
-        window.location.href = data.redirectUrl;
+      if (data.wipayUrl && data.fields) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = data.wipayUrl;
+        Object.entries(data.fields).forEach(([key, value]) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = value as string;
+          form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
         return;
       }
     }
 
-    router.push(`/dashboard?posted=1`);
+    setConfetti(true);
+    setTimeout(() => { window.location.href = `/dashboard?posted=1`; }, 1800);
   };
 
   const canProceedStep1 =
@@ -289,6 +315,7 @@ export default function NewListingPage() {
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen py-10">
+      <Confetti active={confetti} />
       <div className="max-w-2xl mx-auto px-4">
         <div className="mb-8">
           <h1 className="font-display font-bold text-2xl text-gray-900">Post a Listing</h1>
@@ -301,7 +328,7 @@ export default function NewListingPage() {
             <div key={s} className="flex items-center gap-3">
               <div className={[
                 "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors",
-                step === s ? "bg-blue-700 text-white" : step > s ? "bg-blue-100 text-blue-700" : "bg-gray-200 text-gray-500",
+                step === s ? "bg-red-700 text-white" : step > s ? "bg-red-100 text-red-700" : "bg-gray-200 text-gray-500",
               ].join(" ")}>
                 {step > s ? "✓" : s}
               </div>
@@ -329,7 +356,7 @@ export default function NewListingPage() {
                   onChange={(e) => update("title", e.target.value)}
                   placeholder="e.g. 2019 Toyota Corolla – Low Mileage"
                   maxLength={120}
-                  className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
                 <p className="text-xs text-gray-400 mt-1">{form.title.length}/120</p>
               </div>
@@ -340,7 +367,7 @@ export default function NewListingPage() {
                   <select
                     value={form.category}
                     onChange={(e) => update("category", e.target.value)}
-                    className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                    className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                   >
                     <option value="">Select category</option>
                     {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -351,7 +378,7 @@ export default function NewListingPage() {
                   <select
                     value={form.condition}
                     onChange={(e) => update("condition", e.target.value)}
-                    className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                    className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                   >
                     <option value="">Select condition</option>
                     {CONDITIONS.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -365,7 +392,7 @@ export default function NewListingPage() {
                   <select
                     value={form.currency}
                     onChange={(e) => update("currency", e.target.value)}
-                    className="px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                    className="px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                   >
                     <option value="TTD">TTD</option>
                     <option value="USD">USD</option>
@@ -376,7 +403,7 @@ export default function NewListingPage() {
                     onChange={(e) => update("price", e.target.value)}
                     placeholder="0.00"
                     min="0"
-                    className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                 </div>
                 <label className="flex items-center gap-2 mt-2 cursor-pointer">
@@ -384,7 +411,7 @@ export default function NewListingPage() {
                     type="checkbox"
                     checked={form.negotiable}
                     onChange={(e) => update("negotiable", e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-gray-300 text-red-600 focus:ring-red-500"
                   />
                   <span className="text-sm text-gray-600">Price is negotiable</span>
                 </label>
@@ -395,7 +422,7 @@ export default function NewListingPage() {
                 <select
                   value={form.location}
                   onChange={(e) => update("location", e.target.value)}
-                  className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                 >
                   <option value="">Select location</option>
                   {LOCATIONS.map((group) => (
@@ -412,7 +439,7 @@ export default function NewListingPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Listing Tier
-                  <Link href="/pricing" target="_blank" className="ml-2 text-xs text-blue-600 hover:underline font-normal">Compare tiers →</Link>
+                  <Link href="/pricing" target="_blank" className="ml-2 text-xs text-red-600 hover:underline font-normal">Compare tiers →</Link>
                 </label>
                 <div className="grid grid-cols-3 gap-3">
                   {([
@@ -427,13 +454,13 @@ export default function NewListingPage() {
                       className={[
                         "rounded-xl border-2 p-3 text-left transition-all",
                         form.tier === t.value
-                          ? t.value === "premium" ? "border-blue-700 bg-blue-700 text-white" : "border-blue-500 bg-blue-50"
-                          : "border-gray-200 hover:border-blue-300",
+                          ? t.value === "premium" ? "border-red-700 bg-red-700 text-white" : "border-red-500 bg-red-50"
+                          : "border-gray-200 hover:border-red-300",
                       ].join(" ")}
                     >
                       <p className={`text-xs font-bold mb-0.5 ${form.tier === t.value && t.value === "premium" ? "text-white" : "text-gray-900"}`}>{t.label}</p>
-                      <p className={`text-sm font-bold ${form.tier === t.value && t.value === "premium" ? "text-blue-200" : "text-blue-700"}`}>{t.price}</p>
-                      <p className={`text-xs mt-0.5 ${form.tier === t.value && t.value === "premium" ? "text-blue-200" : "text-gray-400"}`}>{t.desc}</p>
+                      <p className={`text-sm font-bold ${form.tier === t.value && t.value === "premium" ? "text-red-200" : "text-red-700"}`}>{t.price}</p>
+                      <p className={`text-xs mt-0.5 ${form.tier === t.value && t.value === "premium" ? "text-red-200" : "text-gray-400"}`}>{t.desc}</p>
                     </button>
                   ))}
                 </div>
@@ -457,7 +484,7 @@ export default function NewListingPage() {
                   rows={7}
                   maxLength={1000}
                   placeholder="Describe your item — condition details, features, reason for selling, availability for viewing, contact preferences, etc."
-                  className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
                 />
                 <p className="text-xs text-gray-400 mt-1">{form.description.length}/1000 characters</p>
               </div>
@@ -471,7 +498,7 @@ export default function NewListingPage() {
                   value={form.tags}
                   onChange={(e) => update("tags", e.target.value)}
                   placeholder="e.g. toyota, automatic, sedan"
-                  className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
                 <p className="text-xs text-gray-400 mt-1">Tags help buyers find your listing faster.</p>
               </div>
@@ -479,7 +506,7 @@ export default function NewListingPage() {
               {form.tags && (
                 <div className="flex flex-wrap gap-2">
                   {form.tags.split(",").map((t) => t.trim()).filter(Boolean).map((tag) => (
-                    <span key={tag} className="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-3 py-1">#{tag}</span>
+                    <span key={tag} className="text-xs bg-red-50 text-red-700 border border-red-200 rounded-full px-3 py-1">#{tag}</span>
                   ))}
                 </div>
               )}
@@ -503,7 +530,7 @@ export default function NewListingPage() {
                   }}
                   className={[
                     "border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer",
-                    dragOver ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-blue-400",
+                    dragOver ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-red-400",
                   ].join(" ")}
                   onClick={() => document.getElementById("file-input")?.click()}
                 >
@@ -517,7 +544,9 @@ export default function NewListingPage() {
                   />
                   <div className="text-3xl mb-3">📷</div>
                   <p className="font-semibold text-gray-700 text-sm">Drag photos here or click to upload</p>
-                  <p className="text-gray-400 text-xs mt-1">Up to 5 images · JPG, PNG, WEBP supported</p>
+                  <p className="text-gray-400 text-xs mt-1">
+                    {form.tier === "free" ? "Up to 2 images on free plan" : "Up to 5 images"} · JPG, PNG, WEBP supported
+                  </p>
                 </div>
               </div>
 
@@ -533,7 +562,7 @@ export default function NewListingPage() {
                         ×
                       </button>
                       {i === 0 && (
-                        <span className="absolute bottom-1 left-1 bg-blue-700 text-white text-xs px-1.5 py-0.5 rounded">Main</span>
+                        <span className="absolute bottom-1 left-1 bg-red-700 text-white text-xs px-1.5 py-0.5 rounded">Main</span>
                       )}
                     </div>
                   ))}

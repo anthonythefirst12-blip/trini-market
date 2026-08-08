@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase-browser";
+import { PushSubscribeButton } from "@/components/ui/PushSubscribeButton";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -17,6 +18,8 @@ export default function SettingsPage() {
   const [email, setEmail] = useState("");
   const [avatar, setAvatar] = useState<string | null>(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
+  const [pwSaving, setPwSaving] = useState(false);
 
   const showToast = (type: "success" | "error", msg: string) => {
     setToast({ type, msg });
@@ -77,6 +80,20 @@ export default function SettingsPage() {
     setSaving(false);
     if (error) showToast("error", "Failed to save. Please try again.");
     else showToast("success", "Profile updated successfully.");
+  };
+
+  const handleChangePassword = async () => {
+    if (pwForm.next.length < 8) { showToast("error", "Password must be at least 8 characters."); return; }
+    if (pwForm.next !== pwForm.confirm) { showToast("error", "Passwords don't match."); return; }
+    setPwSaving(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({ password: pwForm.next });
+    setPwSaving(false);
+    if (error) showToast("error", error.message);
+    else {
+      showToast("success", "Password updated successfully.");
+      setPwForm({ current: "", next: "", confirm: "" });
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -140,7 +157,7 @@ export default function SettingsPage() {
               <input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
             <div>
@@ -158,7 +175,7 @@ export default function SettingsPage() {
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 placeholder="+1 868 xxx-xxxx"
-                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
             <div>
@@ -167,7 +184,7 @@ export default function SettingsPage() {
                 value={form.location}
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
                 placeholder="Port of Spain"
-                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
           </div>
@@ -177,12 +194,33 @@ export default function SettingsPage() {
         </div>
 
         {/* Password */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <h2 className="font-display font-semibold text-base text-gray-900 mb-2">Password</h2>
-          <p className="text-sm text-gray-500 mb-4">Change your password via the secure reset flow.</p>
-          <Link href="/auth/forgot-password">
-            <Button variant="secondary" size="sm">Change Password →</Button>
-          </Link>
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+          <h2 className="font-display font-semibold text-base text-gray-900">Change Password</h2>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">New password</label>
+              <input
+                type="password"
+                value={pwForm.next}
+                onChange={(e) => setPwForm({ ...pwForm, next: e.target.value })}
+                placeholder="At least 8 characters"
+                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Confirm new password</label>
+              <input
+                type="password"
+                value={pwForm.confirm}
+                onChange={(e) => setPwForm({ ...pwForm, confirm: e.target.value })}
+                placeholder="Repeat your new password"
+                className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+          </div>
+          <Button size="sm" onClick={handleChangePassword} disabled={pwSaving || !pwForm.next || !pwForm.confirm}>
+            {pwSaving ? "Updating…" : "Update Password"}
+          </Button>
         </div>
 
         {/* Pro Account */}
@@ -199,21 +237,60 @@ export default function SettingsPage() {
         {/* Notifications */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <h2 className="font-display font-semibold text-base text-gray-900 mb-4">Notifications</h2>
-          <div className="space-y-3">
-            {[
-              { label: "New message received", defaultOn: true },
-              { label: "Listing inquiry", defaultOn: true },
-              { label: "Promotions and tips", defaultOn: false },
-            ].map((n) => (
-              <label key={n.label} className="flex items-center justify-between cursor-pointer">
-                <span className="text-sm text-gray-700">{n.label}</span>
-                <input
-                  type="checkbox"
-                  defaultChecked={n.defaultOn}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-              </label>
-            ))}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-700">Push notifications</p>
+                <p className="text-xs text-gray-400 mt-0.5">Get notified about new messages even when the app isn&apos;t open</p>
+              </div>
+              <PushSubscribeButton />
+            </div>
+            <div className="border-t border-gray-100 pt-4 space-y-3">
+              {[
+                { label: "Email: New message received", defaultOn: true },
+                { label: "Email: Listing inquiry", defaultOn: true },
+                { label: "Email: Promotions and tips", defaultOn: false },
+              ].map((n) => (
+                <label key={n.label} className="flex items-center justify-between cursor-pointer">
+                  <span className="text-sm text-gray-700">{n.label}</span>
+                  <input
+                    type="checkbox"
+                    defaultChecked={n.defaultOn}
+                    className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                  />
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Seller Verification */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h2 className="font-display font-semibold text-base text-gray-900 mb-1">Seller Verification</h2>
+              <p className="text-sm text-gray-500">
+                Get a Verified badge on your profile and listings. We&apos;ll review your ID and contact details within 1–2 business days.
+              </p>
+            </div>
+            <button
+              onClick={async () => {
+                const res = await fetch("/api/email/contact", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    name: form.name || "Seller",
+                    email: email,
+                    message: `Seller verification request from ${form.name} (${email}). Phone: ${form.phone || "not provided"}. Location: ${form.location || "not provided"}.`,
+                  }),
+                });
+                if (res.ok) showToast("success", "Verification request sent! We'll email you within 1–2 business days.");
+                else showToast("error", "Failed to send request. Please email us directly.");
+              }}
+              className="shrink-0 inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-red-600 text-white rounded-xl hover:bg-red-700 active:scale-95 transition-all"
+            >
+              ✓ Apply for Verification
+            </button>
           </div>
         </div>
 

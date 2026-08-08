@@ -26,6 +26,7 @@ export interface Seller {
   banner?: string;
   bio?: string;
   listingCount?: number;
+  phone?: string;
 }
 
 export interface Listing {

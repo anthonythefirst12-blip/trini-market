@@ -1,5 +1,19 @@
 import Link from "next/link";
 
+function MarketBoothLogo() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="34" height="34" rx="9" fill="#7f1d1d" />
+      <path d="M5 14 L17 8 L29 14 Z" fill="#ef4444" />
+      <path d="M5 14 Q8 17 11 14 Q14 17 17 14 Q20 17 23 14 Q26 17 29 14" stroke="#fca5a5" strokeWidth="1" fill="none" />
+      <rect x="8" y="14" width="18" height="12" rx="1" fill="#991b1b" />
+      <rect x="6" y="24" width="22" height="2.5" rx="1" fill="#ef4444" />
+      <rect x="11" y="16.5" width="12" height="7" rx="1" fill="#fecaca" opacity="0.2" />
+      <text x="17" y="23" textAnchor="middle" fontSize="5" fontWeight="bold" fill="white" fontFamily="sans-serif">TM</text>
+    </svg>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-400 mt-auto">
@@ -7,18 +21,10 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2.5 mb-3">
-              <svg width="28" height="28" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <rect width="34" height="34" rx="9" fill="url(#footerLogoGrad)" />
-                <path d="M7 24V11l5.5 7 4.5-6 4.5 6 5.5-7v13" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                <rect x="7" y="26" width="20" height="2" rx="1" fill="rgba(255,255,255,0.4)" />
-                <defs>
-                  <linearGradient id="footerLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stopColor="#2563eb" />
-                    <stop offset="100%" stopColor="#1d4ed8" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <span className="font-display font-bold text-white text-lg tracking-tight">Trini<span className="text-blue-400">Market</span></span>
+              <MarketBoothLogo />
+              <span className="font-display font-bold text-lg tracking-tight">
+                <span className="text-white">Trini</span><span className="text-red-500">Market</span>
+              </span>
             </div>
             <p className="text-sm leading-relaxed">
               Trinidad &amp; Tobago&apos;s trusted marketplace for buying and selling locally.
