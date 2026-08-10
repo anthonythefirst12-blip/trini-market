@@ -28,7 +28,7 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white">
 
       {/* Hero */}
       <section className="bg-gray-50 border-b border-gray-100">
