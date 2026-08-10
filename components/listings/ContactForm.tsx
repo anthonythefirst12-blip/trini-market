@@ -59,7 +59,7 @@ export function ContactForm({ listingId, listingTitle, price, sellerId, listingI
       }),
     }).catch(() => {});
 
-    setSubmitted(true);
+    window.location.href = "/messages";
   };
 
   if (submitted) {
