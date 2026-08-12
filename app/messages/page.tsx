@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase-browser";
 
 interface DBMessage {
@@ -48,6 +48,7 @@ function makeConvKey(userId: string, otherId: string, listingId: string) {
 
 export default function MessagesPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [userId, setUserId] = useState<string | null>(null);
   const [myAvatar, setMyAvatar] = useState("");
   const [myName, setMyName] = useState("");
@@ -144,8 +145,39 @@ export default function MessagesPage() {
         return bLast.localeCompare(aLast);
       });
 
-      setConversations(sorted);
-      if (sorted.length > 0) setActiveKey(sorted[0].key);
+      // Check if opened from "Message Seller" with query params
+      const toId = searchParams.get("to");
+      const listingId = searchParams.get("listing");
+      const listingTitle = searchParams.get("title") ?? "";
+      const listingPrice = searchParams.get("price");
+      const listingImage = searchParams.get("image");
+
+      if (toId && listingId) {
+        const key = makeConvKey(user.id, toId, listingId);
+        const existing = convMap[key];
+        if (!existing) {
+          // Fetch seller info for the new chat partner
+          const { data: sellerData } = await supabase.from("sellers").select("name, avatar").eq("id", toId).single();
+          const newConv: Conversation = {
+            key,
+            otherId: toId,
+            otherName: sellerData?.name ?? toId.slice(0, 8),
+            otherAvatar: sellerData?.avatar ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(sellerData?.name ?? "?")}&background=e2e8f0&color=475569&size=80`,
+            listingId,
+            listingTitle,
+            listingImage,
+            listingPrice,
+            messages: [],
+            unread: 0,
+          };
+          sorted.unshift(newConv);
+        }
+        setConversations(sorted);
+        setActiveKey(existing?.key ?? key);
+      } else {
+        setConversations(sorted);
+        if (sorted.length > 0) setActiveKey(sorted[0].key);
+      }
       setLoading(false);
     };
     load();
