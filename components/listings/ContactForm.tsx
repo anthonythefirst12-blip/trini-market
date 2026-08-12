@@ -44,7 +44,7 @@ export function ContactForm({ listingId, listingTitle, price, sellerId, listingI
     });
 
     setSending(false);
-    if (err) { setError("Failed to send message. Please try again."); return; }
+    if (err) { setError(`Error: ${err.message} (code: ${err.code})`); return; }
 
     // Notify seller by email (fire-and-forget)
     const { data: { user: sender } } = await createClient().auth.getUser();
