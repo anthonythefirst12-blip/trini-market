@@ -289,6 +289,17 @@ function MessagesContent() {
       c.key === activeKey ? { ...c, messages: [...c.messages, newMsg] } : c
     ));
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+    // Notify the other party
+    fetch("/api/email/new-message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        receiverId: conv.otherId,
+        fromName: myName || "Someone",
+        listingTitle: conv.listingTitle,
+        messagePreview: text,
+      }),
+    }).catch(() => {});
   };
 
   const sendMessage = async () => {
