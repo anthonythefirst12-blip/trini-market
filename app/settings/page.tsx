@@ -14,7 +14,7 @@ export default function SettingsPage() {
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState<{ type: "success" | "error"; msg: string } | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", phone: "", location: "" });
+  const [form, setForm] = useState({ name: "", phone: "", location: "", bio: "" });
   const [email, setEmail] = useState("");
   const [avatar, setAvatar] = useState<string | null>(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
@@ -30,13 +30,13 @@ export default function SettingsPage() {
     const load = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.push("/auth/login"); return; }
+      if (!user) { window.location.href = "/auth/login"; return; }
       setUserId(user.id);
       setEmail(user.email ?? "");
 
       const { data: seller } = await supabase
         .from("sellers")
-        .select("name, phone, location, avatar")
+        .select("name, phone, location, avatar, bio")
         .eq("id", user.id)
         .single();
 
@@ -45,6 +45,7 @@ export default function SettingsPage() {
           name: seller.name ?? "",
           phone: seller.phone ?? "",
           location: seller.location ?? "",
+          bio: seller.bio ?? "",
         });
         setAvatar(seller.avatar ?? null);
       }
@@ -75,7 +76,7 @@ export default function SettingsPage() {
     const supabase = createClient();
     const { error } = await supabase
       .from("sellers")
-      .update({ name: form.name, phone: form.phone, location: form.location })
+      .update({ name: form.name, phone: form.phone, location: form.location, bio: form.bio })
       .eq("id", userId);
     setSaving(false);
     if (error) showToast("error", "Failed to save. Please try again.");
@@ -102,7 +103,7 @@ export default function SettingsPage() {
     setDeleting(true);
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/");
+    window.location.href = "/";
   };
 
   if (loading) {
@@ -188,6 +189,18 @@ export default function SettingsPage() {
               />
             </div>
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+            <textarea
+              value={form.bio}
+              onChange={(e) => setForm({ ...form, bio: e.target.value })}
+              placeholder="Tell buyers a little about yourself…"
+              rows={3}
+              maxLength={300}
+              className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+            />
+            <p className="text-xs text-gray-400 mt-0.5">{form.bio.length}/300</p>
+          </div>
           <Button size="sm" onClick={handleSave} disabled={saving}>
             {saving ? "Saving…" : "Save Changes"}
           </Button>
@@ -227,7 +240,7 @@ export default function SettingsPage() {
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <h2 className="font-display font-semibold text-base text-gray-900 mb-2">Pro Account</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Get a branded storefront, Verified Business badge, unlimited listings, and analytics for <strong className="text-gray-700">TT$150/month</strong>.
+            Get a branded storefront, Verified Business badge, unlimited listings, and analytics. Plans start at <strong className="text-gray-700">TT$120/month</strong>.
           </p>
           <Link href="/pricing">
             <Button size="sm">View Plans →</Button>

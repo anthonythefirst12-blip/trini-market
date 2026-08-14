@@ -64,7 +64,7 @@ export default async function SavedPage() {
             <div className="text-5xl mb-4">🤍</div>
             <h3 className="font-display font-semibold text-lg text-gray-700">Nothing saved yet</h3>
             <p className="text-gray-400 text-sm mt-1 mb-6">Tap the heart on any listing to save it here.</p>
-            <Link href="/listings" className="inline-flex items-center gap-2 bg-blue-700 text-white font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-blue-800 transition-colors">
+            <Link href="/listings" className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-red-700 transition-colors">
               Browse Listings
             </Link>
           </div>
