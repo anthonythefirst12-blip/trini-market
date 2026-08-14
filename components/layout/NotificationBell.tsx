@@ -25,13 +25,13 @@ export function NotificationBell() {
     const [messagesRes, reviewsRes] = await Promise.all([
       supabase
         .from("messages")
-        .select("id, content, created_at, listing_id, read, sender_id, senders:sellers!messages_sender_id_fkey(name)")
+        .select("id, text, listing_title, created_at, read, sender_id")
         .eq("receiver_id", uid)
         .order("created_at", { ascending: false })
         .limit(15),
       supabase
         .from("seller_reviews")
-        .select("id, rating, comment, created_at, reviewers:sellers!seller_reviews_user_id_fkey(name)")
+        .select("id, rating, comment, created_at")
         .eq("seller_id", uid)
         .order("created_at", { ascending: false })
         .limit(5),
@@ -39,24 +39,22 @@ export function NotificationBell() {
 
     const built: Notif[] = [];
     for (const m of messagesRes.data ?? []) {
-      const isOffer = m.content?.startsWith("💰 Offer:");
-      const senderName = (m.senders as { name?: string } | null)?.name ?? "Someone";
+      const isOffer = m.text?.startsWith("💰 Offer:");
       built.push({
         id: `msg-${m.id}`,
         type: isOffer ? "offer" : "message",
-        title: isOffer ? `New offer from ${senderName}` : `Message from ${senderName}`,
-        body: m.content?.slice(0, 80) ?? "",
+        title: isOffer ? `New offer on "${m.listing_title}"` : `New message about "${m.listing_title}"`,
+        body: m.text?.slice(0, 80) ?? "",
         href: "/messages",
         time: m.created_at,
         read: m.read ?? false,
       });
     }
     for (const r of reviewsRes.data ?? []) {
-      const reviewerName = (r.reviewers as { name?: string } | null)?.name ?? "Someone";
       built.push({
         id: `rev-${r.id}`,
         type: "review",
-        title: `${reviewerName} left you a ${r.rating}★ review`,
+        title: `You received a ${r.rating}★ review`,
         body: r.comment ?? "No comment left.",
         href: "/dashboard",
         time: r.created_at,
