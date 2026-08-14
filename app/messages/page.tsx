@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -46,7 +46,7 @@ function makeConvKey(userId: string, otherId: string, listingId: string) {
   return `${listingId}__${[userId, otherId].sort().join("__")}`;
 }
 
-export default function MessagesPage() {
+function MessagesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [userId, setUserId] = useState<string | null>(null);
@@ -589,5 +589,13 @@ export default function MessagesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense>
+      <MessagesContent />
+    </Suspense>
   );
 }
