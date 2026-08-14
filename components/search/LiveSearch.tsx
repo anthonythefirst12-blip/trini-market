@@ -40,7 +40,7 @@ export function LiveSearch() {
       const { data } = await supabase
         .from("listings")
         .select("id, title, price, currency, category, images")
-        .ilike("title", `%${query}%`)
+        .textSearch("fts", query.trim(), { type: "websearch", config: "english" })
         .limit(6);
       setResults(data ?? []);
       setOpen(true);
@@ -53,12 +53,12 @@ export function LiveSearch() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (activeIdx >= 0 && results[activeIdx]) {
-      router.push(`/listings/${results[activeIdx].id}`);
+      window.location.href = `/listings/${results[activeIdx].id}`;
       setOpen(false);
       return;
     }
     if (query.trim()) {
-      router.push(`/listings?q=${encodeURIComponent(query)}`);
+      window.location.href = `/listings?q=${encodeURIComponent(query)}`;
       setOpen(false);
     }
   };

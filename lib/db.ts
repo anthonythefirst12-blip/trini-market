@@ -155,9 +155,7 @@ export async function getListings(filters?: {
 
   if (filters?.q) {
     const term = filters.q.trim();
-    query = query.or(
-      `title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`
-    );
+    query = query.textSearch("fts", term, { type: "websearch", config: "english" });
   }
   if (filters?.category) {
     query = query.eq("category", filters.category);
