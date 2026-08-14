@@ -51,8 +51,7 @@ export function Navbar() {
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
+    window.location.href = "/";
   };
 
   const name = user?.user_metadata?.name?.split(" ")[0] ?? "Account";

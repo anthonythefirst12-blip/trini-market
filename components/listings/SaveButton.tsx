@@ -85,7 +85,7 @@ export function SaveButton({ listingId }: Props) {
     e.preventDefault();
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { router.push("/auth/login"); return; }
+    if (!user) { window.location.href = "/auth/login"; return; }
 
     const prev = saved;
     setSaved(!prev);

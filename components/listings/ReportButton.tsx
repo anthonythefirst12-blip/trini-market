@@ -27,7 +27,7 @@ export function ReportButton({ listingId }: { listingId: string }) {
     setSending(true);
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { router.push("/auth/login"); return; }
+    if (!user) { window.location.href = "/auth/login"; return; }
     await supabase.from("reports").insert({
       reporter_id: user.id,
       listing_id: listingId,
