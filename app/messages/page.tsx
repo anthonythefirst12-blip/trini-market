@@ -152,19 +152,19 @@ function MessagesContent() {
       const listingPrice = searchParams.get("price");
       const listingImage = searchParams.get("image");
 
-      if (toId && listingId) {
-        const key = makeConvKey(user.id, toId, listingId);
+      if (toId) {
+        const convListingId = listingId ?? `general-${toId}`;
+        const key = makeConvKey(user.id, toId, convListingId);
         const existing = convMap[key];
         if (!existing) {
-          // Fetch seller info for the new chat partner
           const { data: sellerData } = await supabase.from("sellers").select("name, avatar").eq("id", toId).single();
           const newConv: Conversation = {
             key,
             otherId: toId,
             otherName: sellerData?.name ?? toId.slice(0, 8),
             otherAvatar: sellerData?.avatar ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(sellerData?.name ?? "?")}&background=e2e8f0&color=475569&size=80`,
-            listingId,
-            listingTitle,
+            listingId: convListingId,
+            listingTitle: listingTitle || "General Enquiry",
             listingImage,
             listingPrice,
             messages: [],
