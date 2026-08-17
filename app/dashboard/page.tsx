@@ -175,7 +175,7 @@ function DashboardContent() {
   const TABS: { key: Tab; label: string; icon: string }[] = [
     { key: "home", label: "Home", icon: "🏠" },
     { key: "listings", label: "My Listings", icon: "📋" },
-    { key: "subscriptions", label: "Subscriptions", icon: "⚡" },
+    { key: "subscriptions", label: "Boosts", icon: "⚡" },
     { key: "inquiries", label: "Inquiries", icon: "💬" },
   ];
 
@@ -199,7 +199,7 @@ function DashboardContent() {
           <div>
             <p className="text-red-600 text-xs font-bold uppercase tracking-widest mb-1">Seller Hub</p>
             <h1 className="font-display font-bold text-2xl text-gray-900">Welcome back, {sellerName} 👋</h1>
-            <p className="text-gray-400 text-sm mt-0.5">Manage your listings, subscriptions and account.</p>
+            <p className="text-gray-400 text-sm mt-0.5">Manage your listings, boosts and account.</p>
           </div>
           <Link
             href="/listings/new"
@@ -331,7 +331,7 @@ function DashboardContent() {
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">Premium listings</span>
+                      <span className="text-xs text-gray-500">Boosted listings</span>
                       <span className="text-xs font-bold text-gray-900">
                         {listings.filter((l) => l.tier === "premium" || l.tier === "featured").length}
                       </span>
@@ -344,29 +344,26 @@ function DashboardContent() {
                     </div>
                   </div>
 
-                  {/* Tier breakdown */}
+                  {/* Boost breakdown */}
                   {listings.length > 0 && (
                     <div className="mt-auto pt-4 border-t border-gray-100">
-                      <p className="text-xs text-gray-400 mb-2">Listing tiers</p>
+                      <p className="text-xs text-gray-400 mb-2">Boost status</p>
                       <div className="flex gap-1 h-2 rounded-full overflow-hidden">
                         {(() => {
                           const free = listings.filter((l) => l.tier === "free" || !l.tier).length;
-                          const feat = listings.filter((l) => l.tier === "featured").length;
-                          const prem = listings.filter((l) => l.tier === "premium").length;
+                          const boosted = listings.filter((l) => l.tier === "featured" || l.tier === "premium").length;
                           const total = listings.length;
                           return (
                             <>
                               {free > 0 && <div className="bg-gray-300" style={{ width: `${(free / total) * 100}%` }} />}
-                              {feat > 0 && <div className="bg-orange-400" style={{ width: `${(feat / total) * 100}%` }} />}
-                              {prem > 0 && <div className="bg-red-500" style={{ width: `${(prem / total) * 100}%` }} />}
+                              {boosted > 0 && <div className="bg-red-500" style={{ width: `${(boosted / total) * 100}%` }} />}
                             </>
                           );
                         })()}
                       </div>
                       <div className="flex gap-3 mt-1.5">
                         <span className="text-xs text-gray-400 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-gray-300 inline-block" />Free</span>
-                        <span className="text-xs text-gray-400 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-400 inline-block" />Featured</span>
-                        <span className="text-xs text-gray-400 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" />Premium</span>
+                        <span className="text-xs text-gray-400 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" />Boosted</span>
                       </div>
                     </div>
                   )}
@@ -523,8 +520,7 @@ function DashboardContent() {
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <span className="text-red-600 font-bold text-sm">{formatted}</span>
                         <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{listing.category}</span>
-                        {listing.tier === "premium" && <span className="text-xs bg-red-600 text-white font-bold px-2 py-0.5 rounded-full">★ Premium</span>}
-                        {listing.tier === "featured" && <span className="text-xs bg-orange-100 text-orange-700 border border-orange-200 font-semibold px-2 py-0.5 rounded-full">◆ Featured</span>}
+                        {(listing.tier === "premium" || listing.tier === "featured") && <span className="text-xs bg-red-600 text-white font-bold px-2 py-0.5 rounded-full">⚡ Boosted</span>}
                         {isExpired && (
                           <span className="text-xs bg-gray-200 text-gray-600 font-semibold px-2 py-0.5 rounded-full">Expired</span>
                         )}
@@ -629,21 +625,12 @@ function DashboardContent() {
         {/* ── SUBSCRIPTIONS TAB ── */}
         {tab === "subscriptions" && (
           <div>
-            <div className="bg-red-50 border border-red-100 rounded-xl px-5 py-4 mb-6 flex items-start gap-3">
-              <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-              <p className="text-sm text-red-700">
-                Subscriptions renew monthly via WiPay. Cancel anytime — your plan stays active until the end of the billing period.
-              </p>
-            </div>
-
             {subscriptions.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
                 <div className="text-5xl mb-4">⚡</div>
-                <p className="font-display font-semibold text-gray-700 text-lg">No active subscriptions</p>
-                <p className="text-gray-400 text-sm mt-1 mb-6">Boost a listing to Featured or Premium for more visibility.</p>
-                <Link href="/pricing"><Button>View Plans</Button></Link>
+                <p className="font-display font-semibold text-gray-700 text-lg">No active boosts</p>
+                <p className="text-gray-400 text-sm mt-1 mb-6">Boost a listing for TT$15–$40 to push it to the top of search and the homepage.</p>
+                <Link href="/pricing"><Button>View Boost Pricing</Button></Link>
               </div>
             ) : (
               <div className="space-y-4">
@@ -658,43 +645,23 @@ function DashboardContent() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          {sub.tier === "featured" ? (
-                            <span className="text-xs bg-orange-100 text-orange-700 border border-orange-200 font-semibold px-2.5 py-1 rounded-full">◆ Featured</span>
-                          ) : (
-                            <span className="text-xs bg-red-600 text-white font-bold px-2.5 py-1 rounded-full">★ Premium</span>
-                          )}
+                          <span className="text-xs bg-red-600 text-white font-bold px-2.5 py-1 rounded-full">⚡ Boosted</span>
                           {sub.status === "active" ? (
                             <span className="inline-flex items-center gap-1.5 text-xs text-green-600 font-medium">
                               <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse" /> Active
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-xs text-gray-400 font-medium">
-                              <span className="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block" /> Cancelled
+                              <span className="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block" /> Expired
                             </span>
                           )}
                         </div>
                         <p className="text-sm font-semibold text-gray-800">{sub.listings?.title ?? "Listing"}</p>
                         <p className="text-xs text-gray-400 mt-1">
-                          TT${sub.price_ttd}/month ·{" "}
-                          {sub.status === "active"
-                            ? `Next billing: ${new Date(sub.next_billing_at).toLocaleDateString("en-TT", { month: "short", day: "numeric", year: "numeric" })}`
-                            : `Active until: ${new Date(sub.next_billing_at).toLocaleDateString("en-TT", { month: "short", day: "numeric", year: "numeric" })}`}
+                          TT${sub.price_ttd} one-time ·{" "}
+                          {`Active until: ${new Date(sub.next_billing_at).toLocaleDateString("en-TT", { month: "short", day: "numeric", year: "numeric" })}`}
                         </p>
                       </div>
-                      {sub.status === "active" ? (
-                        <button
-                          onClick={() => handleCancelSub(sub.id, sub.tier, sub.next_billing_at)}
-                          className="shrink-0 text-xs font-semibold text-red-500 border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
-                        >
-                          Cancel Plan
-                        </button>
-                      ) : (
-                        <Link href="/pricing">
-                          <button className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-red-300 hover:text-red-600 transition-all">
-                            Resubscribe
-                          </button>
-                        </Link>
-                      )}
                     </div>
                   </div>
                 ))}

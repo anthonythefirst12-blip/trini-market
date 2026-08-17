@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About TriniMarket | Trinidad & Tobago's Local Marketplace",
-  description: "TriniMarket is Trinidad & Tobago's premier online marketplace — buy and sell vehicles, electronics, real estate, services and more, locally.",
+  title: "About TriniSell | Trinidad & Tobago's Local Marketplace",
+  description: "TriniSell is Trinidad & Tobago's premier online marketplace — buy and sell vehicles, electronics, real estate, services and more, locally.",
 };
 
 export default function AboutPage() {
@@ -17,7 +17,7 @@ export default function AboutPage() {
             Trinidad &amp; Tobago&apos;s<br /><span className="text-red-300">Local Marketplace</span>
           </h1>
           <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
-            TriniMarket was built to make buying and selling locally easier, safer, and more connected for everyone across T&amp;T.
+            TriniSell was built to make buying and selling locally easier, safer, and more connected for everyone across T&amp;T.
           </p>
         </div>
       </section>
@@ -32,7 +32,7 @@ export default function AboutPage() {
                 We believe every Trinbagonian should have a safe, modern, and simple way to buy and sell — whether it&apos;s a car in San Fernando, a phone in Arima, or a house in Tobago.
               </p>
               <p className="text-gray-500 leading-relaxed">
-                TriniMarket connects buyers and sellers across the twin islands with real-time messaging, verified listings, and secure local payments through WiPay.
+                TriniSell connects buyers and sellers across the twin islands with real-time messaging, verified listings, and secure local payments through WiPay.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">

@@ -1,7 +1,20 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getBusinesses } from "@/lib/db";
+
+export const metadata: Metadata = {
+  title: "Business Directory | TriniSell",
+  description: "Browse verified businesses in Trinidad & Tobago — car dealerships, real estate agencies, retailers and more. Find trusted local businesses on TriniSell.",
+  openGraph: {
+    title: "Business Directory | TriniSell",
+    description: "Browse verified businesses in Trinidad & Tobago — car dealerships, real estate agencies, retailers and more.",
+    type: "website",
+  },
+  twitter: { card: "summary", title: "Business Directory | TriniSell", description: "Find trusted local businesses in Trinidad & Tobago." },
+  alternates: { canonical: "https://trinisell.tt/businesses" },
+};
 import { Seller } from "@/lib/types";
 import { BusinessContent } from "@/components/businesses/BusinessContent";
 

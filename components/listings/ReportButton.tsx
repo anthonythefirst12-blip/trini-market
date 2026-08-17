@@ -58,7 +58,7 @@ export function ReportButton({ listingId }: { listingId: string }) {
               <div className="text-center py-4">
                 <div className="text-4xl mb-3">🚩</div>
                 <h3 className="font-display font-bold text-gray-900 text-lg mb-1">Report submitted</h3>
-                <p className="text-sm text-gray-500 mb-5">Thanks for helping keep TriniMarket safe. We&apos;ll review this listing.</p>
+                <p className="text-sm text-gray-500 mb-5">Thanks for helping keep TriniSell safe. We&apos;ll review this listing.</p>
                 <button onClick={() => { setOpen(false); setDone(false); setReason(""); setDetails(""); }}
                   className="text-sm text-red-600 hover:underline">Close</button>
               </div>

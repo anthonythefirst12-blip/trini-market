@@ -6,17 +6,25 @@ export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    await fetch("/api/email/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fromName: form.name, fromEmail: form.email, subject: form.subject, message: form.message }),
-    });
-    setSending(false);
-    setDone(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/email/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fromName: form.name, fromEmail: form.email, subject: form.subject, message: form.message }),
+      });
+      if (!res.ok) throw new Error("Failed to send");
+      setDone(true);
+    } catch {
+      setError("Sorry, we couldn't send your message. Please try again or email us directly.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -37,7 +45,7 @@ export default function ContactPage() {
                 { emoji: "🛡️", title: "Report a Problem", desc: "Found a scam or fake listing? Use the Report button on the listing page, or email us directly." },
                 { emoji: "💳", title: "Payment Issues", desc: "Problems with a WiPay transaction or wallet balance? Include your order ID in your message." },
                 { emoji: "🏪", title: "Seller Support", desc: "Questions about Pro accounts, Featured listings, or your storefront? We'll get back to you within 24 hours." },
-                { emoji: "💡", title: "General Feedback", desc: "We're always improving TriniMarket. Tell us what you'd like to see." },
+                { emoji: "💡", title: "General Feedback", desc: "We're always improving TriniSell. Tell us what you'd like to see." },
               ].map((item) => (
                 <div key={item.title} className="flex gap-4">
                   <div className="text-2xl shrink-0 mt-0.5">{item.emoji}</div>
@@ -51,8 +59,8 @@ export default function ContactPage() {
 
             <div className="mt-8 p-4 bg-white border border-gray-200 rounded-xl">
               <p className="text-gray-700 text-sm font-semibold mb-1">Email us directly</p>
-              <a href="mailto:support@trinimarket.tt" className="text-red-600 hover:text-red-700 text-sm transition-colors">
-                support@trinimarket.tt
+              <a href="mailto:support@trinisell.tt" className="text-red-600 hover:text-red-700 text-sm transition-colors">
+                support@trinisell.tt
               </a>
               <p className="text-gray-400 text-xs mt-2">We respond within 24–48 hours on business days.</p>
             </div>
@@ -68,6 +76,11 @@ export default function ContactPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">
+                    {error}
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                   <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}

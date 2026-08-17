@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | TriniMarket",
-  description: "Read TriniMarket's Privacy Policy — how we collect, use, and protect your personal data.",
+  title: "Privacy Policy | TriniSell",
+  description: "Read TriniSell's Privacy Policy — how we collect, use, and protect your personal data.",
 };
 
 export default function PrivacyPage() {
@@ -34,11 +34,11 @@ export default function PrivacyPage() {
     },
     {
       title: "7. Your Rights",
-      body: "You have the right to access, correct, or delete the personal data we hold about you. To exercise these rights, contact us at support@trinimarket.tt. We will respond within 14 days.",
+      body: "You have the right to access, correct, or delete the personal data we hold about you. To exercise these rights, contact us at support@trinisell.tt. We will respond within 14 days.",
     },
     {
       title: "8. Children's Privacy",
-      body: "TriniMarket is not directed at children under 18. We do not knowingly collect personal data from anyone under 18. If we learn that we have collected data from a child, we will delete it promptly.",
+      body: "TriniSell is not directed at children under 18. We do not knowingly collect personal data from anyone under 18. If we learn that we have collected data from a child, we will delete it promptly.",
     },
     {
       title: "9. Changes to This Policy",
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
     },
     {
       title: "10. Contact",
-      body: "For privacy-related questions or requests, please use our contact page or email support@trinimarket.tt.",
+      body: "For privacy-related questions or requests, please use our contact page or email support@trinisell.tt.",
     },
   ];
 
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
           <span>·</span>
           <Link href="/contact" className="hover:text-red-600 transition-colors">Contact Us</Link>
           <span>·</span>
-          <Link href="/" className="hover:text-red-600 transition-colors">← Back to TriniMarket</Link>
+          <Link href="/" className="hover:text-red-600 transition-colors">← Back to TriniSell</Link>
         </div>
       </div>
     </div>

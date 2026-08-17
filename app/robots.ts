@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/dashboard/", "/wallet/", "/settings/", "/messages/"],
     },
-    sitemap: "https://trini-market.vercel.app/sitemap.xml",
+    sitemap: "https://trinisell.tt/sitemap.xml",
   };
 }

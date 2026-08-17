@@ -22,16 +22,29 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TriniMarket – Trinidad & Tobago's Local Marketplace",
+  metadataBase: new URL("https://trinisell.tt"),
+  title: {
+    default: "TriniSell – Buy & Sell Locally in Trinidad & Tobago",
+    template: "%s | TriniSell",
+  },
   description: "Buy and sell locally in Trinidad & Tobago. Find vehicles, electronics, real estate, fashion, services and more.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "TriniMarket",
+    title: "TriniSell",
   },
   other: {
     "mobile-web-app-capable": "yes",
+  },
+  openGraph: {
+    siteName: "TriniSell",
+    locale: "en_TT",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@trinisell",
   },
 };
 

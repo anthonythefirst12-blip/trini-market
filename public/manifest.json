@@ -1,6 +1,6 @@
 {
-  "name": "TriniMarket",
-  "short_name": "TriniMarket",
+  "name": "TriniSell",
+  "short_name": "TriniSell",
   "description": "Trinidad & Tobago's local marketplace — buy and sell locally",
   "start_url": "/?source=pwa",
   "display": "standalone",

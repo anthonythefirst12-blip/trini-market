@@ -71,13 +71,14 @@ export function Navbar() {
               </svg>
             </div>
             <span className="font-display font-bold text-xl tracking-tight">
-              <span className="text-gray-900">Trini</span><span className="text-red-600">Market</span>
+              <span className="text-gray-900">Trini</span><span className="text-red-600">Sell</span>
             </span>
           </Link>
 
           {/* Desktop nav links */}
           <nav className="hidden md:flex items-center gap-5">
             <Link href="/listings" className="text-sm text-gray-600 hover:text-red-700 transition-colors rounded px-1">Browse</Link>
+            <Link href="/businesses" className="text-sm text-gray-600 hover:text-red-700 transition-colors rounded px-1">Businesses</Link>
             <Link href="/how-it-works" className="text-sm text-gray-600 hover:text-red-700 transition-colors rounded px-1">How It Works</Link>
             <Link href="/pricing" className="text-sm text-gray-600 hover:text-red-700 transition-colors rounded px-1">Pricing</Link>
           </nav>
@@ -193,6 +194,7 @@ export function Navbar() {
         <div className="px-4 py-4 space-y-0.5">
           {[
             { href: "/listings", label: "Browse", icon: "🔍" },
+            { href: "/businesses", label: "Businesses", icon: "🏪" },
             { href: "/how-it-works", label: "How It Works", icon: "💡" },
             { href: "/pricing", label: "Pricing", icon: "💰" },
           ].map(({ href, label, icon }) => (

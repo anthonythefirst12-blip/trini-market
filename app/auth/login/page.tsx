@@ -105,12 +105,12 @@ export default function LoginPage() {
           </div>
 
           <h1 className="font-display font-bold text-2xl text-white mb-1">Welcome back</h1>
-          <p className="text-sm text-red-200/60 mb-6">Log in to your TriniMarket account.</p>
+          <p className="text-sm text-red-200/60 mb-6">Log in to your TriniSell account.</p>
 
           {unverified && (
             <div className="bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm px-4 py-3 rounded-xl mb-5 space-y-2">
               <p className="font-medium">Please confirm your email first.</p>
-              <p className="text-amber-300/70 text-xs">Check your inbox for a verification link from TriniMarket. It may be in your spam folder.</p>
+              <p className="text-amber-300/70 text-xs">Check your inbox for a verification link from TriniSell. It may be in your spam folder.</p>
               {resendSent ? (
                 <p className="text-green-400 text-xs">✓ Verification email resent — check your inbox.</p>
               ) : (

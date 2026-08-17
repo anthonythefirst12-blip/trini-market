@@ -153,7 +153,7 @@ export default function NewListingPage() {
     negotiable: false,
     description: "",
     tags: "",
-    tier: "free" as "free" | "featured" | "premium",
+    tier: "free" as "free",
   });
 
   const update = (key: string, value: string | boolean) =>
@@ -167,7 +167,7 @@ export default function NewListingPage() {
         setUserId(data.user.id);
         setSellerId(data.user.id); // seller id = user id
       } else {
-        router.push("/auth/login");
+        window.location.href = "/auth/login";
       }
     });
   }, [router]);
@@ -271,34 +271,6 @@ export default function NewListingPage() {
       body: JSON.stringify({ listingTitle: form.title, listingId, tier: form.tier }),
     }).catch(() => {});
 
-    // If paid tier, redirect to WiPay for subscription payment
-    if (form.tier !== "free") {
-      const res = await fetch("/api/payments/wipay", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amountTTD: form.tier === "featured" ? 150 : 350,
-          purpose: `subscription_${form.tier}_${listingId}`,
-        }),
-      });
-      const data = await res.json();
-      if (data.wipayUrl && data.fields) {
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = data.wipayUrl;
-        Object.entries(data.fields).forEach(([key, value]) => {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = key;
-          input.value = value as string;
-          form.appendChild(input);
-        });
-        document.body.appendChild(form);
-        form.submit();
-        return;
-      }
-    }
-
     setConfetti(true);
     setTimeout(() => { window.location.href = `/dashboard?posted=1`; }, 1800);
   };
@@ -319,7 +291,7 @@ export default function NewListingPage() {
       <div className="max-w-2xl mx-auto px-4">
         <div className="mb-8">
           <h1 className="font-display font-bold text-2xl text-gray-900">Post a Listing</h1>
-          <p className="text-sm text-gray-500 mt-1">Fill in the details to list your item on TriniMarket.</p>
+          <p className="text-sm text-gray-500 mt-1">Fill in the details to list your item on TriniSell.</p>
         </div>
 
         {/* Step indicator */}
@@ -413,7 +385,7 @@ export default function NewListingPage() {
                     onChange={(e) => update("negotiable", e.target.checked)}
                     className="rounded border-gray-300 text-red-600 focus:ring-red-500"
                   />
-                  <span className="text-sm text-gray-600">Price is negotiable</span>
+                  <span className="text-sm text-gray-600">Price is negotiable <span className="text-gray-400">(enables Make an Offer button for buyers)</span></span>
                 </label>
               </div>
 
@@ -435,40 +407,13 @@ export default function NewListingPage() {
                 </select>
               </div>
 
-              {/* Tier */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Listing Tier
-                  <Link href="/pricing" target="_blank" className="ml-2 text-xs text-red-600 hover:underline font-normal">Compare tiers →</Link>
-                </label>
-                <div className="grid grid-cols-3 gap-3">
-                  {([
-                    { value: "free", label: "Free", price: "TT$0", desc: "Standard placement" },
-                    { value: "featured", label: "◆ Featured", price: "TT$150/mo", desc: "Cancel anytime" },
-                    { value: "premium", label: "★ Premium", price: "TT$350/mo", desc: "Cancel anytime" },
-                  ] as const).map((t) => (
-                    <button
-                      key={t.value}
-                      type="button"
-                      onClick={() => update("tier", t.value)}
-                      className={[
-                        "rounded-xl border-2 p-3 text-left transition-all",
-                        form.tier === t.value
-                          ? t.value === "premium" ? "border-red-700 bg-red-700 text-white" : "border-red-500 bg-red-50"
-                          : "border-gray-200 hover:border-red-300",
-                      ].join(" ")}
-                    >
-                      <p className={`text-xs font-bold mb-0.5 ${form.tier === t.value && t.value === "premium" ? "text-white" : "text-gray-900"}`}>{t.label}</p>
-                      <p className={`text-sm font-bold ${form.tier === t.value && t.value === "premium" ? "text-red-200" : "text-red-700"}`}>{t.price}</p>
-                      <p className={`text-xs mt-0.5 ${form.tier === t.value && t.value === "premium" ? "text-red-200" : "text-gray-400"}`}>{t.desc}</p>
-                    </button>
-                  ))}
+              {/* Boost hint */}
+              <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-start gap-3">
+                <span className="text-lg mt-0.5">⚡</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-700">Listing is free — boost it later</p>
+                  <p className="text-xs text-gray-400 mt-0.5">After posting, you can boost this listing from your Dashboard for TT$15–$40 to push it to the top of search and the homepage.</p>
                 </div>
-                {form.tier !== "free" && (
-                  <p className="text-xs text-gray-400 mt-2">
-                    You&apos;ll be redirected to WiPay to complete payment after posting. Billed monthly · Cancel anytime.
-                  </p>
-                )}
               </div>
             </div>
           )}
@@ -578,7 +523,7 @@ export default function NewListingPage() {
                   ["Condition", form.condition],
                   ["Price", form.price ? `${form.currency} ${parseFloat(form.price).toLocaleString()}${form.negotiable ? " (negotiable)" : ""}` : "—"],
                   ["Location", form.location],
-                  ["Tier", form.tier === "free" ? "Free" : form.tier === "featured" ? "◆ Featured — TT$150/mo" : "★ Premium — TT$350/mo"],
+                  ["Tier", "Free"],
                   ["Photos", imagePreviews.length > 0 ? `${imagePreviews.length} photo${imagePreviews.length > 1 ? "s" : ""}` : "None (a placeholder will be used)"],
                 ].map(([label, value]) => (
                   <div key={label} className="flex gap-2">
@@ -615,7 +560,7 @@ export default function NewListingPage() {
             )}
             {step === 3 && (
               <Button onClick={handleSubmit} size="lg" disabled={submitting}>
-                {submitting ? "Posting…" : form.tier === "free" ? "🚀 Post Listing" : `🚀 Post & Pay TT$${form.tier === "featured" ? "150" : "350"}/mo`}
+                {submitting ? "Posting…" : "🚀 Post Listing"}
               </Button>
             )}
           </div>

@@ -41,7 +41,7 @@ export default function EditListingPage() {
     const load = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.push("/auth/login"); return; }
+      if (!user) { window.location.href = "/auth/login"; return; }
       setUserId(user.id);
 
       const { data, error: err } = await supabase
@@ -51,7 +51,7 @@ export default function EditListingPage() {
         .eq("user_id", user.id)
         .single();
 
-      if (err || !data) { router.push("/dashboard"); return; }
+      if (err || !data) { window.location.href = "/dashboard"; return; }
       setUserId(user.id);
       setImages(data.images ?? []);
 
@@ -125,7 +125,7 @@ export default function EditListingPage() {
 
     setSaving(false);
     if (err) { setError(err.message); return; }
-    router.push("/dashboard?edited=1");
+    window.location.href = "/dashboard?edited=1";
   };
 
   const inputCls = "w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white";
@@ -188,7 +188,7 @@ export default function EditListingPage() {
             </div>
             <label className="flex items-center gap-2 mt-2 cursor-pointer">
               <input type="checkbox" checked={form.negotiable} onChange={(e) => update("negotiable", e.target.checked)} className="rounded border-gray-300 text-red-600" />
-              <span className="text-sm text-gray-600">Price is negotiable</span>
+              <span className="text-sm text-gray-600">Price is negotiable <span className="text-gray-400">(enables Make an Offer button for buyers)</span></span>
             </label>
           </div>
 

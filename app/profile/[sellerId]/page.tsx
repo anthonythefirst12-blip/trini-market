@@ -10,14 +10,16 @@ export async function generateMetadata({ params }: { params: Promise<{ sellerId:
   const { sellerId } = await params;
   const seller = await getSeller(sellerId);
   if (!seller) return { title: "Seller Not Found" };
+  const desc = seller.bio ?? `Browse listings from ${seller.name} on TriniSell. ${seller.listingCount ?? 0} listings available.`;
   return {
-    title: `${seller.name} | TriniMarket`,
-    description: seller.bio ?? `Browse listings from ${seller.name} on TriniMarket. ${seller.listingCount ?? 0} listings available.`,
+    title: seller.name,
+    description: desc,
     openGraph: {
-      title: `${seller.name} | TriniMarket`,
-      description: seller.bio ?? `Browse listings from ${seller.name} on TriniMarket.`,
+      title: seller.name,
+      description: desc,
       images: seller.avatar ? [{ url: seller.avatar }] : [],
     },
+    alternates: { canonical: `https://trinisell.tt/profile/${sellerId}` },
   };
 }
 

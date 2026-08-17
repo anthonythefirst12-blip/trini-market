@@ -3,7 +3,7 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-const FROM = "TriniMarket <no-reply@trinimarket.tt>";
+const FROM = "TriniSell <no-reply@trinisell.tt>";
 
 // ─── Subscription expiry reminder ────────────────────────────────────────────
 
@@ -53,7 +53,7 @@ export async function sendSubscriptionReminder({
                     <span style="color:#ffffff;font-weight:700;font-size:14px;">TM</span>
                   </td>
                   <td style="padding-left:10px;">
-                    <span style="color:#ffffff;font-size:20px;font-weight:700;">TriniMarket</span>
+                    <span style="color:#ffffff;font-size:20px;font-weight:700;">TriniSell</span>
                   </td>
                 </tr>
               </table>
@@ -121,8 +121,8 @@ export async function sendSubscriptionReminder({
           <tr>
             <td style="padding:20px 32px;border-top:1px solid #f3f4f6;">
               <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">
-                © ${new Date().getFullYear()} TriniMarket · Trinidad &amp; Tobago's Marketplace<br />
-                <a href="${APP_URL}" style="color:#6b7280;">Visit TriniMarket</a>
+                © ${new Date().getFullYear()} TriniSell · Trinidad &amp; Tobago's Marketplace<br />
+                <a href="${APP_URL}" style="color:#6b7280;">Visit TriniSell</a>
               </p>
             </td>
           </tr>
@@ -167,18 +167,18 @@ export async function sendWelcomeEmail({
                 <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
                   <span style="color:#ffffff;font-weight:700;font-size:14px;">TM</span>
                 </td>
-                <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniMarket</span></td>
+                <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniSell</span></td>
               </tr></table>
             </td>
           </tr>
           <tr>
             <td style="padding:32px;">
-              <p style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;">Welcome to TriniMarket, ${toName}! 🎉</p>
+              <p style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;">Welcome to TriniSell, ${toName}! 🎉</p>
               <p style="margin:0 0 24px;font-size:15px;color:#6b7280;">You're now part of Trinidad &amp; Tobago's marketplace. Here's how to get started:</p>
 
               ${[
                 ["📋", "Post your first listing", "List anything — vehicles, electronics, services and more.", "/listings/new"],
-                ["⚡", "Boost your listing", "Upgrade to Featured or Premium for more visibility.", "/pricing"],
+                ["⚡", "Boost your listing", "Boost it for TT$15–$40 (one-time) to push it to the top of search results.", "/pricing"],
                 ["🏪", "Browse local businesses", "Discover verified businesses across T&T.", "/businesses"],
               ].map(([icon, title, desc, href]) => `
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
@@ -208,7 +208,7 @@ export async function sendWelcomeEmail({
           <tr>
             <td style="padding:20px 32px;border-top:1px solid #f3f4f6;">
               <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">
-                © ${new Date().getFullYear()} TriniMarket · Trinidad &amp; Tobago's Marketplace
+                © ${new Date().getFullYear()} TriniSell · Trinidad &amp; Tobago's Marketplace
               </p>
             </td>
           </tr>
@@ -223,7 +223,7 @@ export async function sendWelcomeEmail({
   return resend.emails.send({
     from: FROM,
     to: toEmail,
-    subject: `Welcome to TriniMarket, ${toName}! 🎉`,
+    subject: `Welcome to TriniSell, ${toName}! 🎉`,
     html,
   });
 }
@@ -260,7 +260,7 @@ export async function sendNewMessageEmail({
               <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
                 <span style="color:#ffffff;font-weight:700;font-size:14px;">TM</span>
               </td>
-              <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniMarket</span></td>
+              <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniSell</span></td>
             </tr></table>
           </td>
         </tr>
@@ -291,7 +291,7 @@ export async function sendNewMessageEmail({
         </tr>
         <tr>
           <td style="padding:20px 32px;border-top:1px solid #f3f4f6;">
-            <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">© ${new Date().getFullYear()} TriniMarket · Trinidad &amp; Tobago's Marketplace</p>
+            <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">© ${new Date().getFullYear()} TriniSell · Trinidad &amp; Tobago's Marketplace</p>
           </td>
         </tr>
       </table>
@@ -335,7 +335,7 @@ export async function sendContactEmail({
             <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
               <span style="color:#fff;font-weight:700;font-size:14px;">TM</span>
             </td>
-            <td style="padding-left:10px;"><span style="color:#fff;font-size:20px;font-weight:700;">TriniMarket</span></td>
+            <td style="padding-left:10px;"><span style="color:#fff;font-size:20px;font-weight:700;">TriniSell</span></td>
           </tr></table>
         </td></tr>
         <tr><td style="padding:32px;">
@@ -353,7 +353,7 @@ export async function sendContactEmail({
           <p style="margin:0;font-size:13px;color:#9ca3af;">Reply directly to this email to respond to ${fromName}.</p>
         </td></tr>
         <tr><td style="padding:20px 32px;border-top:1px solid #f3f4f6;">
-          <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">© ${new Date().getFullYear()} TriniMarket · Trinidad &amp; Tobago's Marketplace</p>
+          <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">© ${new Date().getFullYear()} TriniSell · Trinidad &amp; Tobago's Marketplace</p>
         </td></tr>
       </table>
     </td></tr>
@@ -399,7 +399,7 @@ export async function sendListingPostedEmail({
               <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
                 <span style="color:#ffffff;font-weight:700;font-size:14px;">TM</span>
               </td>
-              <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniMarket</span></td>
+              <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniSell</span></td>
             </tr></table>
           </td>
         </tr>
@@ -431,7 +431,7 @@ export async function sendListingPostedEmail({
         </tr>
         <tr>
           <td style="padding:20px 32px;border-top:1px solid #f3f4f6;">
-            <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">© ${new Date().getFullYear()} TriniMarket · Trinidad &amp; Tobago's Marketplace</p>
+            <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">© ${new Date().getFullYear()} TriniSell · Trinidad &amp; Tobago's Marketplace</p>
           </td>
         </tr>
       </table>
@@ -444,7 +444,7 @@ export async function sendListingPostedEmail({
   return resend.emails.send({
     from: FROM,
     to: toEmail,
-    subject: `Your listing "${listingTitle}" is now live on TriniMarket`,
+    subject: `Your listing "${listingTitle}" is now live on TriniSell`,
     html,
   });
 }

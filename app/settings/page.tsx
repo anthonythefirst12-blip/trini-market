@@ -240,7 +240,7 @@ export default function SettingsPage() {
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <h2 className="font-display font-semibold text-base text-gray-900 mb-2">Pro Account</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Get a branded storefront, Verified Business badge, unlimited listings, and analytics. Plans start at <strong className="text-gray-700">TT$120/month</strong>.
+            Get a branded storefront, Verified Business badge, unlimited listings, and analytics. Business Storefront is <strong className="text-gray-700">TT$99/month</strong>.
           </p>
           <Link href="/pricing">
             <Button size="sm">View Plans →</Button>

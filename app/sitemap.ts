@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { getListings } from "@/lib/db";
 
-const BASE = "https://trini-market.vercel.app";
+const BASE = "https://trinisell.tt";
 
 const CATEGORIES = ["Electronics","Vehicles","Real Estate","Fashion","Food & Beverage","Services","Home & Garden","Sports & Outdoors"];
 

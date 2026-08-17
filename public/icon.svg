@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Red background with rounded corners -->
+  <rect width="192" height="192" rx="38" fill="#dc2626"/>
+
+  <!-- Shopping bag body -->
+  <path d="M56 80 L60 148 L132 148 L136 80 Z" fill="white" opacity="0.95"/>
+
+  <!-- Shopping bag handle -->
+  <path d="M74 80 C74 58 118 58 118 80" fill="none" stroke="white" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- TS text -->
+  <text x="96" y="130" font-family="Arial Black, Arial, sans-serif" font-size="36" font-weight="900" text-anchor="middle" fill="#dc2626" letter-spacing="-1">TS</text>
+</svg>

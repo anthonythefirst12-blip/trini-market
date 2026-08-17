@@ -11,7 +11,7 @@ export function WhatsAppButton({ phone, listingTitle, price }: Props) {
 
   const clean = phone.replace(/\D/g, "");
   const number = clean.startsWith("1868") ? clean : clean.startsWith("868") ? `1${clean}` : `1868${clean}`;
-  const msg = encodeURIComponent(`Hi, I'm interested in your listing "${listingTitle}" (${price}) on TriniMarket. Is it still available?`);
+  const msg = encodeURIComponent(`Hi, I'm interested in your listing "${listingTitle}" (${price}) on TriniSell. Is it still available?`);
   const url = `https://wa.me/${number}?text=${msg}`;
 
   return (

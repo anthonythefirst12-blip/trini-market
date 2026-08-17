@@ -8,13 +8,13 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const category = params.category ?? "";
   const search = params.search ?? "";
   const title = category
-    ? `${category} for Sale in Trinidad & Tobago | TriniMarket`
+    ? `${category} for Sale in Trinidad & Tobago | TriniSell`
     : search
-    ? `"${search}" — TriniMarket Search Results`
-    : "Browse Listings | TriniMarket";
+    ? `"${search}" — TriniSell Search Results`
+    : "Browse Listings | TriniSell";
   const description = category
-    ? `Find the best ${category.toLowerCase()} deals in Trinidad & Tobago on TriniMarket. Buy and sell locally.`
-    : "Browse thousands of listings across all categories on TriniMarket — Trinidad & Tobago's local marketplace.";
+    ? `Find the best ${category.toLowerCase()} deals in Trinidad & Tobago on TriniSell. Buy and sell locally.`
+    : "Browse thousands of listings across all categories on TriniSell — Trinidad & Tobago's local marketplace.";
   return {
     title,
     description,

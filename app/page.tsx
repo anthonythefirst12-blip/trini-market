@@ -1,6 +1,20 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "TriniSell — Buy & Sell Locally in Trinidad & Tobago",
+  description: "Trinidad & Tobago's trusted online marketplace. Buy and sell cars, electronics, real estate, fashion and more — locally, safely, for free.",
+  openGraph: {
+    title: "TriniSell — Buy & Sell Locally in Trinidad & Tobago",
+    description: "Trinidad & Tobago's trusted online marketplace. Buy and sell cars, electronics, real estate, fashion and more — locally, safely, for free.",
+    type: "website",
+    url: "https://trinisell.tt",
+  },
+  twitter: { card: "summary_large_image", title: "TriniSell", description: "Trinidad & Tobago's local marketplace." },
+  alternates: { canonical: "https://trinisell.tt" },
+};
 import { getPremiumListings, getFeaturedListings, getRecentListings, getCategoryCounts, getSiteStats } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { LiveSearch } from "@/components/search/LiveSearch";

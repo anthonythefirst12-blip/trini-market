@@ -48,7 +48,7 @@ export default function AdminPage() {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user || !ADMIN_EMAILS.includes(user.email ?? "")) {
-      router.push("/");
+      window.location.href = "/";
       return;
     }
 

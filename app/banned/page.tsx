@@ -11,8 +11,8 @@ export default function BannedPage() {
         </p>
         <p className="text-gray-400 text-sm mb-8">
           If you believe this is a mistake, please contact us at{" "}
-          <a href="mailto:support@trinimarket.tt" className="text-red-600 hover:underline">
-            support@trinimarket.tt
+          <a href="mailto:support@trinisell.tt" className="text-red-600 hover:underline">
+            support@trinisell.tt
           </a>
         </p>
         <Link

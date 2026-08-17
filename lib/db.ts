@@ -194,10 +194,11 @@ export async function getSeller(sellerId: string): Promise<Seller | null> {
     .from("sellers")
     .select("*")
     .eq("id", sellerId)
-    .single();
+    .limit(1);
 
   if (error) { console.error("getSeller:", error.message); return null; }
-  return mapSeller(data as SellerRow);
+  if (!data || data.length === 0) return null;
+  return mapSeller(data[0] as SellerRow);
 }
 
 export async function getSellerListings(sellerId: string): Promise<Listing[]> {
@@ -297,15 +298,25 @@ export interface SellerReview {
 export async function getSellerReviews(sellerId: string): Promise<SellerReview[]> {
   const { data, error } = await supabase
     .from("seller_reviews")
-    .select("id, rating, comment, created_at, reviewers:sellers!seller_reviews_user_id_fkey(name, avatar)")
+    .select("id, rating, comment, created_at, user_id")
     .eq("seller_id", sellerId)
     .order("created_at", { ascending: false })
     .limit(20);
 
   if (error) { console.error("getSellerReviews:", error.message); return []; }
+  if (!data || data.length === 0) return [];
+
+  // Batch-fetch reviewer names/avatars from sellers table by user_id
+  const userIds = [...new Set(data.map((r) => r.user_id))];
+  const { data: reviewers } = await supabase
+    .from("sellers")
+    .select("id, name, avatar")
+    .in("id", userIds);
+  const reviewerMap = new Map((reviewers ?? []).map((s) => [s.id, s]));
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (data ?? []).map((r: any) => {
-    const reviewer = Array.isArray(r.reviewers) ? r.reviewers[0] : r.reviewers;
+  return data.map((r: any) => {
+    const reviewer = reviewerMap.get(r.user_id);
     return {
       id: r.id as string,
       rating: r.rating as number,

@@ -2,15 +2,13 @@ import Link from "next/link";
 
 function MarketBoothLogo() {
   return (
-    <svg width="28" height="28" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect width="34" height="34" rx="9" fill="#7f1d1d" />
-      <path d="M5 14 L17 8 L29 14 Z" fill="#ef4444" />
-      <path d="M5 14 Q8 17 11 14 Q14 17 17 14 Q20 17 23 14 Q26 17 29 14" stroke="#fca5a5" strokeWidth="1" fill="none" />
-      <rect x="8" y="14" width="18" height="12" rx="1" fill="#991b1b" />
-      <rect x="6" y="24" width="22" height="2.5" rx="1" fill="#ef4444" />
-      <rect x="11" y="16.5" width="12" height="7" rx="1" fill="#fecaca" opacity="0.2" />
-      <text x="17" y="23" textAnchor="middle" fontSize="5" fontWeight="bold" fill="white" fontFamily="sans-serif">TM</text>
-    </svg>
+    <div className="w-[34px] h-[34px] rounded-[9px] bg-red-600 flex items-center justify-center shrink-0">
+      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <path d="M16 10a4 4 0 01-8 0" />
+      </svg>
+    </div>
   );
 }
 
@@ -23,7 +21,7 @@ export function Footer() {
             <div className="flex items-center gap-2.5 mb-3">
               <MarketBoothLogo />
               <span className="font-display font-bold text-lg tracking-tight">
-                <span className="text-white">Trini</span><span className="text-red-500">Market</span>
+                <span className="text-white">Trini</span><span className="text-red-500">Sell</span>
               </span>
             </div>
             <p className="text-sm leading-relaxed">
@@ -63,7 +61,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-10 pt-6 text-xs text-center space-y-1">
-          <p>© {new Date().getFullYear()} TriniMarket. Built for Trinidad &amp; Tobago.</p>
+          <p>© {new Date().getFullYear()} TriniSell. Built for Trinidad &amp; Tobago.</p>
           <p><Link href="/contact" className="hover:text-white transition-colors">Contact Support</Link></p>
         </div>
       </div>

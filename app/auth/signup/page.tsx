@@ -139,7 +139,7 @@ export default function SignupPage() {
         <div className="relative rounded-2xl p-8" style={{ background: "rgba(20,0,0,0.7)", backdropFilter: "blur(16px)", border: "1px solid rgba(185,28,28,0.25)" }}>
 
           <div className="flex items-center gap-2.5 mb-6">
-            <img src="/icon-192.png" alt="TriniMarket" width={34} height={34} className="rounded-[9px]" />
+            <img src="/icon-192.png" alt="TriniSell" width={34} height={34} className="rounded-[9px]" />
             <span className="font-display font-bold text-xl tracking-tight text-white">Trini<span className="text-red-500">Market</span></span>
           </div>
 

@@ -1,314 +1,273 @@
+"use client";
+
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { useState } from "react";
 
-const tiers = [
+const boostOptions = [
   {
-    name: "Free",
-    price: "TT$0",
-    period: "forever",
-    description: "Get started selling with no upfront cost.",
-    subscription: false,
-    features: [
-      { text: "1 active listing at a time", included: true },
-      { text: "Standard search placement", included: true },
-      { text: "Basic listing details", included: true },
-      { text: "Contact form for buyers", included: true },
-      { text: "Featured badge & border", included: false },
-      { text: "Homepage carousel placement", included: false },
-      { text: "Top-of-search placement", included: false },
-      { text: "Premium badge & ribbon", included: false },
-      { text: "Extended image gallery (5 photos)", included: false },
-      { text: "\"Premium Picks\" section", included: false },
-    ],
-    cta: "Get Started Free",
-    href: "/auth/signup",
-    highlight: false,
-    badge: null,
-    glowColor: "rgba(185,28,28,0.3)",
-    borderColor: "rgba(185,28,28,0.25)",
+    duration: "1 Week",
+    price: "TT$15",
+    description: "Quick visibility push for a fast sale.",
+    popular: false,
   },
   {
-    name: "Featured",
-    price: "TT$120",
-    period: "/ month",
-    description: "Stand out in search results and reach more buyers.",
-    subscription: true,
-    badge: "Most Popular",
-    features: [
-      { text: "Unlimited active listings", included: true },
-      { text: "Standard search placement", included: true },
-      { text: "Basic listing details", included: true },
-      { text: "Contact form for buyers", included: true },
-      { text: "Featured badge & border", included: true },
-      { text: "Homepage carousel placement", included: true },
-      { text: "Top-of-search placement", included: false },
-      { text: "Premium badge & ribbon", included: false },
-      { text: "Extended image gallery (5 photos)", included: false },
-      { text: "\"Premium Picks\" section", included: false },
-    ],
-    cta: "Subscribe — TT$120/mo",
-    href: "/wallet",
-    highlight: true,
-    glowColor: "rgba(234,179,8,0.4)",
-    borderColor: "rgba(234,179,8,0.4)",
+    duration: "2 Weeks",
+    price: "TT$25",
+    description: "Most sellers see results within two weeks.",
+    popular: true,
   },
   {
-    name: "Premium",
-    price: "TT$299",
-    period: "/ month",
-    description: "Maximum visibility for serious sellers and businesses.",
-    subscription: true,
-    badge: null,
-    features: [
-      { text: "Unlimited active listings", included: true },
-      { text: "Standard search placement", included: true },
-      { text: "Basic listing details", included: true },
-      { text: "Contact form for buyers", included: true },
-      { text: "Featured badge & border", included: true },
-      { text: "Homepage carousel placement", included: true },
-      { text: "Top-of-search placement", included: true },
-      { text: "Premium badge & ribbon", included: true },
-      { text: "Extended image gallery (5 photos)", included: true },
-      { text: "\"Premium Picks\" section", included: true },
-    ],
-    cta: "Subscribe — TT$299/mo",
-    href: "/wallet",
-    highlight: false,
-    glowColor: "rgba(220,38,38,0.35)",
-    borderColor: "rgba(220,38,38,0.3)",
+    duration: "1 Month",
+    price: "TT$40",
+    description: "Maximum exposure for hard-to-sell items.",
+    popular: false,
   },
 ];
 
-const proFeatures = [
-  { icon: "🏪", title: "Branded Storefront", desc: "Your own page at /store/yourname with logo, banner, and all listings." },
-  { icon: "✅", title: "Verified Business Badge", desc: "Build trust instantly with a badge that sets you apart." },
-  { icon: "∞", title: "Unlimited Listings", desc: "No cap on how many items or services you can post." },
-  { icon: "⭐", title: "Priority Support", desc: "Get help faster with dedicated seller support." },
-  { icon: "📊", title: "Analytics Dashboard", desc: "See views, clicks, and inquiry rates per listing." },
-  { icon: "🔗", title: "Custom Store URL", desc: "Share a single link to your full storefront." },
+const boostPerks = [
+  { icon: "🔝", title: "Top of search results", desc: "Your listing appears above all non-boosted listings in its category." },
+  { icon: "⭐", title: "Featured badge", desc: "A bold badge that makes your listing stand out at a glance." },
+  { icon: "🏠", title: "Homepage placement", desc: "Shown in the Featured Listings carousel on the homepage." },
+  { icon: "📸", title: "Up to 5 photos", desc: "Boosted listings can include up to 5 images instead of 2." },
 ];
 
-const heroFloating = [
-  { icon: "💰", top: "15%", left: "5%", anim: "animate-float", size: "text-4xl", delay: "0s" },
-  { icon: "🏆", top: "20%", left: "88%", anim: "animate-float-slow", size: "text-5xl", delay: "0.8s" },
-  { icon: "🚀", top: "70%", left: "3%", anim: "animate-float-reverse", size: "text-4xl", delay: "1.5s" },
-  { icon: "⭐", top: "75%", left: "90%", anim: "animate-float", size: "text-3xl", delay: "0.4s" },
-  { icon: "💎", top: "45%", left: "93%", anim: "animate-float-slow", size: "text-3xl", delay: "2s" },
-  { icon: "📈", top: "50%", left: "1%", anim: "animate-float-reverse", size: "text-3xl", delay: "1.1s" },
+const storefrontFeatures = [
+  { icon: "🏪", title: "Branded Storefront Page", desc: "Your own page with your logo, banner, and all your listings in one place. Share a single link to your whole catalogue." },
+  { icon: "∞", title: "Unlimited Listings", desc: "Post as many vehicles, properties, or services as you need — no cap, ever." },
+  { icon: "✅", title: "Verified Business Badge", desc: "A badge that tells buyers you're a legitimate, vetted business — not a random individual." },
+  { icon: "📂", title: "Business Directory Listing", desc: "Your business appears in the dedicated Business Directory, where buyers specifically look for established companies." },
+  { icon: "📊", title: "Analytics Dashboard", desc: "Track views, enquiries, and listing performance from your seller dashboard." },
+  { icon: "⚡", title: "Priority Support", desc: "Direct support line — issues resolved faster than standard accounts." },
+];
+
+const boostFaqs = [
+  { q: "How do I boost a listing?", a: "Go to your Dashboard, find the listing you want to boost, and click the Boost button. Select your duration, pay via WiPay, and it goes live instantly." },
+  { q: "Can I boost multiple listings at once?", a: "Yes — you can boost as many individual listings as you like. Each boost is a separate one-time payment for that specific listing." },
+  { q: "What happens when my boost expires?", a: "Your listing stays live but returns to standard placement. You can re-boost it at any time from your dashboard." },
+  { q: "What payment methods do you accept?", a: "We accept payments via WiPay, which supports Visa, Mastercard, and local bank cards including Linx." },
+];
+
+const storefrontFaqs = [
+  { q: "Who is the Business Storefront for?", a: "It's designed for established businesses — car dealerships, real estate agencies, retailers, and service companies — who want to list many items under a single branded presence on the site." },
+  { q: "How do I cancel my Business Storefront?", a: "Go to Dashboard → Boosts and click Cancel. Your storefront stays active until the end of the current billing period, then stops automatically." },
+  { q: "What payment methods do you accept?", a: "We accept payments via WiPay, which supports Visa, Mastercard, and local bank cards including Linx." },
+  { q: "Is there a lock-in contract?", a: "No. Cancel anytime from your dashboard — no penalties, no questions asked." },
 ];
 
 export default function PricingPage() {
+  const [tab, setTab] = useState<"boost" | "storefront">("boost");
+
   return (
     <div className="min-h-screen" style={{ background: "#1a0000" }}>
+
       {/* Hero */}
-      <section className="relative py-20 px-4 text-center overflow-hidden">
+      <section className="relative py-16 px-4 text-center overflow-hidden">
         <div className="absolute inset-0" style={{
-          background: "radial-gradient(ellipse at 50% 0%, #3b0000 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, #7f1d1d 0%, transparent 50%)",
+          background: "radial-gradient(ellipse at 50% 0%, #3b0000 0%, transparent 60%)",
         }} />
         <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: `radial-gradient(circle, #fca5a5 1px, transparent 1px)`,
           backgroundSize: "28px 28px",
         }} />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-64 rounded-full animate-pulse-glow pointer-events-none" style={{
-          background: "radial-gradient(circle, rgba(185,28,28,0.3) 0%, transparent 70%)",
-          filter: "blur(40px)",
-        }} />
-
-        {heroFloating.map((item, i) => (
-          <div
-            key={i}
-            className={`absolute ${item.anim} ${item.size} opacity-20 pointer-events-none select-none`}
-            style={{ top: item.top, left: item.left, animationDelay: item.delay, filter: "drop-shadow(0 0 10px rgba(220,38,38,0.7))" }}
-          >
-            {item.icon}
-          </div>
-        ))}
-
-        <div className="relative z-10">
+        <div className="relative z-10 max-w-2xl mx-auto">
           <span className="inline-block bg-red-900/40 text-red-300 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5 border border-red-700/40">
             Pricing
           </span>
           <h1 className="font-display font-bold text-4xl md:text-5xl text-white mb-4">
-            Simple, honest pricing.
+            Pay only for what you need.
           </h1>
-          <p className="text-red-200/60 text-lg max-w-xl mx-auto">
-            Monthly subscriptions with no lock-in. Upgrade, downgrade, or cancel anytime — no questions asked.
+          <p className="text-red-200/60 text-lg mb-10">
+            Listing is always free. Choose what you need below.
           </p>
-          <div className="flex items-center justify-center gap-3 flex-wrap mt-6">
-            {[
-              { icon: "✅", text: "Cancel anytime" },
-              { icon: "🔄", text: "No lock-in contract" },
-              { icon: "💳", text: "Billed monthly" },
-              { icon: "🔒", text: "No hidden fees" },
-            ].map((p) => (
-              <span key={p.text} className="inline-flex items-center gap-1.5 text-red-100/70 text-xs font-medium px-3 py-1.5 rounded-full border border-red-800/50" style={{ background: "rgba(60,0,0,0.5)" }}>
-                {p.icon} {p.text}
-              </span>
-            ))}
+
+          {/* Tab switcher */}
+          <div className="inline-flex rounded-2xl p-1.5 gap-1" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
+            <button
+              onClick={() => setTab("boost")}
+              className="relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200"
+              style={tab === "boost" ? {
+                background: "#dc2626",
+                color: "white",
+                boxShadow: "0 2px 12px rgba(220,38,38,0.4)",
+              } : {
+                color: "rgba(255,200,200,0.6)",
+              }}
+            >
+              ⚡ Boost a Listing
+            </button>
+            <button
+              onClick={() => setTab("storefront")}
+              className="relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200"
+              style={tab === "storefront" ? {
+                background: "#dc2626",
+                color: "white",
+                boxShadow: "0 2px 12px rgba(220,38,38,0.4)",
+              } : {
+                color: "rgba(255,200,200,0.6)",
+              }}
+            >
+              🏪 Business Storefront
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Tier cards */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {tiers.map((tier) => (
-            <div key={tier.name} className="relative">
-              <div className="absolute -inset-0.5 rounded-2xl" style={{
-                boxShadow: `0 0 20px ${tier.glowColor}, 0 0 40px ${tier.glowColor.replace("0.3", "0.1").replace("0.4", "0.15").replace("0.35", "0.1")}`,
-                opacity: tier.highlight ? 0.8 : 0.4,
-                borderRadius: "16px",
-              }} />
-              <div className="relative rounded-2xl p-7 flex flex-col h-full" style={{
-                background: "rgba(20,0,0,0.75)",
-                backdropFilter: "blur(16px)",
-                border: `1px solid ${tier.borderColor}`,
-              }}>
-                {tier.badge && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
-                      {tier.badge}
-                    </span>
-                  </div>
-                )}
+      {/* ── BOOST TAB ── */}
+      {tab === "boost" && (
+        <div>
+          {/* Free tier callout */}
+          <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6">
+            <div className="rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center gap-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <div className="text-3xl shrink-0">🆓</div>
+              <div className="flex-1">
+                <h3 className="font-display font-bold text-white text-base mb-0.5">Listing is free — always</h3>
+                <p className="text-sm text-red-200/50">Any registered user can post listings at no cost. No credit card needed. Boost when you want more eyes on a specific item.</p>
+              </div>
+              <Link href="/auth/signup" className="shrink-0 inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors border border-white/10 whitespace-nowrap">
+                Get started free →
+              </Link>
+            </div>
+          </section>
 
-                <div className="mb-6">
-                  <div className="flex items-center gap-2">
-                    <h2 className="font-display font-bold text-xl text-white">{tier.name}</h2>
-                    {tier.subscription && (
-                      <span className="text-xs font-medium text-red-300 px-2 py-0.5 rounded-full border border-red-700/40" style={{ background: "rgba(185,28,28,0.15)" }}>
-                        Subscription
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-baseline gap-1 mt-2">
-                    <span className="font-display font-bold text-3xl text-white">{tier.price}</span>
-                    <span className="text-red-200/50 text-sm">{tier.period}</span>
-                  </div>
-                  <p className="text-red-200/60 text-sm mt-2">{tier.description}</p>
-                  {tier.subscription && (
-                    <p className="text-xs text-green-400 font-medium mt-1.5 flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Cancel anytime, no penalty
-                    </p>
+          {/* Boost cards */}
+          <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+            <div className="mb-8">
+              <h2 className="font-display font-bold text-3xl text-white mb-2">Boost a Listing</h2>
+              <p className="text-red-200/50 text-sm max-w-lg">One-time payment per listing. Pick your duration, pay, and your listing jumps to the top. No subscription required.</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
+              {boostOptions.map((opt) => (
+                <div key={opt.duration} className="relative">
+                  {opt.popular && (
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
+                      <span className="bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">Most Popular</span>
+                    </div>
                   )}
+                  <div className="rounded-2xl p-6 flex flex-col h-full transition-transform hover:-translate-y-1 duration-200" style={{
+                    background: opt.popular ? "rgba(185,28,28,0.2)" : "rgba(40,0,0,0.6)",
+                    border: opt.popular ? "1px solid rgba(220,38,38,0.5)" : "1px solid rgba(185,28,28,0.2)",
+                    boxShadow: opt.popular ? "0 0 30px rgba(185,28,28,0.2)" : "none",
+                  }}>
+                    <div className="mb-4">
+                      <p className="text-red-200/60 text-sm font-medium mb-1">{opt.duration}</p>
+                      <p className="font-display font-bold text-4xl text-white">{opt.price}</p>
+                      <p className="text-red-200/50 text-xs mt-2">{opt.description}</p>
+                    </div>
+                    <Link href="/dashboard" className="mt-auto inline-flex items-center justify-center w-full py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                      style={{
+                        background: opt.popular ? "#dc2626" : "rgba(255,255,255,0.08)",
+                        color: "white",
+                      }}>
+                      Boost for {opt.duration}
+                    </Link>
+                  </div>
                 </div>
+              ))}
+            </div>
 
-                <ul className="space-y-2.5 flex-1 mb-7">
-                  {tier.features.map((f) => (
-                    <li key={f.text} className="flex items-start gap-2.5">
-                      {f.included ? (
-                        <svg className="w-4 h-4 text-green-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      ) : (
-                        <svg className="w-4 h-4 text-red-900/70 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      )}
-                      <span className={`text-sm ${f.included ? "text-red-100/90" : "text-red-200/30"}`}>{f.text}</span>
-                    </li>
+            {/* Boost perks */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+              {boostPerks.map((p) => (
+                <div key={p.title} className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div className="text-xl mb-2">{p.icon}</div>
+                  <p className="text-white text-sm font-semibold mb-1">{p.title}</p>
+                  <p className="text-red-200/40 text-xs leading-relaxed">{p.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* FAQ */}
+            <h2 className="font-display font-bold text-2xl text-white mb-6">FAQ</h2>
+            <div className="space-y-3">
+              {boostFaqs.map((item) => (
+                <details key={item.q} className="rounded-xl group" style={{ background: "rgba(40,0,0,0.6)", border: "1px solid rgba(185,28,28,0.2)" }}>
+                  <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-red-100/80 text-sm list-none hover:text-white transition-colors">
+                    {item.q}
+                    <svg className="w-4 h-4 text-red-400 group-open:rotate-180 transition-transform shrink-0 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <div className="px-5 pb-4 text-sm text-red-200/50 leading-relaxed">{item.a}</div>
+                </details>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
+
+      {/* ── STOREFRONT TAB ── */}
+      {tab === "storefront" && (
+        <div>
+          <section className="relative py-6 px-4 overflow-hidden">
+            <div className="absolute inset-0 opacity-10" style={{
+              backgroundImage: `radial-gradient(circle, #fca5a5 1px, transparent 1px)`,
+              backgroundSize: "24px 24px",
+            }} />
+            <div className="relative z-10 max-w-5xl mx-auto">
+              <div className="text-center mb-10">
+                <h2 className="font-display font-bold text-3xl md:text-4xl text-white mb-3">
+                  Business Storefront
+                </h2>
+                <div className="flex items-baseline gap-1 justify-center mb-3">
+                  <span className="font-display font-bold text-5xl text-white">TT$99</span>
+                  <span className="text-red-200/50 text-lg">/ month</span>
+                </div>
+                <p className="text-red-200/60 max-w-xl mx-auto text-sm">
+                  Built for car dealerships, real estate companies, and established service businesses. Get your own branded storefront, appear in the Business Directory, and post unlimited listings under your brand.
+                </p>
+                <p className="text-xs text-green-400 font-medium mt-2">✅ Cancel anytime, no lock-in contract</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+                {storefrontFeatures.map((f) => (
+                  <div key={f.title} className="rounded-xl p-5 hover:-translate-y-1 transition-transform duration-200" style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                    <div className="text-2xl mb-2">{f.icon}</div>
+                    <h3 className="font-display font-semibold text-white text-sm mb-1">{f.title}</h3>
+                    <p className="text-red-200/50 text-xs leading-relaxed">{f.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Business type examples */}
+              <div className="rounded-2xl p-6 mb-8" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                <p className="text-white text-sm font-semibold mb-3">Perfect for:</p>
+                <div className="flex flex-wrap gap-2">
+                  {["🚗 Car Dealerships", "🏠 Real Estate Firms", "🔧 Auto Parts Shops", "🏗️ Construction Companies", "👗 Clothing Stores", "🍽️ Restaurants & Catering", "⚙️ Service Companies", "📱 Electronics Retailers"].map((tag) => (
+                    <span key={tag} className="text-xs text-red-100/70 px-3 py-1.5 rounded-full font-medium" style={{ background: "rgba(185,28,28,0.15)", border: "1px solid rgba(185,28,28,0.3)" }}>
+                      {tag}
+                    </span>
                   ))}
-                </ul>
+                </div>
+              </div>
 
-                <Link href={tier.href}>
-                  <Button fullWidth variant={tier.highlight ? "primary" : "secondary"} size="lg">
-                    {tier.cta}
-                  </Button>
+              <div className="text-center mb-12">
+                <Link href="/settings" className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-base px-8 py-3.5 rounded-xl transition-all duration-200 hover:shadow-[0_0_30px_rgba(220,38,38,0.4)] active:scale-95">
+                  ⚡ Get a Business Storefront
                 </Link>
+                <p className="text-red-200/40 text-xs mt-3">Monthly subscription · Billed on the same date each month · Cancel from Settings anytime</p>
+              </div>
 
-                {tier.subscription && (
-                  <p className="text-xs text-center text-red-200/30 mt-3">
-                    Billed monthly · Cancel before next billing date to stop charges
-                  </p>
-                )}
+              {/* FAQ */}
+              <h2 className="font-display font-bold text-2xl text-white mb-6">FAQ</h2>
+              <div className="space-y-3">
+                {storefrontFaqs.map((item) => (
+                  <details key={item.q} className="rounded-xl group" style={{ background: "rgba(40,0,0,0.6)", border: "1px solid rgba(185,28,28,0.2)" }}>
+                    <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-red-100/80 text-sm list-none hover:text-white transition-colors">
+                      {item.q}
+                      <svg className="w-4 h-4 text-red-400 group-open:rotate-180 transition-transform shrink-0 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </summary>
+                    <div className="px-5 pb-4 text-sm text-red-200/50 leading-relaxed">{item.a}</div>
+                  </details>
+                ))}
               </div>
             </div>
-          ))}
+          </section>
         </div>
+      )}
 
-        {/* Subscription explainer */}
-        <div className="mt-10 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5" style={{ background: "rgba(40,0,0,0.6)", border: "1px solid rgba(185,28,28,0.2)" }}>
-          <div className="text-3xl shrink-0">🔄</div>
-          <div>
-            <h3 className="font-display font-semibold text-white mb-1">How subscriptions work</h3>
-            <p className="text-sm text-red-200/50 leading-relaxed">
-              Featured and Premium are monthly subscriptions billed on the same date each month. Cancel anytime from your dashboard — your plan stays active until the end of the current billing period, then stops automatically. No penalties, no awkward calls.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Pro Account section */}
-      <section className="relative py-16 px-4 overflow-hidden">
-        <div className="absolute inset-0" style={{
-          background: "linear-gradient(135deg, #3b0000 0%, #1a0000 50%, #7f1d1d 100%)",
-        }} />
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `radial-gradient(circle, #fca5a5 1px, transparent 1px)`,
-          backgroundSize: "24px 24px",
-        }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full animate-pulse-glow pointer-events-none" style={{
-          background: "radial-gradient(circle, rgba(185,28,28,0.3) 0%, transparent 70%)",
-          filter: "blur(50px)",
-        }} />
-
-        <div className="relative z-10 max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <span className="inline-block bg-red-900/40 text-red-300 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-red-700/40">
-              For Businesses
-            </span>
-            <h2 className="font-display font-bold text-3xl text-white mb-3">Pro Account — TT$150/month</h2>
-            <p className="text-red-200/60 max-w-xl mx-auto">
-              Everything in Premium, plus a full branded storefront, analytics, and a Verified Business badge. Cancel anytime.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-            {proFeatures.map((f) => (
-              <div key={f.title} className="rounded-xl p-5 hover:-translate-y-1 transition-transform duration-200" style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                <div className="text-2xl mb-2">{f.icon}</div>
-                <h3 className="font-display font-semibold text-white text-sm mb-1">{f.title}</h3>
-                <p className="text-red-200/50 text-xs leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-          <div className="text-center">
-            <Link
-              href="/settings"
-              className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold text-base px-8 py-3.5 rounded-xl transition-all duration-200 hover:bg-red-700 hover:shadow-[0_0_30px_rgba(220,38,38,0.4)] active:scale-95"
-            >
-              ⚡ Upgrade to Pro
-            </Link>
-            <p className="text-red-200/40 text-xs mt-4">Monthly subscription · Cancel anytime from Settings</p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="max-w-3xl mx-auto px-4 sm:px-6 py-14">
-        <h2 className="font-display font-bold text-2xl text-white mb-8 text-center">Frequently Asked Questions</h2>
-        <div className="space-y-4">
-          {[
-            { q: "How do I cancel my subscription?", a: "Go to Dashboard → Subscriptions and click \"Cancel Plan\". Your plan remains active until the end of the current billing period. You won't be charged again after that." },
-            { q: "What happens to my listings if I cancel?", a: "Your listings stay live until the end of your paid period. After that they revert to Free tier placement — they won't be deleted." },
-            { q: "Can I switch between Featured and Premium?", a: "Yes. You can upgrade or downgrade at any time. Upgrades take effect immediately; downgrades take effect at the next billing date." },
-            { q: "How does TriniMarket's pricing compare to other local platforms?", a: "Many local platforms charge high rates with little transparency. TriniMarket's Featured tier starts at TT$150/month with clear, predictable costs and prominent placement across the site." },
-            { q: "What payment methods do you accept?", a: "We accept payments via WiPay, which supports Visa, Mastercard, and local bank cards including Linx." },
-          ].map((item) => (
-            <details key={item.q} className="rounded-xl group" style={{ background: "rgba(40,0,0,0.6)", border: "1px solid rgba(185,28,28,0.2)" }}>
-              <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-red-100/80 text-sm list-none hover:text-white transition-colors">
-                {item.q}
-                <svg className="w-4 h-4 text-red-400 group-open:rotate-180 transition-transform shrink-0 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </summary>
-              <div className="px-5 pb-4 text-sm text-red-200/50 leading-relaxed">{item.a}</div>
-            </details>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }

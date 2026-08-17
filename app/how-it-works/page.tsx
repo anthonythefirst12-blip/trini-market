@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "How It Works | TriniMarket",
-  description: "Learn how to buy and sell on TriniMarket — Trinidad & Tobago's local marketplace. Post a listing in minutes.",
+  title: "How It Works | TriniSell",
+  description: "Learn how to buy and sell on TriniSell — Trinidad & Tobago's local marketplace. Post a listing in minutes.",
 };
 
 const steps = {
   sell: [
     { n: "1", title: "Create a free account", desc: "Sign up with your email in under a minute. No credit card needed." },
     { n: "2", title: "Post your listing", desc: "Add photos, set your price, pick a category and location. It takes about 2 minutes." },
-    { n: "3", title: "Get messages from buyers", desc: "Buyers contact you directly through TriniMarket's built-in messaging." },
+    { n: "3", title: "Get messages from buyers", desc: "Buyers contact you directly through TriniSell's built-in messaging." },
     { n: "4", title: "Meet and close the deal", desc: "Arrange to meet in a safe public place, hand over the item, and get paid." },
   ],
   buy: [
@@ -51,7 +51,7 @@ export default function HowItWorksPage() {
           Buy &amp; sell the easy way
         </h1>
         <p className="text-white/70 text-lg max-w-xl mx-auto mb-8">
-          TriniMarket connects buyers and sellers across Trinidad &amp; Tobago. No fees to list, no commissions taken.
+          TriniSell connects buyers and sellers across Trinidad &amp; Tobago. No fees to list, no commissions taken.
         </p>
         <div className="flex gap-4 justify-center flex-wrap">
           <Link href="/listings/new" className="inline-flex items-center gap-2 bg-white text-red-700 font-semibold px-6 py-3 rounded-xl hover:bg-red-50 transition-colors">
@@ -67,7 +67,7 @@ export default function HowItWorksPage() {
       <section className="py-16 border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="font-display font-bold text-3xl text-gray-900 mb-2">Selling on TriniMarket</h2>
+            <h2 className="font-display font-bold text-3xl text-gray-900 mb-2">Selling on TriniSell</h2>
             <p className="text-gray-500">List your item for free in minutes.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -86,7 +86,7 @@ export default function HowItWorksPage() {
       <section className="py-16 border-b border-gray-200 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="font-display font-bold text-3xl text-gray-900 mb-2">Buying on TriniMarket</h2>
+            <h2 className="font-display font-bold text-3xl text-gray-900 mb-2">Buying on TriniSell</h2>
             <p className="text-gray-500">Find great deals from sellers across T&T.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

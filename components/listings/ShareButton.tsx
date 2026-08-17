@@ -18,7 +18,7 @@ export function ShareButton({ title }: Props) {
   };
 
   const shareWhatsApp = () => {
-    window.open(`https://wa.me/?text=${encodeURIComponent(`Check out this listing on TriniMarket: ${title}\n${getUrl()}`)}`, "_blank");
+    window.open(`https://wa.me/?text=${encodeURIComponent(`Check out this listing on TriniSell: ${title}\n${getUrl()}`)}`, "_blank");
   };
 
   const shareFacebook = () => {

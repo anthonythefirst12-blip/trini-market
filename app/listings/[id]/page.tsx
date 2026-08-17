@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }).format(listing.price);
   const desc = `${formatted} · ${listing.condition} · ${listing.location} — ${listing.description.slice(0, 120)}`;
   return {
-    title: `${listing.title} | TriniMarket`,
+    title: listing.title,
     description: desc,
     openGraph: {
       title: listing.title,
@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: desc,
       images: listing.images[0] ? [listing.images[0]] : [],
     },
+    alternates: { canonical: `https://trinisell.tt/listings/${id}` },
   };
 }
 
@@ -331,22 +332,16 @@ export default async function ListingDetailPage({ params }: Props) {
             )}
 
             {/* Boost this listing (own listing only) */}
-            {isOwner && <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-              <p className="text-sm font-semibold text-blue-800 mb-1">Is this your listing?</p>
-              <p className="text-xs text-red-600 mb-3">
-                {listing.tier === "free"
-                  ? "Boost it to Featured (TT$150/mo) or Premium (TT$350/mo) for more visibility."
-                  : listing.tier === "featured"
-                  ? "Upgrade to Premium (TT$350/mo) for top placement and a bigger badge."
-                  : "Your listing is at Premium — top of the market! ✨"}
+            {isOwner && <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <p className="text-sm font-semibold text-amber-800 mb-1">Your listing</p>
+              <p className="text-xs text-gray-600 mb-3">
+                Boost it for TT$15–$40 (one-time) to push it to the top of search results and the homepage.
               </p>
-              {listing.tier !== "premium" && (
-                <Link href="/wallet">
-                  <Button size="sm" fullWidth>
-                    ⚡ Boost This Listing
-                  </Button>
-                </Link>
-              )}
+              <Link href="/dashboard">
+                <Button size="sm" fullWidth>
+                  ⚡ Boost This Listing
+                </Button>
+              </Link>
             </div>}
 
             {/* Seller rating */}
