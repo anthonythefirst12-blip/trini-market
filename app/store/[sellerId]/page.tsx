@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getSeller, getSellerListings } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
+import { MapPin } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: Promise<{ sellerId: string }> }): Promise<Metadata> {
   const { sellerId } = await params;
@@ -33,19 +34,65 @@ export default async function StorefrontPage({ params }: { params: Promise<{ sel
   const soldListings = listings.filter((l) => l.sold);
   const memberSince = new Date(seller.joinedDate).toLocaleDateString("en-TT", { month: "long", year: "numeric" });
   const displayName = seller.businessName ?? seller.name;
-
   const categories = [...new Set(activeListings.map((l) => l.category))];
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="store-page min-h-screen">
+      <style>{`
+        .store-page { background: #fafafa; }
+        .store-card { background: #ffffff; border-color: #e5e7eb; }
+        .store-heading { color: #111827; }
+        .store-sub { color: #6b7280; }
+        .store-muted { color: #9ca3af; }
+        .store-divider { border-color: #e5e7eb; }
+        .store-stat-value { color: #111827; }
+        .store-empty { background: #ffffff; border-color: #e5e7eb; }
+        .store-cat-tag { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+        .store-footer { background: #ffffff; border-color: #e5e7eb; }
+        .store-footer-secondary { background: #f3f4f6; color: #374151; }
+        .store-footer-secondary:hover { background: #e5e7eb; }
+        .store-view-profile { background: #f3f4f6; color: #374151; }
+        .store-view-profile:hover { background: #e5e7eb; }
+
+        [data-theme="dark"] .store-page { background: #111111; }
+        [data-theme="dark"] .store-card { background: #1c1c1c; border-color: #2a2a2a; }
+        [data-theme="dark"] .store-heading { color: #f9fafb; }
+        [data-theme="dark"] .store-sub { color: #9ca3af; }
+        [data-theme="dark"] .store-muted { color: rgba(255,255,255,0.3); }
+        [data-theme="dark"] .store-divider { border-color: #2a2a2a; }
+        [data-theme="dark"] .store-stat-value { color: #f9fafb; }
+        [data-theme="dark"] .store-empty { background: #1c1c1c; border-color: #2a2a2a; }
+        [data-theme="dark"] .store-cat-tag { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.25); color: #fca5a5; }
+        [data-theme="dark"] .store-footer { background: #1c1c1c; border-color: #2a2a2a; }
+        [data-theme="dark"] .store-footer-secondary { background: #2a2a2a; color: #d1d5db; }
+        [data-theme="dark"] .store-footer-secondary:hover { background: #333333; }
+        [data-theme="dark"] .store-view-profile { background: #2a2a2a; color: #d1d5db; }
+        [data-theme="dark"] .store-view-profile:hover { background: #333333; }
+
+        @media (prefers-color-scheme: dark) {
+          :root:not([data-theme="light"]) .store-page { background: #111111; }
+          :root:not([data-theme="light"]) .store-card { background: #1c1c1c; border-color: #2a2a2a; }
+          :root:not([data-theme="light"]) .store-heading { color: #f9fafb; }
+          :root:not([data-theme="light"]) .store-sub { color: #9ca3af; }
+          :root:not([data-theme="light"]) .store-muted { color: rgba(255,255,255,0.3); }
+          :root:not([data-theme="light"]) .store-divider { border-color: #2a2a2a; }
+          :root:not([data-theme="light"]) .store-stat-value { color: #f9fafb; }
+          :root:not([data-theme="light"]) .store-empty { background: #1c1c1c; border-color: #2a2a2a; }
+          :root:not([data-theme="light"]) .store-cat-tag { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.25); color: #fca5a5; }
+          :root:not([data-theme="light"]) .store-footer { background: #1c1c1c; border-color: #2a2a2a; }
+          :root:not([data-theme="light"]) .store-footer-secondary { background: #2a2a2a; color: #d1d5db; }
+          :root:not([data-theme="light"]) .store-footer-secondary:hover { background: #333333; }
+          :root:not([data-theme="light"]) .store-view-profile { background: #2a2a2a; color: #d1d5db; }
+          :root:not([data-theme="light"]) .store-view-profile:hover { background: #333333; }
+        }
+      `}</style>
+
       {/* Banner */}
       <div className="relative h-52 sm:h-72 overflow-hidden bg-gradient-to-br from-red-900 via-red-800 to-gray-900">
         {seller.banner && (
           <Image src={seller.banner} alt="" fill className="object-cover opacity-30" sizes="100vw" unoptimized />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-
-        {/* Back link */}
         <div className="absolute top-4 left-4">
           <Link
             href="/businesses"
@@ -61,8 +108,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ sel
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Business header */}
-        <div className="relative -mt-16 sm:-mt-20 flex items-end gap-5 flex-wrap pb-6 border-b border-gray-200">
-          {/* Avatar */}
+        <div className="relative -mt-16 sm:-mt-20 flex items-end gap-5 flex-wrap pb-6 store-divider border-b">
           <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-4 border-white shadow-xl overflow-hidden bg-gradient-to-br from-red-100 to-red-50 shrink-0">
             {seller.avatar ? (
               <Image src={seller.avatar} alt={displayName} fill className="object-cover" sizes="128px" unoptimized />
@@ -75,7 +121,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ sel
 
           <div className="pb-1 flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h1 className="font-display font-bold text-2xl sm:text-3xl text-gray-900 truncate">{displayName}</h1>
+              <h1 className="store-heading font-display font-bold text-2xl sm:text-3xl truncate">{displayName}</h1>
               {seller.verified && (
                 <span className="inline-flex items-center gap-1 text-xs font-semibold bg-red-600 text-white px-2 py-0.5 rounded-full shrink-0">
                   ✓ Verified
@@ -86,10 +132,15 @@ export default async function StorefrontPage({ params }: { params: Promise<{ sel
               </span>
             </div>
             {seller.businessName && seller.name !== seller.businessName && (
-              <p className="text-gray-500 text-sm mb-1">Run by {seller.name}</p>
+              <p className="store-sub text-sm mb-1">Run by {seller.name}</p>
             )}
-            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-400">
-              {seller.location && <span>📍 {seller.location}</span>}
+            <div className="flex flex-wrap items-center gap-3 text-sm store-muted">
+              {seller.location && (
+                <span className="flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5" strokeWidth={2} />
+                  {seller.location}
+                </span>
+              )}
               <span>Member since {memberSince}</span>
               {seller.reviewCount > 0 && (
                 <span className="flex items-center gap-1">
@@ -100,7 +151,6 @@ export default async function StorefrontPage({ params }: { params: Promise<{ sel
             </div>
           </div>
 
-          {/* CTA */}
           <div className="pb-1 flex gap-2 flex-wrap">
             <Link
               href={`/messages?to=${sellerId}&title=Business+Enquiry`}
@@ -126,7 +176,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ sel
             )}
             <Link
               href={`/profile/${sellerId}`}
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-xl transition-colors"
+              className="store-view-profile inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-colors"
             >
               View Profile
             </Link>
@@ -134,32 +184,32 @@ export default async function StorefrontPage({ params }: { params: Promise<{ sel
         </div>
 
         {/* Stats bar */}
-        <div className="grid grid-cols-3 gap-4 py-6 border-b border-gray-200">
+        <div className="grid grid-cols-3 gap-4 py-6 store-divider border-b">
           {[
             { label: "Active Listings", value: activeListings.length },
             { label: "Items Sold", value: soldListings.length },
             { label: "Rating", value: seller.reviewCount > 0 ? `${seller.rating.toFixed(1)} ★` : "—" },
           ].map((s) => (
             <div key={s.label} className="text-center">
-              <p className="font-display font-bold text-2xl text-gray-900">{s.value}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{s.label}</p>
+              <p className="store-stat-value font-display font-bold text-2xl">{s.value}</p>
+              <p className="store-muted text-xs mt-0.5">{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* About */}
         {seller.bio && (
-          <div className="py-6 border-b border-gray-200">
-            <h2 className="font-display font-semibold text-base text-gray-900 mb-3">About</h2>
-            <p className="text-gray-600 text-sm leading-relaxed">{seller.bio}</p>
+          <div className="py-6 store-divider border-b">
+            <h2 className="store-heading font-display font-semibold text-base mb-3">About</h2>
+            <p className="store-sub text-sm leading-relaxed">{seller.bio}</p>
           </div>
         )}
 
         {/* Category filter */}
         {categories.length > 1 && (
-          <div className="py-5 border-b border-gray-200 flex gap-2 flex-wrap">
+          <div className="py-5 store-divider border-b flex gap-2 flex-wrap">
             {categories.map((cat) => (
-              <span key={cat} className="text-xs font-medium px-3 py-1.5 bg-red-50 text-red-700 border border-red-200 rounded-full">
+              <span key={cat} className="store-cat-tag text-xs font-medium px-3 py-1.5 border rounded-full">
                 {cat}
               </span>
             ))}
@@ -169,17 +219,16 @@ export default async function StorefrontPage({ params }: { params: Promise<{ sel
         {/* Listings */}
         <div className="py-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display font-bold text-xl text-gray-900">
+            <h2 className="store-heading font-display font-bold text-xl">
               All Listings
-              <span className="text-gray-400 font-normal text-sm ml-2">({activeListings.length})</span>
+              <span className="store-muted font-normal text-sm ml-2">({activeListings.length})</span>
             </h2>
           </div>
 
           {activeListings.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
-              <p className="text-3xl mb-3">📦</p>
-              <p className="text-gray-500 font-medium">No active listings right now.</p>
-              <p className="text-gray-400 text-sm mt-1">Check back soon.</p>
+            <div className="store-empty text-center py-16 rounded-2xl border">
+              <p className="store-sub font-medium mb-1">No active listings right now.</p>
+              <p className="store-muted text-sm">Check back soon.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -193,9 +242,9 @@ export default async function StorefrontPage({ params }: { params: Promise<{ sel
         {/* Sold */}
         {soldListings.length > 0 && (
           <div className="pb-10">
-            <h2 className="font-display font-bold text-lg text-gray-900 mb-5">
+            <h2 className="store-heading font-display font-bold text-lg mb-5">
               Past Sales
-              <span className="text-gray-400 font-normal text-sm ml-2">({soldListings.length})</span>
+              <span className="store-muted font-normal text-sm ml-2">({soldListings.length})</span>
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {soldListings.map((listing) => (
@@ -207,17 +256,17 @@ export default async function StorefrontPage({ params }: { params: Promise<{ sel
       </div>
 
       {/* Footer CTA */}
-      <div className="border-t border-gray-200 bg-white mt-4">
+      <div className="store-footer border-t mt-4">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <p className="font-display font-bold text-gray-900">Want your own business storefront?</p>
-            <p className="text-gray-400 text-sm mt-0.5">List unlimited items under your brand for TT$99/month.</p>
+            <p className="store-heading font-display font-bold">Want your own business storefront?</p>
+            <p className="store-muted text-sm mt-0.5">List unlimited items under your brand for TT$99/month.</p>
           </div>
           <Link
             href="/pricing"
             className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors shrink-0"
           >
-            ⚡ Get a Storefront
+            Get a Storefront →
           </Link>
         </div>
       </div>
