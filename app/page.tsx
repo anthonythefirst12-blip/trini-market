@@ -21,14 +21,14 @@ import { RecentlyViewed } from "@/components/home/RecentlyViewed";
 import { IslandHero } from "@/components/ui/IslandHero";
 
 const CATEGORIES = [
-  { name: "Electronics", icon: "💻" },
-  { name: "Vehicles", icon: "🚗" },
-  { name: "Real Estate", icon: "🏠" },
-  { name: "Fashion", icon: "👗" },
-  { name: "Food & Beverage", icon: "🍰" },
-  { name: "Services", icon: "🔧" },
-  { name: "Home & Garden", icon: "🪴" },
-  { name: "Sports & Outdoors", icon: "🏄" },
+  { name: "Electronics" },
+  { name: "Vehicles" },
+  { name: "Real Estate" },
+  { name: "Fashion" },
+  { name: "Food & Beverage" },
+  { name: "Services" },
+  { name: "Home & Garden" },
+  { name: "Sports & Outdoors" },
 ];
 
 export default async function HomePage() {
@@ -63,8 +63,7 @@ export default async function HomePage() {
                 href={`/listings?category=${encodeURIComponent(cat.name)}`}
                 className="ripple-chip group flex flex-col items-center gap-1.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-transparent hover:border-red-200 hover:bg-red-50 active:scale-95 transition-all duration-200 text-center"
               >
-                <span className="text-2xl sm:text-3xl group-hover:scale-110 transition-transform duration-200">{cat.icon}</span>
-                <span className="text-[10px] sm:text-xs font-medium text-gray-600 group-hover:text-red-600 leading-tight transition-colors">{cat.name}</span>
+                <span className="text-[10px] sm:text-xs font-semibold text-gray-700 group-hover:text-red-600 leading-tight transition-colors">{cat.name}</span>
                 <span className="hidden sm:block text-xs text-gray-300 group-hover:text-red-300 transition-colors">{categoryCounts[cat.name] ?? 0}</span>
               </Link>
             ))}

@@ -29,7 +29,7 @@ export function AuthCTA() {
 
   return (
     <Link
-      href="/auth/register"
+      href="/auth/signup"
       className="inline-flex items-center gap-2 bg-red-600 text-white font-bold px-8 py-3.5 rounded-full hover:bg-red-700 hover:shadow-[0_0_24px_rgba(220,38,38,0.4)] active:scale-95 transition-all duration-200"
     >
       Create Free Account
