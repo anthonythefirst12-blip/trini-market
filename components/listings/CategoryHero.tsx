@@ -1,58 +1,59 @@
 import Link from "next/link";
+import { Car, Home, Laptop, Shirt, UtensilsCrossed, Wrench, Sofa, Bike, Truck, Building2, Smartphone, Camera, Gamepad2, ShoppingBag, Leaf, Dumbbell, Waves } from "lucide-react";
 
 interface CategoryMeta {
-  icon: string;
+  Icon: React.ElementType;
+  BgIcons: React.ElementType[];
   gradient: string;
   description: string;
-  emoji: string;
 }
 
 const META: Record<string, CategoryMeta> = {
   Vehicles: {
-    icon: "🚗",
-    emoji: "🚗 🚙 🏍️",
+    Icon: Car,
+    BgIcons: [Car, Truck, Bike],
     gradient: "from-blue-900 via-blue-800 to-slate-900",
     description: "Cars, trucks, SUVs, motorcycles, and more from sellers across T&T.",
   },
   "Real Estate": {
-    icon: "🏠",
-    emoji: "🏠 🏡 🏗️",
+    Icon: Home,
+    BgIcons: [Home, Building2, Building2],
     gradient: "from-emerald-900 via-teal-800 to-slate-900",
     description: "Apartments, houses, land, and commercial property for sale or rent.",
   },
   Electronics: {
-    icon: "📱",
-    emoji: "📱 💻 🎮",
+    Icon: Laptop,
+    BgIcons: [Smartphone, Laptop, Gamepad2],
     gradient: "from-violet-900 via-purple-800 to-slate-900",
     description: "Phones, laptops, gaming, cameras, and the latest tech deals.",
   },
   Fashion: {
-    icon: "👗",
-    emoji: "👗 👟 👜",
+    Icon: Shirt,
+    BgIcons: [Shirt, ShoppingBag, ShoppingBag],
     gradient: "from-pink-900 via-rose-800 to-slate-900",
     description: "Clothing, shoes, bags, accessories, and designer brands.",
   },
   "Food & Beverage": {
-    icon: "🍽️",
-    emoji: "🍽️ 🍰 🌶️",
+    Icon: UtensilsCrossed,
+    BgIcons: [UtensilsCrossed, UtensilsCrossed, Camera],
     gradient: "from-orange-900 via-amber-800 to-slate-900",
     description: "Local produce, packaged goods, catering services, and more.",
   },
   Services: {
-    icon: "⚙️",
-    emoji: "⚙️ 🔧 🛠️",
+    Icon: Wrench,
+    BgIcons: [Wrench, Wrench, Wrench],
     gradient: "from-gray-800 via-gray-700 to-slate-900",
     description: "Contractors, tutors, freelancers, and skilled tradespeople.",
   },
   "Home & Garden": {
-    icon: "🌿",
-    emoji: "🌿 🪴 🛋️",
+    Icon: Sofa,
+    BgIcons: [Sofa, Leaf, Leaf],
     gradient: "from-green-900 via-lime-800 to-slate-900",
     description: "Furniture, appliances, décor, garden supplies, and tools.",
   },
   "Sports & Outdoors": {
-    icon: "⚽",
-    emoji: "⚽ 🏄 🎾",
+    Icon: Dumbbell,
+    BgIcons: [Dumbbell, Waves, Bike],
     gradient: "from-cyan-900 via-sky-800 to-slate-900",
     description: "Sporting equipment, outdoor gear, gym, water sports, and more.",
   },
@@ -66,6 +67,8 @@ interface Props {
 export function CategoryHero({ category, count }: Props) {
   const meta = META[category];
   if (!meta) return null;
+
+  const [BgA, BgB, BgC] = meta.BgIcons;
 
   return (
     <div
@@ -81,12 +84,11 @@ export function CategoryHero({ category, count }: Props) {
         }}
       />
 
-      {/* Floating emoji */}
-      <div
-        aria-hidden="true"
-        className="absolute right-6 top-1/2 -translate-y-1/2 text-5xl opacity-10 select-none pointer-events-none hidden sm:block tracking-wider"
-      >
-        {meta.emoji}
+      {/* Floating background icons */}
+      <div aria-hidden="true" className="absolute right-6 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-8 opacity-10 pointer-events-none select-none">
+        <BgA className="w-16 h-16 text-white" strokeWidth={1} />
+        <BgB className="w-20 h-20 text-white" strokeWidth={1} />
+        <BgC className="w-14 h-14 text-white" strokeWidth={1} />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -100,7 +102,9 @@ export function CategoryHero({ category, count }: Props) {
         </nav>
 
         <div className="flex items-center gap-4">
-          <div className="text-4xl sm:text-5xl shrink-0">{meta.icon}</div>
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
+            <meta.Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" strokeWidth={1.5} />
+          </div>
           <div>
             <h1 className="font-display font-bold text-2xl sm:text-3xl text-white">{category}</h1>
             <p className="text-white/50 text-sm mt-1 max-w-md">{meta.description}</p>
