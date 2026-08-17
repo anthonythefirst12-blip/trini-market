@@ -28,6 +28,7 @@ import { ViewToggle } from "@/components/listings/ViewToggle";
 import { Category } from "@/lib/types";
 import Link from "next/link";
 import { MobileFilterDrawer } from "@/components/listings/MobileFilterDrawer";
+import { CategoryHero } from "@/components/listings/CategoryHero";
 
 const CATEGORIES: Category[] = [
   "Electronics",
@@ -121,6 +122,9 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
+      {/* Category hero banner (only shown when a category is selected) */}
+      {category && <CategoryHero category={category} count={results.length} />}
+
       {/* Header */}
       <div className="bg-white border-b border-amber-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">

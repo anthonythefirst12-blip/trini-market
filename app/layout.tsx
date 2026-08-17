@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { PingPresence } from "@/components/PingPresence";
+import { ActivityToast } from "@/components/ui/ActivityToast";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <CookieBanner />
             <BackToTop />
             <PingPresence />
+            <ActivityToast />
           </ToastProvider>
         </ThemeProvider>
       </body>

@@ -10,6 +10,7 @@ import { CommentsSection } from "@/components/listings/CommentsSection";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ListingCard } from "@/components/listings/ListingCard";
+import { SimilarListings } from "@/components/listings/SimilarListings";
 import { ShareButton } from "@/components/listings/ShareButton";
 import { ViewCounter } from "@/components/listings/ViewCounter";
 import { RatingForm } from "@/components/listings/RatingForm";
@@ -84,7 +85,7 @@ export default async function ListingDetailPage({ params }: Props) {
     getComments(id),
     getSellerResponseRate(listing.seller.id),
   ]);
-  const related = allListings.filter((l) => l.id !== listing.id).slice(0, 3);
+  const related = allListings.filter((l) => l.id !== listing.id).slice(0, 8);
 
   const formatted = new Intl.NumberFormat("en-TT", {
     style: "currency",
@@ -218,6 +219,34 @@ export default async function ListingDetailPage({ params }: Props) {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* Location */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 className="font-display font-semibold text-sm text-gray-900 uppercase tracking-wide">Location</h2>
+                <a
+                  href={`https://www.google.com/maps/search/${encodeURIComponent(listing.location + ", Trinidad and Tobago")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-red-600 hover:text-red-700 font-medium transition-colors"
+                >
+                  View on Google Maps →
+                </a>
+              </div>
+              <div className="p-5 flex items-center gap-4">
+                {/* Static T&T map placeholder */}
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-400 to-teal-500 flex items-center justify-center text-2xl shrink-0 shadow-sm">
+                  🗺️
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">{listing.location}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Trinidad &amp; Tobago</p>
+                  <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+                    Always meet in a safe public place. Never send money in advance.
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Comments */}
@@ -364,19 +393,8 @@ export default async function ListingDetailPage({ params }: Props) {
 
         {/* Related listings */}
         {related.length > 0 && (
-          <div className="mt-12">
-            <div className="flex items-center justify-between mb-5">
-              <div>
-                <h2 className="font-display font-bold text-xl text-gray-900">More in {listing.category}</h2>
-                <p className="text-sm text-gray-400 mt-0.5">Similar listings you might like</p>
-              </div>
-              <Link href={`/listings?category=${encodeURIComponent(listing.category)}`} className="text-sm text-red-700 hover:text-blue-800 font-medium transition-colors">
-                View all →
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {related.map((l) => <ListingCard key={l.id} listing={l} />)}
-            </div>
+          <div>
+            <SimilarListings listings={related} category={listing.category} />
           </div>
         )}
       </div>

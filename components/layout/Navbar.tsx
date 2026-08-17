@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase-browser";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/layout/NotificationBell";
+import { SearchOverlay } from "@/components/layout/SearchOverlay";
 import type { User } from "@supabase/supabase-js";
 
 export function Navbar() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [unread, setUnread] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -85,6 +87,16 @@ export function Navbar() {
 
           {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-2">
+            {/* Search icon */}
+            <button
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search"
+              className="p-2 text-gray-500 hover:text-red-600 transition-colors rounded-lg hover:bg-gray-100"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
             <ThemeToggle />
 
             {user ? (
@@ -186,6 +198,9 @@ export function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Search overlay */}
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
 
       {/* Mobile menu */}
       <div

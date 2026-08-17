@@ -14,13 +14,13 @@ const boostOptions = [
     duration: "2 Weeks",
     price: "TT$25",
     description: "Most sellers see results within two weeks.",
-    popular: true,
+    popular: false,
   },
   {
     duration: "1 Month",
     price: "TT$40",
     description: "Maximum exposure for hard-to-sell items.",
-    popular: false,
+    popular: true,
   },
 ];
 
