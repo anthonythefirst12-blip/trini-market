@@ -541,6 +541,23 @@ function MessagesContent() {
                                 </div>
                               );
                             })()}
+                            {/* Review prompt — shown to buyer after offer is accepted */}
+                            {isMe && msg.text.startsWith("💰 Offer:") && (() => {
+                              const accepted = active.messages.some(
+                                (m) => m.sender_id === active.otherId && m.text.startsWith("✅ Offer accepted")
+                              );
+                              if (!accepted) return null;
+                              return (
+                                <div className="mt-2">
+                                  <Link
+                                    href={`/listings/${active.listingId}#reviews`}
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition-colors"
+                                  >
+                                    ★ Leave a review for {active.otherName}
+                                  </Link>
+                                </div>
+                              );
+                            })()}
                             <div className="flex items-center gap-1.5 mt-1 px-1">
                               <span className="text-xs text-gray-400">{timeAgo(msg.created_at)}</span>
                               {isMe && msg.id === lastReadSentId && (

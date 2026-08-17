@@ -19,16 +19,17 @@ import { getPremiumListings, getFeaturedListings, getRecentListings, getCategory
 import { ListingCard } from "@/components/listings/ListingCard";
 import { RecentlyViewed } from "@/components/home/RecentlyViewed";
 import { IslandHero } from "@/components/ui/IslandHero";
+import { Laptop, Car, Home, Shirt, UtensilsCrossed, Wrench, Sofa, Bike } from "lucide-react";
 
 const CATEGORIES = [
-  { name: "Electronics" },
-  { name: "Vehicles" },
-  { name: "Real Estate" },
-  { name: "Fashion" },
-  { name: "Food & Beverage" },
-  { name: "Services" },
-  { name: "Home & Garden" },
-  { name: "Sports & Outdoors" },
+  { name: "Electronics", Icon: Laptop },
+  { name: "Vehicles", Icon: Car },
+  { name: "Real Estate", Icon: Home },
+  { name: "Fashion", Icon: Shirt },
+  { name: "Food & Beverage", Icon: UtensilsCrossed },
+  { name: "Services", Icon: Wrench },
+  { name: "Home & Garden", Icon: Sofa },
+  { name: "Sports & Outdoors", Icon: Bike },
 ];
 
 export default async function HomePage() {
@@ -63,7 +64,8 @@ export default async function HomePage() {
                 href={`/listings?category=${encodeURIComponent(cat.name)}`}
                 className="ripple-chip group flex flex-col items-center gap-1.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-transparent hover:border-red-200 hover:bg-red-50 active:scale-95 transition-all duration-200 text-center"
               >
-                <span className="text-[10px] sm:text-xs font-semibold text-gray-700 group-hover:text-red-600 leading-tight transition-colors">{cat.name}</span>
+                <cat.Icon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-red-500 transition-colors" strokeWidth={1.5} />
+                <span className="text-[10px] sm:text-xs font-medium text-gray-600 group-hover:text-red-600 leading-tight transition-colors">{cat.name}</span>
                 <span className="hidden sm:block text-xs text-gray-300 group-hover:text-red-300 transition-colors">{categoryCounts[cat.name] ?? 0}</span>
               </Link>
             ))}
