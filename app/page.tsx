@@ -17,9 +17,8 @@ export const metadata: Metadata = {
 };
 import { getPremiumListings, getFeaturedListings, getRecentListings, getCategoryCounts, getSiteStats } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
-import { LiveSearch } from "@/components/search/LiveSearch";
 import { RecentlyViewed } from "@/components/home/RecentlyViewed";
-import { CountUp } from "@/components/ui/CountUp";
+import { IslandHero } from "@/components/ui/IslandHero";
 
 const CATEGORIES = [
   { name: "Electronics", icon: "💻" },
@@ -45,40 +44,7 @@ export default async function HomePage() {
     <div className="bg-white">
 
       {/* Hero */}
-      <section className="bg-gray-50 border-b border-gray-100">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-gray-900 mb-4 leading-tight tracking-tight animate-fade-up">
-            Buy &amp; Sell{" "}
-            <span className="text-red-600">
-              Locally
-            </span>
-            <br />
-            <span className="text-gray-400 font-normal text-3xl sm:text-4xl">across T&amp;T</span>
-          </h1>
-          <p className="text-gray-500 text-lg mb-8 max-w-lg mx-auto animate-fade-up-delay-1">
-            Find great deals on vehicles, electronics, real estate, and more — from Port of Spain to Tobago.
-          </p>
-
-          <div className="max-w-2xl mx-auto mb-6 animate-fade-up-delay-2">
-            <LiveSearch />
-          </div>
-
-          <div className="flex items-center justify-center gap-3 flex-wrap animate-fade-up-delay-3">
-            <Link
-              href="/listings/new"
-              className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold px-6 py-3 rounded-full hover:bg-red-700 hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] active:scale-95 transition-all duration-200"
-            >
-              + Post a Listing
-            </Link>
-            <Link
-              href="/listings"
-              className="inline-flex items-center gap-2 bg-white text-gray-700 font-semibold px-6 py-3 rounded-full border border-gray-200 hover:border-red-300 hover:text-red-600 hover:shadow-[0_0_16px_rgba(220,38,38,0.15)] active:scale-95 transition-all duration-200"
-            >
-              Browse Listings
-            </Link>
-          </div>
-        </div>
-      </section>
+      <IslandHero listingCount={stats.listings} />
 
       {/* Categories */}
       <section className="bg-white border-b border-gray-100">
@@ -101,36 +67,6 @@ export default async function HomePage() {
                 <span className="text-xs text-gray-300 group-hover:text-red-300 transition-colors">{categoryCounts[cat.name] ?? 0}</span>
               </Link>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="bg-gray-50 border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-center gap-10 sm:gap-20 flex-wrap">
-            <div className="text-center">
-              <div className="font-display font-bold text-xl text-gray-900">
-                <CountUp to={stats.listings} suffix="+" />
-              </div>
-              <div className="text-gray-400 text-xs mt-0.5">Active Listings</div>
-            </div>
-            <div className="text-center">
-              <div className="font-display font-bold text-xl text-gray-900">
-                <CountUp to={stats.sellers} suffix="+" />
-              </div>
-              <div className="text-gray-400 text-xs mt-0.5">Sellers</div>
-            </div>
-            <div className="text-center">
-              <div className="font-display font-bold text-xl text-gray-900">
-                <CountUp to={8} />
-              </div>
-              <div className="text-gray-400 text-xs mt-0.5">Categories</div>
-            </div>
-            <div className="text-center">
-              <div className="font-display font-bold text-xl text-gray-900">🇹🇹</div>
-              <div className="text-gray-400 text-xs mt-0.5">Made for T&T</div>
-            </div>
           </div>
         </div>
       </section>
