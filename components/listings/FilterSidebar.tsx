@@ -66,15 +66,15 @@ export function FilterSidebar({
   const isOtherActive = !!activeLocation && !locations.includes(activeLocation);
   const hasFilters = !!(activeCategory || activeLocation || activeCondition || activeSort || minPrice || maxPrice || q);
 
-  const sectionLabel = "text-xs font-bold text-gray-500 uppercase tracking-widest mb-3";
+  const sectionLabel = "text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2.5";
   const activeBtn = "bg-red-700 text-white font-semibold";
   const inactiveBtn = "text-gray-600 hover:bg-gray-100 hover:text-gray-900";
-  const btn = "w-full text-left text-sm px-3 py-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+  const btn = "w-full text-left text-sm px-3 py-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500";
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <h3 className="font-display font-bold text-sm text-gray-900 uppercase tracking-widest">Filters</h3>
+        <h3 className="font-display font-bold text-sm text-gray-900">Filters</h3>
         {hasFilters && (
           <button
             onClick={clearAll}
@@ -127,14 +127,14 @@ export function FilterSidebar({
               type="number"
               defaultValue={minPrice}
               placeholder="Min"
-              className="w-full px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
             />
             <input
               name="maxPrice"
               type="number"
               defaultValue={maxPrice}
               placeholder="Max"
-              className="w-full px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
           <Button type="submit" variant="secondary" size="sm" fullWidth>Apply</Button>
@@ -226,7 +226,7 @@ export function FilterSidebar({
               value={otherLocation}
               onChange={(e) => setOtherLocation(e.target.value)}
               placeholder="e.g. Tobago, Sangre Grande"
-              className="flex-1 px-3 py-1.5 text-sm bg-white border border-amber-400 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="flex-1 px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               autoFocus
             />
             <button

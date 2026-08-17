@@ -72,7 +72,7 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
     listing.tier === "premium"
       ? "border-red-300"
       : listing.tier === "featured"
-      ? "border-orange-200"
+      ? "border-amber-200"
       : "border-gray-200";
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -153,8 +153,10 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
       <div className="group block relative">
         <Link href={`/listings/${listing.id}`} className="block">
           <article className={`bg-white border ${borderClass} rounded-2xl overflow-hidden shadow-sm card-hover focus-within:ring-2 focus-within:ring-red-400`}>
-            {/* Top accent strip */}
-            <div className={`h-1 ${listing.tier === "premium" ? "bg-gradient-to-r from-red-700 via-red-500 to-amber-400" : listing.tier === "featured" ? "bg-gradient-to-r from-amber-400 to-amber-200" : "bg-gradient-to-r from-gray-200 to-gray-100"}`} />
+            {/* Top accent strip — premium and featured only */}
+            {(listing.tier === "premium" || listing.tier === "featured") && (
+              <div className={`h-1 ${listing.tier === "premium" ? "bg-gradient-to-r from-red-700 via-red-500 to-red-400" : "bg-gradient-to-r from-amber-400 to-amber-300"}`} />
+            )}
             <div className="relative h-48 bg-gray-100">
               <CardImageCarousel
                 images={listing.images}
@@ -201,10 +203,7 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
               )}
             </div>
             <div className="p-4">
-              <span className="text-xs text-red-600 font-medium uppercase tracking-wide">
-                {listing.category}
-              </span>
-              <h3 className="font-semibold text-gray-900 mt-0.5 line-clamp-2 leading-snug group-hover:text-red-700 transition-colors">
+              <h3 className="font-semibold text-gray-900 line-clamp-2 leading-snug group-hover:text-red-700 transition-colors">
                 {listing.title}
               </h3>
               <div className="flex items-center justify-between mt-3">

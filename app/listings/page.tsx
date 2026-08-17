@@ -25,6 +25,8 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 import { ListingCard } from "@/components/listings/ListingCard";
 import { FilterSidebar } from "@/components/listings/FilterSidebar";
 import { ViewToggle } from "@/components/listings/ViewToggle";
+import { ActiveFilters } from "@/components/listings/ActiveFilters";
+import { SortSelect } from "@/components/listings/SortSelect";
 import { Category } from "@/lib/types";
 import Link from "next/link";
 import { MobileFilterDrawer } from "@/components/listings/MobileFilterDrawer";
@@ -40,17 +42,6 @@ const CATEGORIES: Category[] = [
   "Home & Garden",
   "Sports & Outdoors",
 ];
-
-const CATEGORY_ICONS: Record<string, string> = {
-  Electronics: "📱",
-  Vehicles: "🚗",
-  "Real Estate": "🏠",
-  Fashion: "👗",
-  "Food & Beverage": "🍽️",
-  Services: "⚙️",
-  "Home & Garden": "🌿",
-  "Sports & Outdoors": "⚽",
-};
 
 const LOCATIONS = [
   "Port of Spain",
@@ -114,24 +105,20 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
     return `/listings?${sp.toString()}`;
   };
 
-  const pageTitle = category
-    ? `${CATEGORY_ICONS[category] ?? ""} ${category}`
-    : q
-    ? `Results for "${q}"`
-    : "All Listings";
-
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       {/* Category hero banner (only shown when a category is selected) */}
       {category && <CategoryHero category={category} count={results.length} />}
 
       {/* Header */}
-      <div className="bg-white border-b border-amber-100">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="font-display font-bold text-2xl text-gray-900">{pageTitle}</h1>
-              <p className="text-gray-500 text-sm mt-0.5">
+              <h1 className="font-display font-bold text-2xl text-gray-900">
+                {category ?? (q ? `Results for "${q}"` : "All Listings")}
+              </h1>
+              <p className="text-gray-400 text-sm mt-0.5">
                 {results.length} listing{results.length !== 1 ? "s" : ""}
                 {location ? ` in ${location}` : ""}
                 {condition ? ` · ${condition}` : ""}
@@ -145,7 +132,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             <Link
               href="/listings"
               className={[
-                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all",
+                "inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all",
                 !category
                   ? "bg-red-700 border-red-700 text-white"
                   : "border-gray-300 text-gray-600 hover:border-red-400 hover:text-red-700 bg-white",
@@ -158,13 +145,12 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                 key={cat}
                 href={`/listings?category=${encodeURIComponent(cat)}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
                 className={[
-                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all",
+                  "inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all",
                   category === cat
                     ? "bg-red-600 border-red-600 text-white"
                     : "border-gray-300 text-gray-600 hover:border-red-600 hover:text-red-600 bg-white",
                 ].join(" ")}
               >
-                <span>{CATEGORY_ICONS[cat]}</span>
                 {cat}
               </Link>
             ))}
@@ -192,24 +178,44 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
           {/* Results */}
           <div className="flex-1 min-w-0">
-            <div className="mb-4 lg:hidden">
-              <MobileFilterDrawer
-                categories={CATEGORIES}
-                locations={LOCATIONS}
-                activeCategory={category}
-                activeLocation={location}
-                activeCondition={condition}
-                activeSort={sort}
-                minPrice={minPrice}
-                maxPrice={maxPrice}
-                q={q}
-              />
+            {/* Mobile filter drawer + sort bar */}
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="lg:hidden">
+                <MobileFilterDrawer
+                  categories={CATEGORIES}
+                  locations={LOCATIONS}
+                  activeCategory={category}
+                  activeLocation={location}
+                  activeCondition={condition}
+                  activeSort={sort}
+                  minPrice={minPrice}
+                  maxPrice={maxPrice}
+                  q={q}
+                />
+              </div>
+              <SortSelect activeSort={sort} q={q} category={category} location={location} minPrice={minPrice} maxPrice={maxPrice} condition={condition} />
             </div>
+            {/* Active filter chips */}
+            <ActiveFilters
+              category={category}
+              location={location}
+              condition={condition}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              q={q}
+            />
             {results.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-                <div className="text-4xl mb-3">🔍</div>
-                <h3 className="font-display font-semibold text-lg text-gray-700">No listings found</h3>
-                <p className="text-gray-400 text-sm mt-1">Try adjusting your filters or search terms.</p>
+              <div className="py-20 bg-white rounded-2xl border border-gray-200 flex flex-col items-center gap-4">
+                <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <div className="text-center">
+                  <h3 className="font-display font-semibold text-gray-700">No listings found</h3>
+                  <p className="text-gray-400 text-sm mt-1">Try adjusting your filters or broadening your search.</p>
+                </div>
+                <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">
+                  Clear all filters →
+                </Link>
               </div>
             ) : view === "list" ? (
               <div className="flex flex-col gap-3">
@@ -218,7 +224,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {results.map((listing) => (
                   <ListingCard key={listing.id} listing={listing} />
                 ))}
@@ -229,19 +235,19 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             {(hasPrevPage || hasNextPage) && (
               <div className="flex items-center justify-center gap-3 mt-8">
                 {hasPrevPage ? (
-                  <Link href={buildPageUrl(page - 1)} className="px-5 py-2.5 bg-white border border-gray-300 hover:border-red-400 text-gray-700 text-sm font-semibold rounded-xl transition-colors">
+                  <Link href={buildPageUrl(page - 1)} className="px-5 py-2.5 bg-white border border-gray-200 hover:border-red-400 hover:text-red-700 text-gray-600 text-sm font-semibold rounded-xl transition-colors">
                     ← Previous
                   </Link>
                 ) : (
-                  <span className="px-5 py-2.5 bg-white border border-gray-200 text-gray-300 text-sm font-semibold rounded-xl cursor-not-allowed">← Previous</span>
+                  <span className="px-5 py-2.5 bg-white border border-gray-100 text-gray-300 text-sm font-semibold rounded-xl cursor-not-allowed select-none">← Previous</span>
                 )}
-                <span className="text-gray-500 text-sm">Page {page}</span>
+                <span className="text-gray-400 text-sm font-medium">Page {page}</span>
                 {hasNextPage ? (
-                  <Link href={buildPageUrl(page + 1)} className="px-5 py-2.5 bg-red-700 hover:bg-red-800 text-white text-sm font-semibold rounded-xl transition-colors">
+                  <Link href={buildPageUrl(page + 1)} className="px-5 py-2.5 bg-white border border-gray-200 hover:border-red-400 hover:text-red-700 text-gray-600 text-sm font-semibold rounded-xl transition-colors">
                     Next →
                   </Link>
                 ) : (
-                  <span className="px-5 py-2.5 bg-white border border-gray-200 text-gray-300 text-sm font-semibold rounded-xl cursor-not-allowed">Next →</span>
+                  <span className="px-5 py-2.5 bg-white border border-gray-100 text-gray-300 text-sm font-semibold rounded-xl cursor-not-allowed select-none">Next →</span>
                 )}
               </div>
             )}
