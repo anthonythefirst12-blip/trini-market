@@ -48,30 +48,31 @@ export default async function HomePage() {
 
       {/* Categories */}
       <section className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display font-bold text-xl text-gray-900">Shop by Category</h2>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-10">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="font-display font-bold text-lg sm:text-xl text-gray-900">Shop by Category</h2>
             <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">
               View All →
             </Link>
           </div>
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+          {/* 4-col on mobile with tighter padding, 8-col on sm+ */}
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-3">
             {CATEGORIES.map((cat) => (
               <Link
                 key={cat.name}
                 href={`/listings?category=${encodeURIComponent(cat.name)}`}
-                className="ripple-chip group flex flex-col items-center gap-2 p-3 rounded-2xl border border-transparent hover:border-red-200 hover:bg-red-50 hover:shadow-[0_0_16px_rgba(220,38,38,0.12)] active:scale-95 transition-all duration-200 text-center"
+                className="ripple-chip group flex flex-col items-center gap-1.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-transparent hover:border-red-200 hover:bg-red-50 active:scale-95 transition-all duration-200 text-center"
               >
-                <span className="text-3xl group-hover:scale-110 transition-transform duration-200">{cat.icon}</span>
-                <span className="text-xs font-medium text-gray-600 group-hover:text-red-600 leading-tight transition-colors">{cat.name}</span>
-                <span className="text-xs text-gray-300 group-hover:text-red-300 transition-colors">{categoryCounts[cat.name] ?? 0}</span>
+                <span className="text-2xl sm:text-3xl group-hover:scale-110 transition-transform duration-200">{cat.icon}</span>
+                <span className="text-[10px] sm:text-xs font-medium text-gray-600 group-hover:text-red-600 leading-tight transition-colors">{cat.name}</span>
+                <span className="hidden sm:block text-xs text-gray-300 group-hover:text-red-300 transition-colors">{categoryCounts[cat.name] ?? 0}</span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-10 space-y-8 sm:space-y-12">
 
         {/* Premium */}
         {premium.length > 0 && (

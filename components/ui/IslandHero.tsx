@@ -185,10 +185,10 @@ export function IslandHero({ listingCount = 0 }: Props) {
           }} />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-7xl flex-col px-5 pb-10 pt-28 sm:px-8 lg:px-10 lg:pt-32">
+      <div className="relative z-10 mx-auto flex min-h-[85svh] w-full max-w-7xl flex-col px-5 pb-8 pt-20 sm:px-8 sm:pt-24 lg:min-h-[100svh] lg:px-10 lg:pt-32">
 
         {/* Eyebrow */}
-        <div className="im-reveal mb-8 flex flex-wrap items-center gap-3" style={{ ["--im-delay" as string]: "0.05s" }}>
+        <div className="im-reveal mb-5 flex flex-wrap items-center gap-3 lg:mb-8" style={{ ["--im-delay" as string]: "0.05s" }}>
           <span className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em]"
             style={{ backgroundColor: "var(--ih-pill-bg)", color: "var(--ih-pill-color)" }}>
             <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
@@ -202,12 +202,12 @@ export function IslandHero({ listingCount = 0 }: Props) {
         </div>
 
         {/* Main grid */}
-        <div className="grid flex-1 grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
+        <div className="grid flex-1 grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-8">
 
           {/* Left: headline */}
           <div className="lg:col-span-6">
             <h1 id="island-hero-heading"
-              className="font-[family-name:var(--font-island-display)] text-[clamp(2.8rem,9vw,5.6rem)] font-extrabold leading-[0.92] tracking-[-0.03em]"
+              className="font-[family-name:var(--font-island-display)] text-[clamp(2.2rem,8vw,5.6rem)] font-extrabold leading-[0.92] tracking-[-0.03em]"
               style={{ color: "var(--ih-ink)" }}>
               <span className="im-reveal block" style={{ ["--im-delay" as string]: "0.15s" }}>
                 Buy &amp; sell locally,
@@ -217,7 +217,7 @@ export function IslandHero({ listingCount = 0 }: Props) {
               </span>
             </h1>
 
-            <p className="im-reveal mt-7 max-w-md text-base leading-relaxed sm:text-lg"
+            <p className="im-reveal mt-4 max-w-md text-sm leading-relaxed sm:mt-7 sm:text-base lg:text-lg"
               style={{ color: "var(--ih-muted)", ["--im-delay" as string]: "0.6s" }}>
               <span className="font-semibold" style={{ color: "var(--ih-ink)" }}>TriniSell</span>{" "}
               connects buyers and sellers across Trinidad &amp; Tobago — vehicles, real estate, tech, food, services and more.
@@ -225,7 +225,7 @@ export function IslandHero({ listingCount = 0 }: Props) {
 
             {/* Search */}
             <form action="/listings" method="GET" role="search" aria-label="Search listings"
-              className="im-reveal mt-8 flex max-w-md flex-col gap-2.5 sm:flex-row"
+              className="im-reveal mt-5 flex max-w-md flex-col gap-2 sm:mt-8 sm:flex-row sm:gap-2.5"
               style={{ ["--im-delay" as string]: "0.7s" }}>
               <div className="relative flex-1">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2"
@@ -256,7 +256,7 @@ export function IslandHero({ listingCount = 0 }: Props) {
             </form>
 
             {/* CTA + counter */}
-            <div className="im-reveal mt-9 flex flex-wrap items-center gap-x-6 gap-y-5"
+            <div className="im-reveal mt-5 flex flex-wrap items-center gap-x-6 gap-y-4 sm:mt-9"
               style={{ ["--im-delay" as string]: "0.8s" }}>
               <a href="/listings/new"
                 className="group inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-base font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none"
@@ -282,8 +282,8 @@ export function IslandHero({ listingCount = 0 }: Props) {
             </div>
           </div>
 
-          {/* Right: showcase card */}
-          <div className="relative lg:col-span-6">
+          {/* Right: showcase card — hidden on mobile to keep hero compact */}
+          <div className="relative hidden lg:col-span-6 lg:block">
             <div ref={stageRef}
               className="im-reveal relative mx-auto aspect-[5/6] w-full max-w-md [transform-style:preserve-3d]"
               style={{ ["--im-delay" as string]: "0.4s", perspective: "1200px" }}>
@@ -366,7 +366,7 @@ export function IslandHero({ listingCount = 0 }: Props) {
         </div>
 
         {/* Marquee */}
-        <div className="im-reveal relative mt-12 overflow-hidden border-t pt-6"
+        <div className="im-reveal relative mt-6 overflow-hidden border-t pt-5 lg:mt-12 lg:pt-6"
           style={{
             ["--im-delay" as string]: "0.9s",
             borderColor: "var(--ih-border)",
