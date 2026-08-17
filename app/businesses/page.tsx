@@ -3,6 +3,8 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getBusinesses } from "@/lib/db";
+import { PageHero } from "@/components/ui/PageHero";
+import { BadgeCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Business Directory | TriniSell",
@@ -28,75 +30,86 @@ export default async function BusinessDirectoryPage() {
   const businesses = await getBusinesses();
 
   return (
-    <div className="bg-slate-800 min-h-screen">
-      {/* Hero */}
-      <section className="relative bg-gray-900 overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: `radial-gradient(circle, #93C5FD 1px, transparent 1px)`,
-            backgroundSize: "28px 28px",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-red-900/80 to-gray-900/60" />
+    <div className="biz-page min-h-screen">
+      <style>{`
+        .biz-page { background: #fafafa; }
+        .biz-section { background: #ffffff; border-color: #e5e7eb; }
+        .biz-section-alt { background: #fafafa; border-color: #e5e7eb; }
+        .biz-heading { color: #111827; }
+        .biz-sub { color: #6b7280; }
+        .biz-stat-value { color: #111827; }
+        .biz-stat-label { color: #9ca3af; }
+        .biz-cta-section { background: #ffffff; border-color: #e5e7eb; }
+        .biz-cta-secondary { border-color: #e5e7eb; color: #374151; }
+        .biz-cta-secondary:hover { background: #f9fafb; border-color: #d1d5db; }
 
-        {/* Large background icons */}
-        <div className="absolute left-[-40px] top-1/2 -translate-y-1/2 text-[220px] opacity-5 pointer-events-none select-none animate-float-slow" style={{ filter: "drop-shadow(0 0 30px rgba(59,130,246,0.8))" }}>🏢</div>
-        <div className="absolute right-[-30px] top-1/2 -translate-y-1/2 text-[200px] opacity-5 pointer-events-none select-none animate-float" style={{ animationDelay: "1s", filter: "drop-shadow(0 0 30px rgba(59,130,246,0.8))" }}>🚗</div>
-        <div className="absolute left-1/2 bottom-[-40px] -translate-x-1/2 text-[160px] opacity-5 pointer-events-none select-none animate-float-reverse" style={{ animationDelay: "0.5s", filter: "drop-shadow(0 0 30px rgba(59,130,246,0.8))" }}>⚙️</div>
+        [data-theme="dark"] .biz-page { background: #111111; }
+        [data-theme="dark"] .biz-section { background: #1c1c1c; border-color: #2a2a2a; }
+        [data-theme="dark"] .biz-section-alt { background: #111111; border-color: #2a2a2a; }
+        [data-theme="dark"] .biz-heading { color: #f9fafb; }
+        [data-theme="dark"] .biz-sub { color: rgba(255,255,255,0.4); }
+        [data-theme="dark"] .biz-stat-value { color: #f9fafb; }
+        [data-theme="dark"] .biz-stat-label { color: rgba(255,255,255,0.35); }
+        [data-theme="dark"] .biz-cta-section { background: #1c1c1c; border-color: #2a2a2a; }
+        [data-theme="dark"] .biz-cta-secondary { border-color: #2a2a2a; color: #d1d5db; }
+        [data-theme="dark"] .biz-cta-secondary:hover { background: #222222; border-color: #333333; }
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className="inline-block bg-red-700/30 border border-red-500/40 text-red-300 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-5">
-            Business Directory
-          </span>
-          <h1 className="font-display font-bold text-4xl sm:text-5xl text-white mb-4 leading-tight">
-            Trusted Businesses.<br />
-            <span className="text-red-400">Verified. Professional.</span>
-          </h1>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Find established real estate firms, authorised dealerships, and top-tier service companies — all verified and operating across Trinidad &amp; Tobago.
-          </p>
+        @media (prefers-color-scheme: dark) {
+          :root:not([data-theme="light"]) .biz-page { background: #111111; }
+          :root:not([data-theme="light"]) .biz-section { background: #1c1c1c; border-color: #2a2a2a; }
+          :root:not([data-theme="light"]) .biz-section-alt { background: #111111; border-color: #2a2a2a; }
+          :root:not([data-theme="light"]) .biz-heading { color: #f9fafb; }
+          :root:not([data-theme="light"]) .biz-sub { color: rgba(255,255,255,0.4); }
+          :root:not([data-theme="light"]) .biz-stat-value { color: #f9fafb; }
+          :root:not([data-theme="light"]) .biz-stat-label { color: rgba(255,255,255,0.35); }
+          :root:not([data-theme="light"]) .biz-cta-section { background: #1c1c1c; border-color: #2a2a2a; }
+          :root:not([data-theme="light"]) .biz-cta-secondary { border-color: #2a2a2a; color: #d1d5db; }
+          :root:not([data-theme="light"]) .biz-cta-secondary:hover { background: #222222; border-color: #333333; }
+        }
+      `}</style>
 
-          <div className="flex items-center justify-center gap-10 mt-10 flex-wrap">
-            {[
-              { value: businesses.length, label: "Verified Businesses" },
-              { value: "3", label: "Industries" },
-              { value: "100%", label: "Pro Verified" },
-            ].map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="font-display font-bold text-3xl text-white">{s.value}</p>
-                <p className="text-gray-400 text-sm mt-0.5">{s.label}</p>
-              </div>
-            ))}
-          </div>
+      <PageHero
+        eyebrow="Business Directory"
+        title="Trusted Businesses in T&T"
+        subtitle="Find established real estate firms, authorised dealerships, and top-tier service companies — all verified and operating across Trinidad & Tobago."
+      >
+        <div className="flex items-center justify-center gap-10 flex-wrap">
+          {[
+            { value: businesses.length, label: "Verified Businesses" },
+            { value: "3", label: "Industries" },
+            { value: "100%", label: "Pro Verified" },
+          ].map((s) => (
+            <div key={s.label} className="text-center">
+              <p className="biz-stat-value font-display font-bold text-3xl">{s.value}</p>
+              <p className="biz-stat-label text-sm mt-0.5">{s.label}</p>
+            </div>
+          ))}
         </div>
-      </section>
+      </PageHero>
 
       {/* Category filter + business cards */}
       <BusinessContent businesses={businesses} />
 
       {/* Join CTA */}
-      <section className="bg-slate-900 border-t border-slate-700 py-16 px-4">
+      <section className="biz-cta-section border-t py-16 px-4">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-display font-bold text-2xl text-white mb-3">
+          <h2 className="biz-heading font-display font-bold text-2xl mb-3">
             Is your business listed here?
           </h2>
-          <p className="text-slate-400 mb-6">
+          <p className="biz-sub mb-8">
             Upgrade to a Pro account to appear in the Business Directory, get a Verified Business badge, and reach serious buyers across T&T.
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <Link
               href="/settings"
-              className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold text-sm px-6 py-3 rounded-lg hover:bg-red-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+              className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold text-sm px-6 py-3 rounded-xl hover:bg-red-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
             >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
+              <BadgeCheck className="w-4 h-4" strokeWidth={2} />
               Get Verified
             </Link>
             <Link
               href="/pricing"
-              className="inline-flex items-center gap-2 border border-slate-600 text-slate-300 font-semibold text-sm px-6 py-3 rounded-lg hover:bg-slate-700 hover:text-white transition-colors"
+              className="biz-cta-secondary inline-flex items-center gap-2 border font-semibold text-sm px-6 py-3 rounded-xl transition-colors"
             >
               View Pricing
             </Link>

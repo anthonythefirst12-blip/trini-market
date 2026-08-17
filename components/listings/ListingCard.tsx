@@ -182,7 +182,7 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 p-2 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <button
                     onClick={(e) => { e.preventDefault(); setQuickView(true); }}
-                    className="flex items-center gap-1.5 bg-white/90 hover:bg-white text-gray-800 text-xs font-semibold px-3 py-1.5 rounded-full shadow transition-all hover:scale-105 active:scale-95"
+                    className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full shadow transition-all hover:scale-105 active:scale-95" style={{ background: "rgba(255,255,255,0.92)", color: "#1f2937" }}
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -192,7 +192,7 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
                   </button>
                   <button
                     onClick={handleShare}
-                    className="w-7 h-7 bg-white/90 hover:bg-white text-gray-800 rounded-full flex items-center justify-center shadow transition-all hover:scale-105 active:scale-95"
+                    className="w-7 h-7 rounded-full flex items-center justify-center shadow transition-all hover:scale-105 active:scale-95" style={{ background: "rgba(255,255,255,0.92)", color: "#1f2937" }}
                     aria-label="Share listing"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
