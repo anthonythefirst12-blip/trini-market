@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AuthCTA } from "@/components/ui/AuthCTA";
 
 export const metadata: Metadata = {
   title: "How It Works | TriniSell",
@@ -145,9 +146,7 @@ export default function HowItWorksPage() {
           <h2 className="font-display font-bold text-3xl text-gray-900 mb-3">Ready to get started?</h2>
           <p className="text-gray-500 mb-8">It's free to list. No commissions. No hidden fees.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/auth/signup" className="inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors">
-              Create Free Account
-            </Link>
+            <AuthCTA />
             <Link href="/listings" className="inline-flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold px-8 py-3 rounded-xl transition-colors">
               Browse Listings
             </Link>

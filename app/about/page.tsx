@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AuthCTA } from "@/components/ui/AuthCTA";
 
 export const metadata: Metadata = {
   title: "About TriniSell | Trinidad & Tobago's Local Marketplace",
@@ -85,13 +86,10 @@ export default function AboutPage() {
           <h2 className="font-display font-bold text-2xl text-gray-900 mb-3">Ready to get started?</h2>
           <p className="text-gray-500 mb-8">Join thousands of Trinbagonians buying and selling every day.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <AuthCTA />
             <Link href="/listings"
-              className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors">
-              Browse Listings →
-            </Link>
-            <Link href="/auth/signup"
               className="inline-flex items-center justify-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold px-6 py-3 rounded-xl transition-colors">
-              Create Free Account
+              Browse Listings →
             </Link>
           </div>
         </div>
