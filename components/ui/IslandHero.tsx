@@ -185,7 +185,7 @@ export function IslandHero({ listingCount = 0 }: Props) {
           }} />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[85svh] w-full max-w-7xl flex-col px-5 pb-8 pt-20 sm:px-8 sm:pt-24 lg:min-h-[100svh] lg:px-10 lg:pt-32">
+      <div className="relative z-10 mx-auto flex min-h-[55vh] w-full max-w-7xl flex-col px-5 pb-8 pt-16 sm:px-8 sm:pt-20 lg:min-h-[68vh] lg:px-10 lg:pt-24">
 
         {/* Eyebrow */}
         <div className="im-reveal mb-5 flex flex-wrap items-center gap-3 lg:mb-8" style={{ ["--im-delay" as string]: "0.05s" }}>
@@ -366,7 +366,7 @@ export function IslandHero({ listingCount = 0 }: Props) {
         </div>
 
         {/* Marquee */}
-        <div className="im-reveal relative mt-6 overflow-hidden border-t pt-5 lg:mt-12 lg:pt-6"
+        <div className="im-reveal relative mt-4 overflow-hidden border-t pt-4 lg:mt-8 lg:pt-5"
           style={{
             ["--im-delay" as string]: "0.9s",
             borderColor: "var(--ih-border)",
