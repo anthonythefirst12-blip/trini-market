@@ -7,6 +7,11 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase-browser";
 import type { User } from "@supabase/supabase-js";
+import {
+  Home, ClipboardList, Zap, MessageCircle, Eye, CheckCircle2,
+  Plus, Store, Settings, ArrowUp, RefreshCw, Clock, Trash2,
+  Package, BarChart2,
+} from "lucide-react";
 
 type Tab = "home" | "listings" | "subscriptions" | "inquiries";
 
@@ -172,11 +177,11 @@ function DashboardContent() {
   const sellerName = user?.user_metadata?.name?.split(" ")[0] ?? "there";
   const recentListings = listings.slice(0, 3);
 
-  const TABS: { key: Tab; label: string; icon: string }[] = [
-    { key: "home", label: "Home", icon: "🏠" },
-    { key: "listings", label: "My Listings", icon: "📋" },
-    { key: "subscriptions", label: "Boosts", icon: "⚡" },
-    { key: "inquiries", label: "Inquiries", icon: "💬" },
+  const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
+    { key: "home", label: "Home", icon: <Home size={15} /> },
+    { key: "listings", label: "My Listings", icon: <ClipboardList size={15} /> },
+    { key: "subscriptions", label: "Boosts", icon: <Zap size={15} /> },
+    { key: "inquiries", label: "Inquiries", icon: <MessageCircle size={15} /> },
   ];
 
   if (loading) {
@@ -253,19 +258,18 @@ function DashboardContent() {
             {/* Stat cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { label: "Total Listings", value: listings.length, icon: "📋", change: null },
-                { label: "Active Plans", value: activeSubs.length, icon: "⚡", change: null },
-                { label: "Items Sold", value: soldCount, icon: "✅", change: null },
-                { label: "Total Views", value: totalViews, icon: "👁️", change: null },
+                { label: "Total Listings", value: listings.length, Icon: ClipboardList },
+                { label: "Active Plans", value: activeSubs.length, Icon: Zap },
+                { label: "Items Sold", value: soldCount, Icon: CheckCircle2 },
+                { label: "Total Views", value: totalViews, Icon: Eye },
               ].map((stat) => (
                 <div
                   key={stat.label}
                   className="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md hover:-translate-y-0.5 hover:border-red-200 transition-all duration-200 group cursor-default"
                 >
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-2xl">{stat.icon}</span>
-                    <div className="w-8 h-8 rounded-full bg-gray-50 group-hover:bg-red-50 flex items-center justify-center transition-colors">
-                      <div className="w-2 h-2 rounded-full bg-gray-300 group-hover:bg-red-400 transition-colors" />
+                    <div className="w-9 h-9 rounded-xl bg-gray-50 group-hover:bg-red-50 flex items-center justify-center transition-colors">
+                      <stat.Icon size={18} className="text-gray-400 group-hover:text-red-500 transition-colors" strokeWidth={1.5} />
                     </div>
                   </div>
                   <div className="font-display font-bold text-3xl text-gray-900">{stat.value}</div>
@@ -287,7 +291,7 @@ function DashboardContent() {
                   </div>
                   {listings.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-32 text-gray-300">
-                      <span className="text-3xl mb-2">📊</span>
+                      <BarChart2 size={32} className="mb-2 text-gray-200" strokeWidth={1.5} />
                       <p className="text-xs">No data yet</p>
                     </div>
                   ) : (
@@ -389,7 +393,7 @@ function DashboardContent() {
                           {l.images?.[0] ? (
                             <Image src={l.images[0]} alt={l.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="300px" unoptimized={l.images[0].startsWith("blob:")} />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-3xl">📦</div>
+                            <div className="w-full h-full flex items-center justify-center"><Package size={28} className="text-gray-300" strokeWidth={1.5} /></div>
                           )}
                           {l.sold && (
                             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -414,10 +418,10 @@ function DashboardContent() {
               <h2 className="font-display font-bold text-lg text-gray-900 mb-4">Quick Actions</h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { label: "Post Listing", icon: "➕", href: "/listings/new", primary: true },
-                  { label: "View Store", icon: "🏪", href: user ? `/store/${user.id}` : "#", primary: false },
-                  { label: "Upgrade Plan", icon: "⚡", href: "/pricing", primary: false },
-                  { label: "Settings", icon: "⚙️", href: "/settings", primary: false },
+                  { label: "Post Listing", Icon: Plus, href: "/listings/new", primary: true },
+                  { label: "View Store", Icon: Store, href: user ? `/store/${user.id}` : "#", primary: false },
+                  { label: "Upgrade Plan", Icon: Zap, href: "/pricing", primary: false },
+                  { label: "Settings", Icon: Settings, href: "/settings", primary: false },
                 ].map((action) => (
                   <Link
                     key={action.label}
@@ -429,7 +433,7 @@ function DashboardContent() {
                         : "bg-white border-gray-200 text-gray-700 hover:border-red-200 hover:text-red-600 hover:shadow-sm",
                     ].join(" ")}
                   >
-                    <span className="text-2xl">{action.icon}</span>
+                    <action.Icon size={22} strokeWidth={1.5} />
                     <span className="text-xs font-semibold">{action.label}</span>
                   </Link>
                 ))}
@@ -466,7 +470,9 @@ function DashboardContent() {
 
             {listings.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-                <div className="text-5xl mb-4">📭</div>
+                <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                  <Package size={28} className="text-gray-300" strokeWidth={1.5} />
+                </div>
                 <p className="font-display font-semibold text-gray-700 text-lg">No listings yet</p>
                 <p className="text-gray-400 text-sm mt-1 mb-6">Create your first listing to start selling across T&T.</p>
                 <Link href="/listings/new"><Button>Post a Listing</Button></Link>
@@ -506,7 +512,7 @@ function DashboardContent() {
                       {listing.images?.[0] ? (
                         <Image src={listing.images[0]} alt={listing.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="80px" unoptimized={listing.images[0].startsWith("blob:")} />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl">📦</div>
+                        <div className="w-full h-full flex items-center justify-center"><Package size={22} className="text-gray-300" strokeWidth={1.5} /></div>
                       )}
                       {listing.sold && (
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -520,13 +526,13 @@ function DashboardContent() {
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <span className="text-red-600 font-bold text-sm">{formatted}</span>
                         <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{listing.category}</span>
-                        {(listing.tier === "premium" || listing.tier === "featured") && <span className="text-xs bg-red-600 text-white font-bold px-2 py-0.5 rounded-full">⚡ Boosted</span>}
+                        {(listing.tier === "premium" || listing.tier === "featured") && <span className="inline-flex items-center gap-1 text-xs bg-red-600 text-white font-bold px-2 py-0.5 rounded-full"><Zap size={10} />Boosted</span>}
                         {isExpired && (
                           <span className="text-xs bg-gray-200 text-gray-600 font-semibold px-2 py-0.5 rounded-full">Expired</span>
                         )}
                         {expiringSoon && !isExpired && (
-                          <span className="text-xs bg-red-100 text-red-700 border border-red-200 font-semibold px-2 py-0.5 rounded-full">
-                            ⏰ Expires in {daysLeft}d
+                          <span className="inline-flex items-center gap-1 text-xs bg-red-100 text-red-700 border border-red-200 font-semibold px-2 py-0.5 rounded-full">
+                            <Clock size={10} />Expires in {daysLeft}d
                           </span>
                         )}
                       </div>
@@ -541,20 +547,20 @@ function DashboardContent() {
                           onClick={() => handleRenew(listing.id)}
                           className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-600 hover:text-white transition-all"
                         >
-                          🔄 Renew
+                          <RefreshCw size={11} className="inline mr-1" />Renew
                         </button>
                       ) : (
                         <button
                           onClick={() => handleBump(listing.id)}
-                          className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-700 hover:text-white transition-all"
+                          className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-700 hover:text-white transition-all"
                         >
-                          ⬆️ Bump
+                          <ArrowUp size={11} />Bump
                         </button>
                       )}
                       {(listing.tier === "free" || !listing.tier) && !listing.sold && (
                         <Link href="/pricing">
-                          <button className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white transition-all">
-                            ⚡ Boost
+                          <button className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white transition-all">
+                            <Zap size={11} />Boost
                           </button>
                         </Link>
                       )}
@@ -575,9 +581,7 @@ function DashboardContent() {
                         className="p-1.5 text-gray-300 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
                         aria-label="Delete listing"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
@@ -594,19 +598,19 @@ function DashboardContent() {
                   onClick={handleBulkBump}
                   className="flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors"
                 >
-                  ⬆️ Bump
+                  <ArrowUp size={14} />Bump
                 </button>
                 <button
                   onClick={handleBulkMarkSold}
                   className="flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors"
                 >
-                  ✅ Mark Sold
+                  <CheckCircle2 size={14} />Mark Sold
                 </button>
                 <button
                   onClick={handleBulkDelete}
                   className="flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-lg text-red-400 hover:bg-red-500/20 transition-colors"
                 >
-                  🗑️ Delete
+                  <Trash2 size={14} />Delete
                 </button>
                 <button
                   onClick={clearSelection}
@@ -627,7 +631,9 @@ function DashboardContent() {
           <div>
             {subscriptions.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-                <div className="text-5xl mb-4">⚡</div>
+                <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                  <Zap size={28} className="text-gray-300" strokeWidth={1.5} />
+                </div>
                 <p className="font-display font-semibold text-gray-700 text-lg">No active boosts</p>
                 <p className="text-gray-400 text-sm mt-1 mb-6">Boost a listing for TT$15–$40 to push it to the top of search and the homepage.</p>
                 <Link href="/pricing"><Button>View Boost Pricing</Button></Link>
@@ -645,7 +651,7 @@ function DashboardContent() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <span className="text-xs bg-red-600 text-white font-bold px-2.5 py-1 rounded-full">⚡ Boosted</span>
+                          <span className="inline-flex items-center gap-1 text-xs bg-red-600 text-white font-bold px-2.5 py-1 rounded-full"><Zap size={10} />Boosted</span>
                           {sub.status === "active" ? (
                             <span className="inline-flex items-center gap-1.5 text-xs text-green-600 font-medium">
                               <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse" /> Active
@@ -673,7 +679,9 @@ function DashboardContent() {
         {/* ── INQUIRIES TAB ── */}
         {tab === "inquiries" && (
           <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-            <div className="text-5xl mb-4">💬</div>
+            <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+              <MessageCircle size={28} className="text-gray-300" strokeWidth={1.5} />
+            </div>
             <p className="font-display font-semibold text-gray-700 text-lg">No inquiries yet</p>
             <p className="text-gray-400 text-sm mt-1 mb-6">When buyers message you about your listings, they&apos;ll appear here.</p>
             <Link href="/messages">

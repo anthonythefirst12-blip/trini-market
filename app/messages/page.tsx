@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase-browser";
+import { MessageCircle, Send, ChevronLeft } from "lucide-react";
 
 interface DBMessage {
   id: string;
@@ -409,7 +410,9 @@ function MessagesContent() {
 
         {conversations.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-            <div className="text-5xl mb-4">💬</div>
+            <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+              <MessageCircle size={32} className="text-gray-300" strokeWidth={1.5} />
+            </div>
             <h3 className="font-display font-semibold text-lg text-gray-700">No messages yet</h3>
             <p className="text-gray-400 text-sm mt-1 mb-6">When you contact a seller or receive an enquiry, it will appear here.</p>
             <Link href="/listings" className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-red-700 transition-colors">
@@ -417,7 +420,7 @@ function MessagesContent() {
             </Link>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden flex h-[600px]">
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden flex" style={{ height: "calc(100dvh - 220px)", minHeight: 520 }}>
             {/* Conversation list — hidden on mobile when a chat is open */}
             <div className={`${activeKey ? "hidden sm:flex" : "flex"} w-full sm:w-72 lg:w-80 border-r border-gray-200 flex-col shrink-0`}>
               <div className="overflow-y-auto flex-1">
@@ -468,9 +471,7 @@ function MessagesContent() {
                     className="sm:hidden p-1 -ml-1 text-gray-500 hover:text-gray-800"
                     aria-label="Back to conversations"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
+                    <ChevronLeft size={20} />
                   </button>
                   <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-100 shrink-0">
                     <Image src={active.otherAvatar} alt={active.otherName} width={36} height={36} className="object-cover" unoptimized />
@@ -596,20 +597,16 @@ function MessagesContent() {
                     <button
                       type="submit"
                       disabled={!input.trim() || sending}
-                      className="px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0"
+                      className="px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 flex items-center justify-center"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                      </svg>
+                      <Send size={16} />
                     </button>
                   </form>
                 </div>
               </div>
             ) : (
               <div className="hidden sm:flex flex-1 items-center justify-center text-gray-400 flex-col gap-3 bg-white">
-                <svg className="w-12 h-12 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
+                <MessageCircle size={44} className="text-gray-200" strokeWidth={1.5} />
                 <p className="text-sm">Select a conversation</p>
               </div>
             )}
