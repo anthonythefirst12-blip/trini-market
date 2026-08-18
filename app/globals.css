@@ -244,6 +244,39 @@
 [data-theme="dark"] input::placeholder,
 [data-theme="dark"] textarea::placeholder { color: #555 !important; }
 
+/* ── Amber / warning colours ── */
+[data-theme="dark"] [class~="bg-amber-50"]     { background-color: #1c1500 !important; }
+[data-theme="dark"] [class~="bg-amber-100"]    { background-color: #261c00 !important; }
+[data-theme="dark"] [class~="border-amber-100"]{ border-color: #3a2800 !important; }
+[data-theme="dark"] [class~="border-amber-200"]{ border-color: #4a3500 !important; }
+[data-theme="dark"] [class~="border-amber-300"]{ border-color: #5a4200 !important; }
+[data-theme="dark"] [class~="text-amber-900"]  { color: #fde68a !important; }
+[data-theme="dark"] [class~="text-amber-800"]  { color: #fcd34d !important; }
+[data-theme="dark"] [class~="text-amber-700"]  { color: #fbbf24 !important; }
+[data-theme="dark"] [class~="text-amber-600"]  { color: #f59e0b !important; }
+
+/* ── Green / success colours ── */
+[data-theme="dark"] [class~="bg-green-50"]     { background-color: #0a1a0e !important; }
+[data-theme="dark"] [class~="bg-green-100"]    { background-color: #0f2214 !important; }
+[data-theme="dark"] [class~="border-green-200"]{ border-color: #1a3d22 !important; }
+[data-theme="dark"] [class~="text-green-700"]  { color: #4ade80 !important; }
+[data-theme="dark"] [class~="text-green-600"]  { color: #34d399 !important; }
+
+/* ── Red border colours ── */
+[data-theme="dark"] [class~="border-red-100"]  { border-color: #3a1010 !important; }
+[data-theme="dark"] [class~="border-red-200"]  { border-color: #4a1515 !important; }
+[data-theme="dark"] [class~="border-red-300"]  { border-color: #5a1a1a !important; }
+
+/* ── Stone / neutral colours (used in Button ghost) ── */
+[data-theme="dark"] [class~="text-stone-700"]  { color: #d4d0cc !important; }
+[data-theme="dark"] [class~="bg-stone-100"]    { background-color: #242424 !important; }
+[data-theme="dark"] [class~="hover:bg-stone-100"]:hover { background-color: #2a2a2a !important; }
+
+/* ── Blue accent (used in some info cards) ── */
+[data-theme="dark"] [class~="bg-blue-50"]      { background-color: #0a0f1e !important; }
+[data-theme="dark"] [class~="border-blue-200"] { border-color: #1a2a4a !important; }
+[data-theme="dark"] [class~="text-blue-700"]   { color: #60a5fa !important; }
+
 /* ── Buttons that use gray backgrounds ── */
 [data-theme="dark"] [class~="bg-gray-100"][class~="hover:bg-gray-200"] {
   background-color: #242424 !important;
