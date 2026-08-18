@@ -44,34 +44,27 @@ export default async function HomePage() {
   return (
     <div className="bg-white">
 
-      {/* Hero */}
-      <IslandHero listingCount={stats.listings} />
-
-      {/* Categories */}
+      {/* Categories — above the fold */}
       <section className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-10">
-          <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <h2 className="font-display font-bold text-lg sm:text-xl text-gray-900">Shop by Category</h2>
-            <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">
-              View All →
-            </Link>
-          </div>
-          {/* 4-col on mobile with tighter padding, 8-col on sm+ */}
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2">
             {CATEGORIES.map((cat) => (
               <Link
                 key={cat.name}
                 href={`/listings?category=${encodeURIComponent(cat.name)}`}
-                className="ripple-chip group flex flex-col items-center gap-1.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-transparent hover:border-red-200 hover:bg-red-50 active:scale-95 transition-all duration-200 text-center"
+                className="ripple-chip group flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl border border-transparent hover:border-red-200 hover:bg-red-50 active:scale-95 transition-all duration-200 text-center"
               >
-                <cat.Icon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-red-500 transition-colors" strokeWidth={1.5} />
-                <span className="text-[10px] sm:text-xs font-medium text-gray-600 group-hover:text-red-600 leading-tight transition-colors">{cat.name}</span>
-                <span className="hidden sm:block text-xs text-gray-300 group-hover:text-red-300 transition-colors">{categoryCounts[cat.name] ?? 0}</span>
+                <cat.Icon className="w-5 h-5 sm:w-5 sm:h-5 text-gray-400 group-hover:text-red-500 transition-colors" strokeWidth={1.5} />
+                <span className="text-[10px] sm:text-[11px] font-medium text-gray-600 group-hover:text-red-600 leading-tight transition-colors">{cat.name}</span>
+                <span className="hidden sm:block text-[10px] text-gray-300 group-hover:text-red-300 transition-colors">{categoryCounts[cat.name] ?? 0}</span>
               </Link>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Hero */}
+      <IslandHero listingCount={stats.listings} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-10 space-y-8 sm:space-y-12">
 
