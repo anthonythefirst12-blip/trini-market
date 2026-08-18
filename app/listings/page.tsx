@@ -62,6 +62,7 @@ interface ListingsPageProps {
   searchParams: Promise<{
     q?: string;
     category?: string;
+    subcategory?: string;
     location?: string;
     minPrice?: string;
     maxPrice?: string;
@@ -74,12 +75,13 @@ interface ListingsPageProps {
 
 export default async function ListingsPage({ searchParams }: ListingsPageProps) {
   const params = await searchParams;
-  const { q, category, location, minPrice, maxPrice, condition, sort, view = "grid", page: pageParam } = params;
+  const { q, category, subcategory, location, minPrice, maxPrice, condition, sort, view = "grid", page: pageParam } = params;
   const page = Math.max(1, Number(pageParam ?? 1));
 
   const results = await getListings({
     q,
     category,
+    subcategory,
     location,
     minPrice: minPrice ? Number(minPrice) : undefined,
     maxPrice: maxPrice ? Number(maxPrice) : undefined,
@@ -95,6 +97,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
     const sp = new URLSearchParams();
     if (q) sp.set("q", q);
     if (category) sp.set("category", category);
+    if (subcategory) sp.set("subcategory", subcategory);
     if (location) sp.set("location", location);
     if (minPrice) sp.set("minPrice", minPrice);
     if (maxPrice) sp.set("maxPrice", maxPrice);
@@ -167,6 +170,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
               categories={CATEGORIES}
               locations={LOCATIONS}
               activeCategory={category}
+              activeSubcategory={subcategory}
               activeLocation={location}
               activeCondition={condition}
               activeSort={sort}
@@ -185,6 +189,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                   categories={CATEGORIES}
                   locations={LOCATIONS}
                   activeCategory={category}
+                  activeSubcategory={subcategory}
                   activeLocation={location}
                   activeCondition={condition}
                   activeSort={sort}
@@ -193,11 +198,12 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                   q={q}
                 />
               </div>
-              <SortSelect activeSort={sort} q={q} category={category} location={location} minPrice={minPrice} maxPrice={maxPrice} condition={condition} />
+              <SortSelect activeSort={sort} q={q} category={category} subcategory={subcategory} location={location} minPrice={minPrice} maxPrice={maxPrice} condition={condition} />
             </div>
             {/* Active filter chips */}
             <ActiveFilters
               category={category}
+              subcategory={subcategory}
               location={location}
               condition={condition}
               minPrice={minPrice}

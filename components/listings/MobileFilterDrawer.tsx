@@ -8,6 +8,7 @@ interface Props {
   categories: Category[];
   locations: string[];
   activeCategory?: string;
+  activeSubcategory?: string;
   activeLocation?: string;
   activeCondition?: string;
   activeSort?: string;
@@ -19,7 +20,7 @@ interface Props {
 export function MobileFilterDrawer(props: Props) {
   const [open, setOpen] = useState(false);
 
-  const activeCount = [props.activeCategory, props.activeLocation, props.activeCondition, props.activeSort, props.minPrice, props.maxPrice].filter(Boolean).length;
+  const activeCount = [props.activeCategory, props.activeSubcategory, props.activeLocation, props.activeCondition, props.activeSort, props.minPrice, props.maxPrice].filter(Boolean).length;
 
   return (
     <>

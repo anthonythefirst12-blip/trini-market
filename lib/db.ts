@@ -133,6 +133,7 @@ const PAGE_SIZE = 24;
 export async function getListings(filters?: {
   q?: string;
   category?: string;
+  subcategory?: string;
   location?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -171,6 +172,9 @@ export async function getListings(filters?: {
   }
   if (filters?.condition) {
     query = query.eq("condition", filters.condition);
+  }
+  if (filters?.subcategory) {
+    query = query.ilike("title", `%${filters.subcategory}%`);
   }
 
   const { data, error } = await query;

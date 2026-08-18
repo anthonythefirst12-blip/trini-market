@@ -12,10 +12,24 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High → Low" },
 ];
 
+const SUBCATEGORIES: Partial<Record<Category, string[]>> = {
+  Vehicles: [
+    "Toyota", "Nissan", "Honda", "Mitsubishi", "Hyundai",
+    "Mazda", "BMW", "Mercedes-Benz", "Ford", "Suzuki", "Kia", "Isuzu",
+  ],
+  "Real Estate": [
+    "Apartment", "House", "Land", "Townhouse", "Commercial", "Office Space",
+  ],
+  Electronics: [
+    "Phone", "Laptop", "Console", "Tablet", "TV", "Camera", "Headphones", "Desktop PC",
+  ],
+};
+
 interface FilterSidebarProps {
   categories: Category[];
   locations: string[];
   activeCategory?: string;
+  activeSubcategory?: string;
   activeLocation?: string;
   activeCondition?: string;
   activeSort?: string;
@@ -28,6 +42,7 @@ export function FilterSidebar({
   categories,
   locations,
   activeCategory,
+  activeSubcategory,
   activeLocation,
   activeCondition,
   activeSort,
@@ -52,6 +67,9 @@ export function FilterSidebar({
       } else {
         params.delete(key);
       }
+      // Reset subcategory when category changes
+      if (key === "category") params.delete("subcategory");
+      params.delete("page");
       router.push(`/listings?${params.toString()}`);
     },
     [router, searchParams]
@@ -64,7 +82,9 @@ export function FilterSidebar({
   };
 
   const isOtherActive = !!activeLocation && !locations.includes(activeLocation);
-  const hasFilters = !!(activeCategory || activeLocation || activeCondition || activeSort || minPrice || maxPrice || q);
+  const hasFilters = !!(activeCategory || activeSubcategory || activeLocation || activeCondition || activeSort || minPrice || maxPrice || q);
+
+  const subcategoryOptions = activeCategory ? SUBCATEGORIES[activeCategory as Category] : undefined;
 
   const sectionLabel = "text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2.5";
   const activeBtn = "bg-red-700 text-white font-semibold";
@@ -102,6 +122,30 @@ export function FilterSidebar({
         </ul>
       </div>
 
+      {/* Subcategory — only shown for Vehicles, Real Estate, Electronics */}
+      {subcategoryOptions && (
+        <>
+          <div className="border-t border-gray-200" />
+          <div>
+            <h4 className={sectionLabel}>
+              {activeCategory === "Vehicles" ? "Brand" : activeCategory === "Real Estate" ? "Type" : "Device"}
+            </h4>
+            <ul className="space-y-0.5">
+              {subcategoryOptions.map((sub) => (
+                <li key={sub}>
+                  <button
+                    onClick={() => updateParam("subcategory", activeSubcategory === sub ? undefined : sub)}
+                    className={[btn, activeSubcategory === sub ? activeBtn : inactiveBtn].join(" ")}
+                  >
+                    {sub}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )}
+
       {/* Divider */}
       <div className="border-t border-gray-200" />
 
@@ -117,6 +161,7 @@ export function FilterSidebar({
             const params = new URLSearchParams(searchParams.toString());
             if (min) params.set("minPrice", min); else params.delete("minPrice");
             if (max) params.set("maxPrice", max); else params.delete("maxPrice");
+            params.delete("page");
             router.push(`/listings?${params.toString()}`);
           }}
           className="space-y-2"

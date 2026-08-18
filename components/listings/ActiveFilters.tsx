@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 interface ActiveFiltersProps {
   category?: string;
+  subcategory?: string;
   location?: string;
   condition?: string;
   minPrice?: string;
@@ -22,11 +23,12 @@ function buildUrl(params: URLSearchParams, removeKey: string) {
   return `/listings${str ? `?${str}` : ""}`;
 }
 
-export function ActiveFilters({ category, location, condition, minPrice, maxPrice, q }: ActiveFiltersProps) {
+export function ActiveFilters({ category, subcategory, location, condition, minPrice, maxPrice, q }: ActiveFiltersProps) {
   const searchParams = useSearchParams();
 
   const chips: { label: string; key: string }[] = [];
   if (category) chips.push({ label: category, key: "category" });
+  if (subcategory) chips.push({ label: subcategory, key: "subcategory" });
   if (location) chips.push({ label: location, key: "location" });
   if (condition) chips.push({ label: condition, key: "condition" });
   if (minPrice || maxPrice) {

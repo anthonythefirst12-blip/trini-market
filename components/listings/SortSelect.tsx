@@ -13,19 +13,21 @@ interface SortSelectProps {
   activeSort?: string;
   q?: string;
   category?: string;
+  subcategory?: string;
   location?: string;
   minPrice?: string;
   maxPrice?: string;
   condition?: string;
 }
 
-export function SortSelect({ activeSort, q, category, location, minPrice, maxPrice, condition }: SortSelectProps) {
+export function SortSelect({ activeSort, q, category, subcategory, location, minPrice, maxPrice, condition }: SortSelectProps) {
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const sp = new URLSearchParams();
     if (q) sp.set("q", q);
     if (category) sp.set("category", category);
+    if (subcategory) sp.set("subcategory", subcategory);
     if (location) sp.set("location", location);
     if (minPrice) sp.set("minPrice", minPrice);
     if (maxPrice) sp.set("maxPrice", maxPrice);
