@@ -174,7 +174,9 @@ export async function getListings(filters?: {
     query = query.eq("condition", filters.condition);
   }
   if (filters?.subcategory) {
-    query = query.ilike("title", `%${filters.subcategory}%`);
+    // Match listings that have the subcategory in tags (new form) OR in the title (legacy)
+    const sub = filters.subcategory.replace(/'/g, "''");
+    query = query.or(`tags.cs.{${sub}},title.ilike.%${sub}%`);
   }
 
   const { data, error } = await query;

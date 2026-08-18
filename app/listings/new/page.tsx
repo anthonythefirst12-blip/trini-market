@@ -24,6 +24,77 @@ const CATEGORIES = [
 
 const CONDITIONS = ["New", "Like New", "Good", "Fair"];
 
+const SUBCATEGORIES: Record<string, { label: string; options: string[] }> = {
+  Vehicles: {
+    label: "Brand",
+    options: [
+      "Toyota", "Nissan", "Honda", "Mitsubishi", "Hyundai",
+      "Mazda", "BMW", "Mercedes-Benz", "Ford", "Suzuki",
+      "Kia", "Isuzu", "Jeep", "Land Rover", "Subaru",
+      "Volkswagen", "Audi", "Chevrolet", "Dodge", "RAM",
+      "Lexus", "Infiniti", "Porsche", "Peugeot", "Renault",
+      "Fiat", "Volvo", "Yamaha", "Kawasaki", "Bajaj", "TVS",
+      "Other",
+    ],
+  },
+  "Real Estate": {
+    label: "Type",
+    options: [
+      "Apartment", "House", "Land", "Townhouse", "Condo",
+      "Villa", "Studio", "Room for Rent", "Commercial Space",
+      "Office Space", "Warehouse", "Agricultural Land", "Other",
+    ],
+  },
+  Electronics: {
+    label: "Device",
+    options: [
+      "Smartphone", "Laptop", "Tablet", "Gaming Console", "Smart TV",
+      "Camera", "Headphones", "Desktop PC", "Smartwatch", "Printer",
+      "Speaker", "Monitor", "Router", "Accessories", "Other",
+    ],
+  },
+  Fashion: {
+    label: "Type",
+    options: [
+      "Men's Clothing", "Women's Clothing", "Shoes", "Bags & Accessories",
+      "Jewelry", "Watches", "Kids' Clothing", "Sportswear",
+      "Underwear & Swimwear", "Vintage & Thrift", "School Uniforms", "Other",
+    ],
+  },
+  "Food & Beverage": {
+    label: "Type",
+    options: [
+      "Homemade Food", "Catering Services", "Beverages", "Snacks",
+      "Groceries", "Baked Goods", "Spices & Sauces", "Restaurant Equipment", "Other",
+    ],
+  },
+  Services: {
+    label: "Service",
+    options: [
+      "Plumbing", "Electrical", "Carpentry", "Painting", "Cleaning",
+      "Landscaping", "Transportation", "IT & Tech Support", "Tutoring",
+      "Beauty & Wellness", "Photography", "Event Planning",
+      "Security", "Masonry & Construction", "Other",
+    ],
+  },
+  "Home & Garden": {
+    label: "Type",
+    options: [
+      "Furniture", "Appliances", "Garden Tools", "Home Decor", "Lighting",
+      "Bedding & Bath", "Kitchen Items", "Storage", "Tools & Equipment",
+      "Curtains & Blinds", "Other",
+    ],
+  },
+  "Sports & Outdoors": {
+    label: "Type",
+    options: [
+      "Gym Equipment", "Cycling", "Water Sports", "Football / Soccer",
+      "Cricket", "Basketball", "Outdoor & Camping", "Fishing",
+      "Martial Arts", "Golf", "Tennis / Racquet Sports", "Other",
+    ],
+  },
+};
+
 const LOCATIONS: { region: string; areas: string[] }[] = [
   {
     region: "Port of Spain & Environs",
@@ -146,6 +217,8 @@ export default function NewListingPage() {
   const [form, setForm] = useState({
     title: "",
     category: "",
+    subcategory: "",
+    customSubcategory: "",
     condition: "",
     price: "",
     currency: "TTD",
@@ -233,10 +306,15 @@ export default function NewListingPage() {
     }
 
     const listingId = `l${Date.now()}`;
-    const tagsArray = form.tags
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
+    const subcategoryValue =
+      form.subcategory === "Other"
+        ? form.customSubcategory.trim()
+        : form.subcategory;
+
+    const tagsArray = [
+      ...(subcategoryValue ? [subcategoryValue] : []),
+      ...form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+    ];
 
     const { error } = await supabase.from("listings").insert({
       id: listingId,
@@ -338,7 +416,7 @@ export default function NewListingPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
                   <select
                     value={form.category}
-                    onChange={(e) => update("category", e.target.value)}
+                    onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value, subcategory: "", customSubcategory: "" }))}
                     className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                   >
                     <option value="">Select category</option>
@@ -357,6 +435,36 @@ export default function NewListingPage() {
                   </select>
                 </div>
               </div>
+
+              {/* Subcategory — optional, appears when a category with subcategories is selected */}
+              {form.category && SUBCATEGORIES[form.category] && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {SUBCATEGORIES[form.category].label}
+                    <span className="ml-1.5 text-xs font-normal text-gray-400">optional</span>
+                  </label>
+                  <select
+                    value={form.subcategory}
+                    onChange={(e) => setForm((prev) => ({ ...prev, subcategory: e.target.value, customSubcategory: "" }))}
+                    className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
+                  >
+                    <option value="">— Select {SUBCATEGORIES[form.category].label.toLowerCase()} —</option>
+                    {SUBCATEGORIES[form.category].options.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                  {form.subcategory === "Other" && (
+                    <input
+                      type="text"
+                      value={form.customSubcategory}
+                      onChange={(e) => update("customSubcategory", e.target.value)}
+                      placeholder={`Specify ${SUBCATEGORIES[form.category].label.toLowerCase()}…`}
+                      maxLength={60}
+                      className="mt-2 w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    />
+                  )}
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Price *</label>

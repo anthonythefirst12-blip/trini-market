@@ -12,17 +12,75 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High → Low" },
 ];
 
-const SUBCATEGORIES: Partial<Record<Category, string[]>> = {
-  Vehicles: [
-    "Toyota", "Nissan", "Honda", "Mitsubishi", "Hyundai",
-    "Mazda", "BMW", "Mercedes-Benz", "Ford", "Suzuki", "Kia", "Isuzu",
-  ],
-  "Real Estate": [
-    "Apartment", "House", "Land", "Townhouse", "Commercial", "Office Space",
-  ],
-  Electronics: [
-    "Phone", "Laptop", "Console", "Tablet", "TV", "Camera", "Headphones", "Desktop PC",
-  ],
+// "Other" excluded from filter sidebar (no meaningful ilike/tag match)
+const SUBCATEGORIES: Partial<Record<Category, { label: string; options: string[] }>> = {
+  Vehicles: {
+    label: "Brand",
+    options: [
+      "Toyota", "Nissan", "Honda", "Mitsubishi", "Hyundai",
+      "Mazda", "BMW", "Mercedes-Benz", "Ford", "Suzuki",
+      "Kia", "Isuzu", "Jeep", "Land Rover", "Subaru",
+      "Volkswagen", "Audi", "Chevrolet", "Dodge", "RAM",
+      "Lexus", "Infiniti", "Porsche", "Peugeot", "Renault",
+      "Fiat", "Volvo", "Yamaha", "Kawasaki", "Bajaj", "TVS",
+    ],
+  },
+  "Real Estate": {
+    label: "Type",
+    options: [
+      "Apartment", "House", "Land", "Townhouse", "Condo",
+      "Villa", "Studio", "Room for Rent", "Commercial Space",
+      "Office Space", "Warehouse", "Agricultural Land",
+    ],
+  },
+  Electronics: {
+    label: "Device",
+    options: [
+      "Smartphone", "Laptop", "Tablet", "Gaming Console", "Smart TV",
+      "Camera", "Headphones", "Desktop PC", "Smartwatch", "Printer",
+      "Speaker", "Monitor", "Router", "Accessories",
+    ],
+  },
+  Fashion: {
+    label: "Type",
+    options: [
+      "Men's Clothing", "Women's Clothing", "Shoes", "Bags & Accessories",
+      "Jewelry", "Watches", "Kids' Clothing", "Sportswear",
+      "Underwear & Swimwear", "Vintage & Thrift", "School Uniforms",
+    ],
+  },
+  "Food & Beverage": {
+    label: "Type",
+    options: [
+      "Homemade Food", "Catering Services", "Beverages", "Snacks",
+      "Groceries", "Baked Goods", "Spices & Sauces", "Restaurant Equipment",
+    ],
+  },
+  Services: {
+    label: "Service",
+    options: [
+      "Plumbing", "Electrical", "Carpentry", "Painting", "Cleaning",
+      "Landscaping", "Transportation", "IT & Tech Support", "Tutoring",
+      "Beauty & Wellness", "Photography", "Event Planning",
+      "Security", "Masonry & Construction",
+    ],
+  },
+  "Home & Garden": {
+    label: "Type",
+    options: [
+      "Furniture", "Appliances", "Garden Tools", "Home Decor", "Lighting",
+      "Bedding & Bath", "Kitchen Items", "Storage", "Tools & Equipment",
+      "Curtains & Blinds",
+    ],
+  },
+  "Sports & Outdoors": {
+    label: "Type",
+    options: [
+      "Gym Equipment", "Cycling", "Water Sports", "Football / Soccer",
+      "Cricket", "Basketball", "Outdoor & Camping", "Fishing",
+      "Martial Arts", "Golf", "Tennis / Racquet Sports",
+    ],
+  },
 };
 
 interface FilterSidebarProps {
@@ -67,7 +125,6 @@ export function FilterSidebar({
       } else {
         params.delete(key);
       }
-      // Reset subcategory when category changes
       if (key === "category") params.delete("subcategory");
       params.delete("page");
       router.push(`/listings?${params.toString()}`);
@@ -83,8 +140,7 @@ export function FilterSidebar({
 
   const isOtherActive = !!activeLocation && !locations.includes(activeLocation);
   const hasFilters = !!(activeCategory || activeSubcategory || activeLocation || activeCondition || activeSort || minPrice || maxPrice || q);
-
-  const subcategoryOptions = activeCategory ? SUBCATEGORIES[activeCategory as Category] : undefined;
+  const subcategoryDef = activeCategory ? SUBCATEGORIES[activeCategory as Category] : undefined;
 
   const sectionLabel = "text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2.5";
   const activeBtn = "bg-red-700 text-white font-semibold";
@@ -96,10 +152,7 @@ export function FilterSidebar({
       <div className="flex items-center justify-between">
         <h3 className="font-display font-bold text-sm text-gray-900">Filters</h3>
         {hasFilters && (
-          <button
-            onClick={clearAll}
-            className="text-xs text-red-700 hover:text-red-900 transition-colors focus-visible:outline-none rounded"
-          >
+          <button onClick={clearAll} className="text-xs text-red-700 hover:text-red-900 transition-colors focus-visible:outline-none rounded">
             Clear all
           </button>
         )}
@@ -122,16 +175,14 @@ export function FilterSidebar({
         </ul>
       </div>
 
-      {/* Subcategory — only shown for Vehicles, Real Estate, Electronics */}
-      {subcategoryOptions && (
+      {/* Subcategory — shown for all categories that have options */}
+      {subcategoryDef && (
         <>
           <div className="border-t border-gray-200" />
           <div>
-            <h4 className={sectionLabel}>
-              {activeCategory === "Vehicles" ? "Brand" : activeCategory === "Real Estate" ? "Type" : "Device"}
-            </h4>
-            <ul className="space-y-0.5">
-              {subcategoryOptions.map((sub) => (
+            <h4 className={sectionLabel}>{subcategoryDef.label}</h4>
+            <ul className="space-y-0.5 max-h-56 overflow-y-auto pr-1">
+              {subcategoryDef.options.map((sub) => (
                 <li key={sub}>
                   <button
                     onClick={() => updateParam("subcategory", activeSubcategory === sub ? undefined : sub)}
@@ -146,7 +197,6 @@ export function FilterSidebar({
         </>
       )}
 
-      {/* Divider */}
       <div className="border-t border-gray-200" />
 
       {/* Price range */}
@@ -243,7 +293,6 @@ export function FilterSidebar({
               </button>
             </li>
           ))}
-          {/* Other option */}
           <li>
             <button
               onClick={() => {
@@ -262,9 +311,7 @@ export function FilterSidebar({
             className="mt-2 flex gap-2"
             onSubmit={(e) => {
               e.preventDefault();
-              if (otherLocation.trim()) {
-                updateParam("location", otherLocation.trim());
-              }
+              if (otherLocation.trim()) updateParam("location", otherLocation.trim());
             }}
           >
             <input
@@ -274,10 +321,7 @@ export function FilterSidebar({
               className="flex-1 px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               autoFocus
             />
-            <button
-              type="submit"
-              className="px-3 py-1.5 bg-red-700 text-white text-xs font-semibold rounded-lg hover:bg-red-800 transition-colors"
-            >
+            <button type="submit" className="px-3 py-1.5 bg-red-700 text-white text-xs font-semibold rounded-lg hover:bg-red-800 transition-colors">
               Go
             </button>
           </form>
