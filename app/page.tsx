@@ -154,7 +154,7 @@ export default async function HomePage() {
 
             {/* CTA */}
             <Link
-              href="/businesses"
+              href="/pricing?tab=storefront"
               className="shrink-0 inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors"
             >
               Get Started

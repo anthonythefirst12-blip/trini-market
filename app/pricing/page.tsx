@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { PageHero } from "@/components/ui/PageHero";
 import { Zap, Store, TrendingUp, ImageIcon, LayoutGrid, BadgeCheck, BookOpen, BarChart2, Headphones } from "lucide-react";
 
@@ -44,7 +45,10 @@ const storefrontFaqs = [
 const businessTags = ["Car Dealerships", "Real Estate Firms", "Auto Parts Shops", "Construction Companies", "Clothing Stores", "Restaurants & Catering", "Service Companies", "Electronics Retailers"];
 
 export default function PricingPage() {
-  const [tab, setTab] = useState<"boost" | "storefront">("boost");
+  const searchParams = useSearchParams();
+  const [tab, setTab] = useState<"boost" | "storefront">(
+    searchParams.get("tab") === "storefront" ? "storefront" : "boost"
+  );
 
   return (
     <div className="pricing-page min-h-screen">
