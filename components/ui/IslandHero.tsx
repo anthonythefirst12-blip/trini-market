@@ -185,7 +185,7 @@ export function IslandHero({ listingCount = 0 }: Props) {
           }} />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[52vh] w-full max-w-7xl flex-col px-5 pb-6 pt-12 sm:px-8 sm:pt-16 lg:min-h-[60vh] lg:px-10 lg:pt-20">
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col px-5 pb-6 pt-8 sm:px-8 sm:pt-12 lg:px-10 lg:pt-14">
 
         {/* Eyebrow */}
         <div className="im-reveal mb-5 flex flex-wrap items-center gap-3 lg:mb-8" style={{ ["--im-delay" as string]: "0.05s" }}>
@@ -365,30 +365,6 @@ export function IslandHero({ listingCount = 0 }: Props) {
           </div>
         </div>
 
-        {/* Marquee */}
-        <div className="im-reveal relative mt-4 overflow-hidden border-t pt-4 lg:mt-8 lg:pt-5"
-          style={{
-            ["--im-delay" as string]: "0.9s",
-            borderColor: "var(--ih-border)",
-            maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
-            WebkitMaskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
-          }}
-          aria-hidden="true">
-          <div className="im-marquee-track items-center gap-8 py-1">
-            {Array.from({ length: 2 }).map((_, dup) => (
-              <div key={dup} className="flex items-center gap-8">
-                {["Vehicles", "Real Estate", "Tech & Gadgets", "Local Food", "Services", "Fashion", "Home & Garden"].map((c) => (
-                  <span key={`${dup}-${c}`}
-                    className="flex items-center gap-8 whitespace-nowrap font-[family-name:var(--font-island-display)] text-sm font-semibold uppercase tracking-widest"
-                    style={{ color: "var(--ih-muted)" }}>
-                    {c}
-                    <span className="h-1.5 w-1.5 rounded-full inline-block" style={{ backgroundColor: "var(--ih-red)" }} />
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );

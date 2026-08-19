@@ -19,7 +19,7 @@ import { getPremiumListings, getFeaturedListings, getRecentListings, getCategory
 import { ListingCard } from "@/components/listings/ListingCard";
 import { RecentlyViewed } from "@/components/home/RecentlyViewed";
 import { IslandHero } from "@/components/ui/IslandHero";
-import { Laptop, Car, Home, Shirt, UtensilsCrossed, Wrench, Sofa, Bike, TrendingUp, Store, BadgeCheck, ArrowRight } from "lucide-react";
+import { Laptop, Car, Home, Shirt, UtensilsCrossed, Wrench, Sofa, Bike, TrendingUp, Store, ArrowRight } from "lucide-react";
 
 const CATEGORIES = [
   { name: "Electronics",       Icon: Laptop,          color: "text-violet-500", hover: "hover:border-violet-200 hover:bg-violet-50", hoverText: "group-hover:text-violet-600", hoverCount: "group-hover:text-violet-300" },
@@ -67,73 +67,44 @@ export default async function HomePage() {
       {/* Hero */}
       <IslandHero listingCount={stats.listings} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-10 space-y-8 sm:space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-10">
 
-        {/* Trending This Week */}
-        {trending.length >= 3 && (
-          <section>
-            <div className="flex items-center justify-between mb-5">
-              <div>
-                <div className="flex items-center gap-2 mb-0.5">
-                  <TrendingUp className="w-5 h-5 text-red-600" strokeWidth={1.5} />
-                  <h2 className="font-display font-bold text-xl text-gray-900">Trending This Week</h2>
+        {/* Top Picks — premium + featured + trending merged, max 4 */}
+        {(() => {
+          const topPicks = [...premium, ...featured, ...trending.filter(t => !premium.find(p => p.id === t.id) && !featured.find(f => f.id === t.id))].slice(0, 4);
+          if (topPicks.length === 0) return null;
+          return (
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-red-600" strokeWidth={1.5} />
+                  <h2 className="font-display font-bold text-lg text-gray-900">Top Picks</h2>
                 </div>
-                <p className="text-sm text-gray-400">Most viewed listings right now</p>
+                <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">View all →</Link>
               </div>
-              <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">View all →</Link>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {trending.map((l) => <ListingCard key={l.id} listing={l} />)}
-            </div>
-          </section>
-        )}
-
-        {/* Premium */}
-        {premium.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-2">
-                <h2 className="font-display font-bold text-xl text-gray-900">Premium Picks</h2>
-                <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">★ Premium</span>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {topPicks.map((l) => <ListingCard key={l.id} listing={l} />)}
               </div>
-              <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">View all →</Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {premium.map((l) => <ListingCard key={l.id} listing={l} />)}
-            </div>
-          </section>
-        )}
+            </section>
+          );
+        })()}
 
-        {/* Featured */}
-        {featured.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="font-display font-bold text-xl text-gray-900">Featured Listings</h2>
-              <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">View all →</Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {featured.map((l) => <ListingCard key={l.id} listing={l} />)}
-            </div>
-          </section>
-        )}
-
-        {/* Recent */}
+        {/* Recently Listed — main focus */}
         <section>
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-display font-bold text-xl text-gray-900">Recently Listed</h2>
-            <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">View all →</Link>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display font-bold text-lg text-gray-900">Recently Listed</h2>
+            <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">Browse all →</Link>
           </div>
           {recent.length === 0 ? (
             <div className="text-center py-16 bg-gray-50 rounded-2xl border border-gray-100">
-              <div className="text-4xl mb-3">🏪</div>
-              <p className="font-display font-semibold text-gray-700">No listings yet</p>
-              <p className="text-gray-400 text-sm mt-1 mb-5">Be the first to post something!</p>
-              <Link href="/listings/new" className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-red-700 hover:shadow-[0_0_20px_rgba(220,38,38,0.35)] active:scale-95 transition-all">
+              <p className="font-display font-semibold text-gray-700 mb-1">No listings yet</p>
+              <p className="text-gray-400 text-sm mb-5">Be the first to post something!</p>
+              <Link href="/listings/new" className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-red-700 active:scale-95 transition-all">
                 Post a Listing
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {recent.map((l) => <ListingCard key={l.id} listing={l} />)}
             </div>
           )}
@@ -145,94 +116,24 @@ export default async function HomePage() {
         <RecentlyViewed />
       </div>
 
-      {/* Business Storefront Promo */}
-      <section className="border-t border-gray-100 mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-8 py-12 sm:px-14 sm:py-14">
-            {/* subtle red glow top-right */}
-            <div className="absolute top-0 right-0 w-72 h-72 bg-red-600/20 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-red-800/10 rounded-full blur-2xl pointer-events-none" />
-
-            <div className="relative flex flex-col lg:flex-row items-start lg:items-center gap-10">
-              {/* Left — copy */}
-              <div className="flex-1 min-w-0">
-                <div className="inline-flex items-center gap-2 bg-red-600/20 text-red-400 text-xs font-bold px-3 py-1 rounded-full border border-red-500/30 mb-4">
-                  <Store className="w-3.5 h-3.5" strokeWidth={2} />
-                  Business Storefront
-                </div>
-                <h2 className="font-display font-bold text-2xl sm:text-3xl text-white mb-3 leading-tight">
-                  Your brand, your storefront.<br className="hidden sm:block" /> Right here on TriniSell.
-                </h2>
-                <p className="text-gray-400 text-sm sm:text-base max-w-lg mb-6">
-                  Dealerships, real estate agencies, tech stores, and service businesses — get a verified branded page that puts your listings front and centre for serious buyers.
-                </p>
-                <ul className="space-y-2 mb-8">
-                  {[
-                    "Verified Business badge builds buyer trust",
-                    "Listed in the Business Directory",
-                    "Branded profile with logo, banner & bio",
-                    "All your listings under one storefront URL",
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-2 text-sm text-gray-300">
-                      <BadgeCheck className="w-4 h-4 text-red-500 shrink-0" strokeWidth={2} />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <Link
-                    href="/businesses"
-                    className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-colors"
-                  >
-                    Get Your Storefront
-                    <ArrowRight className="w-4 h-4" strokeWidth={2} />
-                  </Link>
-                  <Link
-                    href="/businesses"
-                    className="inline-flex items-center gap-2 border border-white/20 text-gray-300 hover:text-white hover:border-white/40 font-semibold text-sm px-6 py-3 rounded-xl transition-colors"
-                  >
-                    Browse Businesses
-                  </Link>
-                </div>
-              </div>
-
-              {/* Right — business type chips */}
-              <div className="shrink-0 w-full lg:w-60 grid grid-cols-2 lg:grid-cols-1 gap-2">
-                {[
-                  { icon: Car, label: "Car Dealerships", color: "text-blue-400" },
-                  { icon: Home, label: "Real Estate Agencies", color: "text-emerald-400" },
-                  { icon: Laptop, label: "Tech Stores", color: "text-violet-400" },
-                  { icon: Wrench, label: "Service Businesses", color: "text-gray-400" },
-                ].map(({ icon: Icon, label, color }) => (
-                  <div
-                    key={label}
-                    className="flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-xl px-3 py-2.5"
-                  >
-                    <Icon className={`w-4 h-4 shrink-0 ${color}`} strokeWidth={1.5} />
-                    <span className="text-xs font-medium text-gray-300 leading-tight">{label}</span>
-                  </div>
-                ))}
-              </div>
+      {/* Business Storefront — slim banner */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+        <Link
+          href="/businesses"
+          className="group flex items-center justify-between gap-4 bg-gray-900 hover:bg-gray-800 rounded-2xl px-6 py-4 transition-colors"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-600 shrink-0">
+              <Store className="w-4 h-4 text-white" strokeWidth={1.5} />
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-white leading-tight">Own a business?</p>
+              <p className="text-xs text-gray-400 truncate">Get a verified storefront — dealerships, agencies, tech stores &amp; more</p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* CTA banner */}
-      <section className="bg-gray-50 border-t border-gray-100 mt-8">
-        <div className="max-w-3xl mx-auto px-4 py-14 text-center">
-          <h2 className="font-display font-bold text-2xl sm:text-3xl text-gray-900 mb-3">
-            Ready to sell something?
-          </h2>
-          <p className="text-gray-500 mb-7">Post your listing in minutes. Reach buyers across T&amp;T for free.</p>
-          <Link
-            href="/listings/new"
-            className="inline-flex items-center gap-2 bg-red-600 text-white font-bold px-8 py-3.5 rounded-full hover:bg-red-700 hover:shadow-[0_0_24px_rgba(220,38,38,0.4)] active:scale-95 transition-all duration-200"
-          >
-            + Post a Free Listing
-          </Link>
-        </div>
-      </section>
+          <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-white shrink-0 transition-colors" strokeWidth={2} />
+        </Link>
+      </div>
     </div>
   );
 }
