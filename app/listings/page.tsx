@@ -31,6 +31,7 @@ import { Category } from "@/lib/types";
 import Link from "next/link";
 import { MobileFilterDrawer } from "@/components/listings/MobileFilterDrawer";
 import { CategoryHero } from "@/components/listings/CategoryHero";
+import { Car, Home, Laptop, Shirt, UtensilsCrossed, Wrench, Sofa, Dumbbell } from "lucide-react";
 
 const CATEGORIES: Category[] = [
   "Electronics",
@@ -42,6 +43,18 @@ const CATEGORIES: Category[] = [
   "Home & Garden",
   "Sports & Outdoors",
 ];
+
+// Colours mirror CategoryHero gradients — active bg, active text, inactive icon tint
+const CAT_COLOR: Record<Category, { icon: React.ElementType; active: string; inactive: string; dot: string }> = {
+  Electronics:      { icon: Laptop,          active: "bg-violet-600 border-violet-600 text-white",   inactive: "text-violet-500 border-violet-200 hover:border-violet-400 hover:text-violet-700 hover:bg-violet-50", dot: "bg-violet-400" },
+  Vehicles:         { icon: Car,             active: "bg-blue-600 border-blue-600 text-white",       inactive: "text-blue-500 border-blue-200 hover:border-blue-400 hover:text-blue-700 hover:bg-blue-50",          dot: "bg-blue-400" },
+  "Real Estate":    { icon: Home,            active: "bg-emerald-600 border-emerald-600 text-white", inactive: "text-emerald-600 border-emerald-200 hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50", dot: "bg-emerald-400" },
+  Fashion:          { icon: Shirt,           active: "bg-pink-600 border-pink-600 text-white",       inactive: "text-pink-500 border-pink-200 hover:border-pink-400 hover:text-pink-700 hover:bg-pink-50",          dot: "bg-pink-400" },
+  "Food & Beverage":{ icon: UtensilsCrossed, active: "bg-orange-500 border-orange-500 text-white",   inactive: "text-orange-500 border-orange-200 hover:border-orange-400 hover:text-orange-700 hover:bg-orange-50", dot: "bg-orange-400" },
+  Services:         { icon: Wrench,          active: "bg-gray-700 border-gray-700 text-white",       inactive: "text-gray-500 border-gray-300 hover:border-gray-500 hover:text-gray-700 hover:bg-gray-100",         dot: "bg-gray-400" },
+  "Home & Garden":  { icon: Sofa,            active: "bg-green-600 border-green-600 text-white",     inactive: "text-green-600 border-green-200 hover:border-green-400 hover:text-green-700 hover:bg-green-50",     dot: "bg-green-400" },
+  "Sports & Outdoors":{ icon: Dumbbell,      active: "bg-cyan-600 border-cyan-600 text-white",       inactive: "text-cyan-600 border-cyan-200 hover:border-cyan-400 hover:text-cyan-700 hover:bg-cyan-50",         dot: "bg-cyan-400" },
+};
 
 const LOCATIONS = [
   "Port of Spain",
@@ -143,20 +156,24 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             >
               All
             </Link>
-            {CATEGORIES.map((cat) => (
-              <Link
-                key={cat}
-                href={`/listings?category=${encodeURIComponent(cat)}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
-                className={[
-                  "inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all",
-                  category === cat
-                    ? "bg-red-600 border-red-600 text-white"
-                    : "border-gray-300 text-gray-600 hover:border-red-600 hover:text-red-600 bg-white",
-                ].join(" ")}
-              >
-                {cat}
-              </Link>
-            ))}
+            {CATEGORIES.map((cat) => {
+              const meta = CAT_COLOR[cat];
+              const Icon = meta.icon;
+              const isActive = category === cat;
+              return (
+                <Link
+                  key={cat}
+                  href={`/listings?category=${encodeURIComponent(cat)}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
+                  className={[
+                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all bg-white",
+                    isActive ? meta.active : meta.inactive,
+                  ].join(" ")}
+                >
+                  <Icon size={11} strokeWidth={2} />
+                  {cat}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
