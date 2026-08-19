@@ -10,7 +10,7 @@ import type { User } from "@supabase/supabase-js";
 import {
   Home, ClipboardList, Zap, MessageCircle, Eye, CheckCircle2,
   Plus, Store, Settings, ArrowUp, RefreshCw, Clock, Trash2,
-  Package, BarChart2,
+  Package, BarChart2, UserCircle, X,
 } from "lucide-react";
 
 type Tab = "home" | "listings" | "subscriptions" | "inquiries";
@@ -68,6 +68,8 @@ function DashboardContent() {
   const [toast, setToast] = useState<string | null>(
     justPosted ? "🎉 Listing posted successfully!" : justEdited ? "✅ Listing updated." : null
   );
+  const [sellerProfile, setSellerProfile] = useState<{name:string|null, avatar:string|null, bio:string|null, location:string|null} | null>(null);
+  const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -79,13 +81,15 @@ function DashboardContent() {
     const { data: { user: u } } = await supabase.auth.getUser();
     if (!u) { setLoading(false); return; }
     setUser(u);
-    const [listingsRes, subsRes] = await Promise.all([
+    const [listingsRes, subsRes, profileRes] = await Promise.all([
       supabase.from("listings").select("id, title, price, currency, category, location, images, tier, created_at, expires_at, sold, views")
         .eq("user_id", u.id).order("created_at", { ascending: false }),
       supabase.from("subscriptions").select("*, listings(title)").eq("user_id", u.id).order("created_at", { ascending: false }),
+      supabase.from("sellers").select("name, avatar, bio, location").eq("id", u.id).maybeSingle(),
     ]);
     setListings(listingsRes.data ?? []);
     setSubscriptions(subsRes.data ?? []);
+    setSellerProfile(profileRes.data ?? null);
     setLoading(false);
   }, []);
 
@@ -248,6 +252,32 @@ function DashboardContent() {
         {toast && (
           <div className="mb-6 px-4 py-3 rounded-xl text-sm font-medium bg-green-50 border border-green-200 text-green-700 flex items-center gap-2">
             {toast}
+          </div>
+        )}
+
+        {/* Onboarding banner */}
+        {!dismissedOnboarding && sellerProfile && (!sellerProfile.avatar || !sellerProfile.bio || !sellerProfile.location) && (
+          <div className="mb-5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-2xl p-4 flex items-start gap-3">
+            <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0 mt-0.5">
+              <UserCircle size={16} className="text-amber-600" strokeWidth={1.5} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-amber-900 dark:text-amber-300 text-sm">Complete your profile</p>
+              <p className="text-amber-700 dark:text-amber-400 text-xs mt-0.5">Add a photo, bio and location to build trust with buyers.</p>
+              <div className="flex gap-2 mt-3">
+                {!sellerProfile.avatar && <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2.5 py-1 rounded-full font-medium">📷 Photo</span>}
+                {!sellerProfile.location && <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2.5 py-1 rounded-full font-medium">📍 Location</span>}
+                {!sellerProfile.bio && <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2.5 py-1 rounded-full font-medium">✍️ Bio</span>}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link href="/profile/edit" className="text-xs font-semibold text-amber-700 hover:text-amber-900 bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:hover:bg-amber-800/50 px-3 py-1.5 rounded-lg transition-colors">
+                Edit Profile
+              </Link>
+              <button onClick={() => setDismissedOnboarding(true)} className="text-amber-400 hover:text-amber-600 transition-colors">
+                <X size={16} strokeWidth={1.5} />
+              </button>
+            </div>
           </div>
         )}
 
@@ -558,7 +588,7 @@ function DashboardContent() {
                         </button>
                       )}
                       {(listing.tier === "free" || !listing.tier) && !listing.sold && (
-                        <Link href="/pricing">
+                        <Link href={`/boost/${listing.id}`}>
                           <button className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white transition-all">
                             <Zap size={11} />Boost
                           </button>
