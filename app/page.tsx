@@ -45,27 +45,32 @@ export default async function HomePage() {
   return (
     <div className="bg-white">
 
-      {/* Categories — above the fold */}
-      <section className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2">
-            {CATEGORIES.map((cat) => (
-              <Link
-                key={cat.name}
-                href={`/listings?category=${encodeURIComponent(cat.name)}`}
-                className={`ripple-chip group flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl border border-transparent ${cat.hover} active:scale-95 transition-all duration-200 text-center`}
-              >
-                <cat.Icon className={`w-5 h-5 sm:w-5 sm:h-5 ${cat.color} transition-colors`} strokeWidth={1.5} />
-                <span className={`text-[10px] sm:text-[11px] font-medium text-gray-600 ${cat.hoverText} leading-tight transition-colors`}>{cat.name}</span>
-                <span className={`hidden sm:block text-[10px] text-gray-300 ${cat.hoverCount} transition-colors`}>{categoryCounts[cat.name] ?? 0}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Hero + Categories — reversed on mobile so hero appears first */}
+      <div className="flex flex-col-reverse sm:flex-col">
 
-      {/* Hero */}
-      <IslandHero listingCount={stats.listings} />
+        {/* Categories */}
+        <section className="bg-white border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2">
+              {CATEGORIES.map((cat) => (
+                <Link
+                  key={cat.name}
+                  href={`/listings?category=${encodeURIComponent(cat.name)}`}
+                  className={`ripple-chip group flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl border border-transparent ${cat.hover} active:scale-95 transition-all duration-200 text-center`}
+                >
+                  <cat.Icon className={`w-5 h-5 sm:w-5 sm:h-5 ${cat.color} transition-colors`} strokeWidth={1.5} />
+                  <span className={`text-[10px] sm:text-[11px] font-medium text-gray-600 ${cat.hoverText} leading-tight transition-colors`}>{cat.name}</span>
+                  <span className={`hidden sm:block text-[10px] text-gray-300 ${cat.hoverCount} transition-colors`}>{categoryCounts[cat.name] ?? 0}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Hero */}
+        <IslandHero listingCount={stats.listings} />
+
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-10">
 
