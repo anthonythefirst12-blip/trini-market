@@ -116,23 +116,47 @@ export default async function HomePage() {
         <RecentlyViewed />
       </div>
 
-      {/* Business Storefront — slim banner */}
+      {/* Business Storefront — mid banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
-        <Link
-          href="/businesses"
-          className="group flex items-center justify-between gap-4 bg-gray-900 hover:bg-gray-800 rounded-2xl px-6 py-4 transition-colors"
-        >
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-600 shrink-0">
-              <Store className="w-4 h-4 text-white" strokeWidth={1.5} />
+        <div className="relative overflow-hidden rounded-2xl bg-gray-900 px-6 py-8 sm:px-10 sm:py-9">
+          {/* glow */}
+          <div className="absolute -top-10 -right-10 w-56 h-56 bg-red-600/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-10">
+            {/* Icon */}
+            <span className="flex items-center justify-center w-12 h-12 rounded-xl bg-red-600 shrink-0">
+              <Store className="w-6 h-6 text-white" strokeWidth={1.5} />
             </span>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-white leading-tight">Own a business?</p>
-              <p className="text-xs text-gray-400 truncate">Get a verified storefront — dealerships, agencies, tech stores &amp; more</p>
+
+            {/* Copy */}
+            <div className="flex-1 min-w-0">
+              <p className="font-display font-bold text-white text-lg sm:text-xl mb-1">Own a business? Get your storefront.</p>
+              <p className="text-gray-400 text-sm mb-4">Dealerships, real estate agencies, tech stores &amp; service businesses — get a verified branded page and reach serious buyers across T&amp;T.</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { icon: Car,    label: "Dealerships",      color: "text-blue-400" },
+                  { icon: Home,   label: "Real Estate",      color: "text-emerald-400" },
+                  { icon: Laptop, label: "Tech Stores",      color: "text-violet-400" },
+                  { icon: Wrench, label: "Service Businesses", color: "text-gray-400" },
+                ].map(({ icon: Icon, label, color }) => (
+                  <span key={label} className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-medium text-gray-300">
+                    <Icon className={`w-3.5 h-3.5 ${color}`} strokeWidth={1.5} />
+                    {label}
+                  </span>
+                ))}
+              </div>
             </div>
+
+            {/* CTA */}
+            <Link
+              href="/businesses"
+              className="shrink-0 inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors"
+            >
+              Get Started
+              <ArrowRight className="w-4 h-4" strokeWidth={2} />
+            </Link>
           </div>
-          <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-white shrink-0 transition-colors" strokeWidth={2} />
-        </Link>
+        </div>
       </div>
     </div>
   );
