@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase-browser";
+import { DollarSign, X } from "lucide-react";
 
 interface Props {
   listingId: string;
@@ -64,22 +65,36 @@ export function MakeOfferButton({ listingId, sellerId, listingTitle, listingImag
     <>
       <button
         onClick={() => setOpen(true)}
-        className="w-full px-4 py-2.5 bg-white border-2 border-red-600 text-red-600 text-sm font-semibold rounded-lg hover:bg-red-50 active:scale-95 transition-all duration-200"
+        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border-2 border-red-600 text-red-600 text-sm font-semibold rounded-lg hover:bg-red-50 active:scale-95 transition-all duration-200 dark:bg-transparent dark:hover:bg-red-950/30"
       >
-        💬 Make an Offer
+        <DollarSign size={15} strokeWidth={2} />
+        Make an Offer
       </button>
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+          <div className="bg-white dark:bg-[#1c1c1c] rounded-2xl shadow-xl w-full max-w-sm p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display font-bold text-lg text-gray-900">Make an Offer</h2>
-              <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+              <h2 className="font-display font-bold text-lg text-gray-900 dark:text-white">Make an Offer</h2>
+              <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                <X size={18} strokeWidth={1.5} />
+              </button>
             </div>
 
-            <p className="text-gray-500 text-sm mb-4">
-              Asking price: <span className="font-semibold text-gray-800">{formatted}</span>
-            </p>
+            <div className="flex items-center justify-between mb-4 p-3 rounded-xl bg-gray-50 dark:bg-white/5">
+              <div>
+                <p className="text-xs text-gray-400 dark:text-gray-500">Asking price</p>
+                <p className="font-semibold text-gray-900 dark:text-white text-sm">{formatted}</p>
+              </div>
+              {offer && parseFloat(offer) > 0 && parseFloat(offer) < askingPrice && (
+                <div className="text-right">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">Your offer</p>
+                  <p className="font-semibold text-red-600 text-sm">
+                    -{Math.round((1 - parseFloat(offer) / askingPrice) * 100)}% below asking
+                  </p>
+                </div>
+              )}
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
@@ -91,18 +106,18 @@ export function MakeOfferButton({ listingId, sellerId, listingTitle, listingImag
                   value={offer}
                   onChange={(e) => setOffer(e.target.value)}
                   placeholder={`e.g. ${Math.round(askingPrice * 0.85)}`}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full border border-gray-200 dark:border-white/10 dark:bg-white/5 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Note (optional)</label>
+                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Note (optional)</label>
                 <textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Add a note to the seller…"
                   rows={2}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                  className="w-full border border-gray-200 dark:border-white/10 dark:bg-white/5 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
                 />
               </div>
               {error && <p className="text-red-600 text-xs">{error}</p>}

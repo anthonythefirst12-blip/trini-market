@@ -7,6 +7,17 @@ import { createClient } from "@/lib/supabase-browser";
 
 const CATEGORIES = ["Electronics","Vehicles","Real Estate","Fashion","Food & Beverage","Services","Home & Garden","Sports & Outdoors"];
 const CONDITIONS = ["New", "Like New", "Good", "Fair"];
+
+const SUBCATEGORIES: Record<string, { label: string; options: string[] }> = {
+  Vehicles: { label: "Brand", options: ["Toyota","Nissan","Honda","Mitsubishi","Hyundai","Mazda","BMW","Mercedes-Benz","Ford","Suzuki","Kia","Isuzu","Jeep","Land Rover","Subaru","Volkswagen","Audi","Chevrolet","Dodge","RAM","Lexus","Infiniti","Porsche","Peugeot","Renault","Fiat","Volvo","Yamaha","Kawasaki","Bajaj","TVS","Other"] },
+  "Real Estate": { label: "Type", options: ["Apartment","House","Land","Townhouse","Condo","Villa","Studio","Room for Rent","Commercial Space","Office Space","Warehouse","Agricultural Land","Other"] },
+  Electronics: { label: "Device", options: ["Smartphone","Laptop","Tablet","Gaming Console","Smart TV","Camera","Headphones","Desktop PC","Smartwatch","Printer","Speaker","Monitor","Router","Accessories","Other"] },
+  Fashion: { label: "Type", options: ["Men's Clothing","Women's Clothing","Shoes","Bags & Accessories","Jewelry","Watches","Kids' Clothing","Sportswear","Underwear & Swimwear","Vintage & Thrift","School Uniforms","Other"] },
+  "Food & Beverage": { label: "Type", options: ["Homemade Food","Catering Services","Beverages","Snacks","Groceries","Baked Goods","Spices & Sauces","Restaurant Equipment","Other"] },
+  Services: { label: "Service", options: ["Plumbing","Electrical","Carpentry","Painting","Cleaning","Landscaping","Transportation","IT & Tech Support","Tutoring","Beauty & Wellness","Photography","Event Planning","Security","Masonry & Construction","Other"] },
+  "Home & Garden": { label: "Type", options: ["Furniture","Appliances","Garden Tools","Home Decor","Lighting","Bedding & Bath","Kitchen Items","Storage","Tools & Equipment","Curtains & Blinds","Other"] },
+  "Sports & Outdoors": { label: "Type", options: ["Gym Equipment","Cycling","Water Sports","Football / Soccer","Cricket","Basketball","Outdoor & Camping","Fishing","Martial Arts","Golf","Tennis / Racquet Sports","Other"] },
+};
 const LOCATIONS: { region: string; areas: string[] }[] = [
   { region: "Port of Spain & Environs", areas: ["Port of Spain","Belmont","Cascade","Woodbrook","St. Clair","Newtown","St. James","Cocorite","Gonzales","Laventille","Morvant"] },
   { region: "East-West Corridor", areas: ["Barataria","San Juan","Curepe","St. Augustine","Tunapuna","Arouca","Trincity","Piarco","Arima","Sangre Grande"] },
@@ -30,7 +41,8 @@ export default function EditListingPage() {
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
   const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
   const [form, setForm] = useState({
-    title: "", category: "", condition: "", price: "", currency: "TTD",
+    title: "", category: "", subcategory: "", customSubcategory: "",
+    condition: "", price: "", currency: "TTD",
     location: "", negotiable: false, description: "", tags: "",
   });
 
@@ -55,16 +67,26 @@ export default function EditListingPage() {
       setUserId(user.id);
       setImages(data.images ?? []);
 
+      const category = data.category ?? "";
+      const rawTags: string[] = data.tags ?? [];
+      const subDef = SUBCATEGORIES[category];
+      const knownOptions = subDef ? subDef.options : [];
+      const firstTag = rawTags[0] ?? "";
+      const detectedSub = knownOptions.includes(firstTag) ? firstTag : "";
+      const remainingTags = detectedSub ? rawTags.slice(1) : rawTags;
+
       setForm({
         title: data.title ?? "",
-        category: data.category ?? "",
+        category,
+        subcategory: detectedSub,
+        customSubcategory: "",
         condition: data.condition ?? "",
         price: String(data.price ?? ""),
         currency: data.currency ?? "TTD",
         location: data.location ?? "",
         negotiable: data.negotiable ?? false,
         description: data.description ?? "",
-        tags: (data.tags ?? []).join(", "),
+        tags: remainingTags.join(", "),
       });
       setLoading(false);
     };
@@ -105,7 +127,11 @@ export default function EditListingPage() {
     }
 
     const finalImages = [...images, ...uploadedUrls];
-    const tagsArray = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
+    const subcategoryValue = form.subcategory === "Other" ? form.customSubcategory.trim() : form.subcategory;
+    const tagsArray = [
+      ...(subcategoryValue ? [subcategoryValue] : []),
+      ...form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+    ];
     const { error: err } = await supabase
       .from("listings")
       .update({
@@ -163,7 +189,7 @@ export default function EditListingPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
-              <select value={form.category} onChange={(e) => update("category", e.target.value)} className={selectCls}>
+              <select value={form.category} onChange={(e) => setForm((p) => ({ ...p, category: e.target.value, subcategory: "", customSubcategory: "" }))} className={selectCls}>
                 <option value="">Select…</option>
                 {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -176,6 +202,31 @@ export default function EditListingPage() {
               </select>
             </div>
           </div>
+
+          {form.category && SUBCATEGORIES[form.category] && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {SUBCATEGORIES[form.category].label}
+                <span className="ml-1.5 text-xs font-normal text-gray-400">optional</span>
+              </label>
+              <select value={form.subcategory} onChange={(e) => setForm((p) => ({ ...p, subcategory: e.target.value, customSubcategory: "" }))} className={selectCls}>
+                <option value="">— Select {SUBCATEGORIES[form.category].label.toLowerCase()} —</option>
+                {SUBCATEGORIES[form.category].options.map((opt) => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+              {form.subcategory === "Other" && (
+                <input
+                  type="text"
+                  value={form.customSubcategory}
+                  onChange={(e) => update("customSubcategory", e.target.value)}
+                  placeholder={`Specify ${SUBCATEGORIES[form.category].label.toLowerCase()}…`}
+                  maxLength={60}
+                  className={`mt-2 ${inputCls}`}
+                />
+              )}
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Price *</label>
