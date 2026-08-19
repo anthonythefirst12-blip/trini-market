@@ -53,12 +53,12 @@ export function SearchOverlay({ open, onClose }: Props) {
       const { data } = await supabase
         .from("listings")
         .select("id, title, price, currency, category, images")
-        .textSearch("fts", query.trim(), { type: "websearch", config: "english" })
-        .limit(7);
+        .ilike("title", `%${query.trim()}%`)
+        .limit(6);
       setResults(data ?? []);
       setActiveIdx(-1);
       setLoading(false);
-    }, 280);
+    }, 200);
     return () => clearTimeout(t);
   }, [query]);
 

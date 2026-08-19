@@ -240,6 +240,18 @@ export async function getFeaturedListings(): Promise<Listing[]> {
   return (data as ListingRow[]).map(mapListing);
 }
 
+export async function getTrendingListings(limit = 8): Promise<Listing[]> {
+  const { data, error } = await supabase
+    .from("listings")
+    .select("*, sellers(*)")
+    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+    .order("views", { ascending: false })
+    .gt("views", 0)
+    .limit(limit);
+  if (error) { console.error("getTrendingListings:", error.message); return []; }
+  return (data as ListingRow[]).map(mapListing);
+}
+
 export async function getRecentListings(limit = 6): Promise<Listing[]> {
   const { data, error } = await supabase
     .from("listings")

@@ -15,11 +15,11 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: "TriniSell", description: "Trinidad & Tobago's local marketplace." },
   alternates: { canonical: "https://trinisell.tt" },
 };
-import { getPremiumListings, getFeaturedListings, getRecentListings, getCategoryCounts, getSiteStats } from "@/lib/db";
+import { getPremiumListings, getFeaturedListings, getRecentListings, getCategoryCounts, getSiteStats, getTrendingListings } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { RecentlyViewed } from "@/components/home/RecentlyViewed";
 import { IslandHero } from "@/components/ui/IslandHero";
-import { Laptop, Car, Home, Shirt, UtensilsCrossed, Wrench, Sofa, Bike } from "lucide-react";
+import { Laptop, Car, Home, Shirt, UtensilsCrossed, Wrench, Sofa, Bike, TrendingUp } from "lucide-react";
 
 const CATEGORIES = [
   { name: "Electronics",       Icon: Laptop,          color: "text-violet-500", hover: "hover:border-violet-200 hover:bg-violet-50", hoverText: "group-hover:text-violet-600", hoverCount: "group-hover:text-violet-300" },
@@ -33,12 +33,13 @@ const CATEGORIES = [
 ];
 
 export default async function HomePage() {
-  const [premium, featured, recent, categoryCounts, stats] = await Promise.all([
+  const [premium, featured, recent, categoryCounts, stats, trending] = await Promise.all([
     getPremiumListings(),
     getFeaturedListings(),
     getRecentListings(8),
     getCategoryCounts(),
     getSiteStats(),
+    getTrendingListings(8),
   ]);
 
   return (
@@ -67,6 +68,25 @@ export default async function HomePage() {
       <IslandHero listingCount={stats.listings} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-10 space-y-8 sm:space-y-12">
+
+        {/* Trending This Week */}
+        {trending.length >= 3 && (
+          <section>
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <TrendingUp className="w-5 h-5 text-red-600" strokeWidth={1.5} />
+                  <h2 className="font-display font-bold text-xl text-gray-900">Trending This Week</h2>
+                </div>
+                <p className="text-sm text-gray-400">Most viewed listings right now</p>
+              </div>
+              <Link href="/listings" className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">View all →</Link>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {trending.map((l) => <ListingCard key={l.id} listing={l} />)}
+            </div>
+          </section>
+        )}
 
         {/* Premium */}
         {premium.length > 0 && (

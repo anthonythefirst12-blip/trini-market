@@ -293,3 +293,7 @@
 [data-theme="dark"] ::-webkit-scrollbar-track { background: #161616; }
 [data-theme="dark"] ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #444; }
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}

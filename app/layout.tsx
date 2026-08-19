@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { PingPresence } from "@/components/PingPresence";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -66,11 +67,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <ToastProvider>
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pb-[60px] md:pb-0">{children}</main>
             <Footer />
             <CookieBanner />
             <BackToTop />
             <PingPresence />
+            <MobileBottomNav />
           </ToastProvider>
         </ThemeProvider>
       </body>
