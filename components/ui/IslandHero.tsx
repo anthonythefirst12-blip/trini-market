@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Bricolage_Grotesque } from "next/font/google";
 import { gsap } from "gsap";
-import { ArrowUpRight, Car, Home, Cpu, UtensilsCrossed, Wrench, MapPin, Search } from "lucide-react";
+import { Car, Home, Cpu, UtensilsCrossed, Wrench, MapPin, Search } from "lucide-react";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -217,16 +217,10 @@ export function IslandHero({ listingCount = 0 }: Props) {
               </span>
             </h1>
 
-            <p className="im-reveal mt-4 max-w-md text-sm leading-relaxed sm:mt-7 sm:text-base lg:text-lg"
-              style={{ color: "var(--ih-muted)", ["--im-delay" as string]: "0.6s" }}>
-              <span className="font-semibold" style={{ color: "var(--ih-ink)" }}>TriniSell</span>{" "}
-              connects buyers and sellers across Trinidad &amp; Tobago — vehicles, real estate, tech, food, services and more.
-            </p>
-
             {/* Search */}
             <form action="/listings" method="GET" role="search" aria-label="Search listings"
-              className="im-reveal mt-5 flex max-w-md flex-col gap-2 sm:mt-8 sm:flex-row sm:gap-2.5"
-              style={{ ["--im-delay" as string]: "0.7s" }}>
+              className="im-reveal mt-5 flex max-w-md flex-col gap-2 sm:mt-6 sm:flex-row sm:gap-2.5"
+              style={{ ["--im-delay" as string]: "0.6s" }}>
               <div className="relative flex-1">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2"
                   style={{ color: "var(--ih-muted)" }} aria-hidden="true" />
@@ -254,32 +248,6 @@ export function IslandHero({ listingCount = 0 }: Props) {
                 Search
               </button>
             </form>
-
-            {/* CTA + counter */}
-            <div className="im-reveal mt-5 flex flex-wrap items-center gap-x-6 gap-y-4 sm:mt-9"
-              style={{ ["--im-delay" as string]: "0.8s" }}>
-              <a href="/listings/new"
-                className="group inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-base font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none"
-                style={{ background: "linear-gradient(135deg, var(--ih-red) 0%, var(--ih-red-deep) 100%)" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = "0 0 28px var(--ih-red-glow)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = ""; }}>
-                Start selling today.
-                <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
-              </a>
-
-              <div className="flex items-center gap-3">
-                <div className="font-[family-name:var(--font-island-display)] text-4xl font-extrabold tracking-tight"
-                  style={{ color: "var(--ih-ink)" }}>
-                  {count.toLocaleString("en-US")}
-                  <span style={{ color: "var(--ih-red)" }}>+</span>
-                </div>
-                <div className="text-xs font-semibold uppercase leading-tight tracking-[0.12em]"
-                  style={{ color: "var(--ih-muted)" }}>
-                  Active Listings<br />
-                  <span className="font-normal normal-case tracking-normal">updated daily</span>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Right: showcase card — hidden on mobile to keep hero compact */}
