@@ -22,14 +22,14 @@ import { IslandHero } from "@/components/ui/IslandHero";
 import { Laptop, Car, Home, Shirt, UtensilsCrossed, Wrench, Sofa, Bike } from "lucide-react";
 
 const CATEGORIES = [
-  { name: "Electronics", Icon: Laptop },
-  { name: "Vehicles", Icon: Car },
-  { name: "Real Estate", Icon: Home },
-  { name: "Fashion", Icon: Shirt },
-  { name: "Food & Beverage", Icon: UtensilsCrossed },
-  { name: "Services", Icon: Wrench },
-  { name: "Home & Garden", Icon: Sofa },
-  { name: "Sports & Outdoors", Icon: Bike },
+  { name: "Electronics",       Icon: Laptop,          color: "text-violet-500", hover: "hover:border-violet-200 hover:bg-violet-50", hoverText: "group-hover:text-violet-600", hoverCount: "group-hover:text-violet-300" },
+  { name: "Vehicles",          Icon: Car,             color: "text-blue-500",   hover: "hover:border-blue-200   hover:bg-blue-50",   hoverText: "group-hover:text-blue-600",   hoverCount: "group-hover:text-blue-300"   },
+  { name: "Real Estate",       Icon: Home,            color: "text-emerald-500",hover: "hover:border-emerald-200 hover:bg-emerald-50",hoverText: "group-hover:text-emerald-600",hoverCount: "group-hover:text-emerald-300"},
+  { name: "Fashion",           Icon: Shirt,           color: "text-pink-500",   hover: "hover:border-pink-200   hover:bg-pink-50",   hoverText: "group-hover:text-pink-600",   hoverCount: "group-hover:text-pink-300"   },
+  { name: "Food & Beverage",   Icon: UtensilsCrossed, color: "text-orange-500", hover: "hover:border-orange-200 hover:bg-orange-50", hoverText: "group-hover:text-orange-600", hoverCount: "group-hover:text-orange-300" },
+  { name: "Services",          Icon: Wrench,          color: "text-gray-400",   hover: "hover:border-gray-300   hover:bg-gray-100",  hoverText: "group-hover:text-gray-700",   hoverCount: "group-hover:text-gray-400"   },
+  { name: "Home & Garden",     Icon: Sofa,            color: "text-green-500",  hover: "hover:border-green-200  hover:bg-green-50",  hoverText: "group-hover:text-green-600",  hoverCount: "group-hover:text-green-300"  },
+  { name: "Sports & Outdoors", Icon: Bike,            color: "text-cyan-500",   hover: "hover:border-cyan-200   hover:bg-cyan-50",   hoverText: "group-hover:text-cyan-600",   hoverCount: "group-hover:text-cyan-300"   },
 ];
 
 export default async function HomePage() {
@@ -52,11 +52,11 @@ export default async function HomePage() {
               <Link
                 key={cat.name}
                 href={`/listings?category=${encodeURIComponent(cat.name)}`}
-                className="ripple-chip group flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl border border-transparent hover:border-red-200 hover:bg-red-50 active:scale-95 transition-all duration-200 text-center"
+                className={`ripple-chip group flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl border border-transparent ${cat.hover} active:scale-95 transition-all duration-200 text-center`}
               >
-                <cat.Icon className="w-5 h-5 sm:w-5 sm:h-5 text-gray-400 group-hover:text-red-500 transition-colors" strokeWidth={1.5} />
-                <span className="text-[10px] sm:text-[11px] font-medium text-gray-600 group-hover:text-red-600 leading-tight transition-colors">{cat.name}</span>
-                <span className="hidden sm:block text-[10px] text-gray-300 group-hover:text-red-300 transition-colors">{categoryCounts[cat.name] ?? 0}</span>
+                <cat.Icon className={`w-5 h-5 sm:w-5 sm:h-5 ${cat.color} transition-colors`} strokeWidth={1.5} />
+                <span className={`text-[10px] sm:text-[11px] font-medium text-gray-600 ${cat.hoverText} leading-tight transition-colors`}>{cat.name}</span>
+                <span className={`hidden sm:block text-[10px] text-gray-300 ${cat.hoverCount} transition-colors`}>{categoryCounts[cat.name] ?? 0}</span>
               </Link>
             ))}
           </div>
