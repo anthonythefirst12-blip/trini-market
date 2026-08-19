@@ -10,19 +10,18 @@ export default function AppleIcon() {
         style={{
           width: 180,
           height: 180,
-          borderRadius: 40,
-          background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+          borderRadius: 36,
+          background: "#dc2626",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           color: "white",
-          fontWeight: 700,
-          fontSize: 72,
-          fontFamily: "sans-serif",
-          letterSpacing: "-2px",
+          fontSize: 120,
+          fontWeight: 900,
+          fontFamily: "serif",
         }}
       >
-        TM
+        T
       </div>
     ),
     { ...size }

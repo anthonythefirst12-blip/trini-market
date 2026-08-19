@@ -11,18 +11,17 @@ export default function Icon() {
           width: 32,
           height: 32,
           borderRadius: 8,
-          background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+          background: "#dc2626",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           color: "white",
-          fontWeight: 700,
-          fontSize: 14,
-          fontFamily: "sans-serif",
-          letterSpacing: "-0.5px",
+          fontSize: 22,
+          fontWeight: 900,
+          fontFamily: "serif",
         }}
       >
-        TM
+        T
       </div>
     ),
     { ...size }

@@ -1,51 +1,45 @@
 {
   "name": "TriniSell",
   "short_name": "TriniSell",
-  "description": "Trinidad & Tobago's local marketplace — buy and sell locally",
-  "start_url": "/?source=pwa",
+  "description": "Trinidad & Tobago's local marketplace — buy and sell locally.",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAFAFA",
+  "background_color": "#111111",
   "theme_color": "#dc2626",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
+      "src": "/apple-icon",
+      "sizes": "180x180",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
+      "src": "/icon",
+      "sizes": "32x32",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ],
   "shortcuts": [
     {
-      "name": "Post a Listing",
-      "short_name": "Post",
-      "description": "Create a new listing",
-      "url": "/listings/new",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
-    },
-    {
       "name": "Browse Listings",
       "short_name": "Browse",
-      "description": "Browse all listings",
       "url": "/listings",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "description": "Browse all listings"
     },
     {
-      "name": "My Dashboard",
-      "short_name": "Dashboard",
-      "description": "Manage your listings",
-      "url": "/dashboard",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "name": "Post a Listing",
+      "short_name": "Sell",
+      "url": "/listings/new",
+      "description": "Create a new listing"
+    },
+    {
+      "name": "Messages",
+      "short_name": "Messages",
+      "url": "/messages",
+      "description": "View your messages"
     }
   ],
-  "categories": ["shopping", "lifestyle"],
-  "lang": "en-TT",
-  "dir": "ltr",
-  "scope": "/"
+  "categories": ["shopping", "marketplace"]
 }
