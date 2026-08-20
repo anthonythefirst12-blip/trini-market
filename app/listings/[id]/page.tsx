@@ -105,7 +105,7 @@ export default async function ListingDetailPage({ params }: Props) {
       "@type": "Offer",
       price: listing.price,
       priceCurrency: listing.currency,
-      availability: "https://schema.org/InStock",
+      availability: listing.sold ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
       seller: { "@type": "Person", name: listing.seller.name },
     },
     ...(listing.seller.reviewCount > 0 && {

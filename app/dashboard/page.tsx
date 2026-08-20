@@ -10,10 +10,10 @@ import type { User } from "@supabase/supabase-js";
 import {
   Home, ClipboardList, Zap, MessageCircle, Eye, CheckCircle2,
   Plus, Store, Settings, ArrowUp, RefreshCw, Clock, Trash2,
-  Package, BarChart2, UserCircle, X,
+  Package, BarChart2, UserCircle, X, DollarSign, Check, XCircle,
 } from "lucide-react";
 
-type Tab = "home" | "listings" | "subscriptions" | "inquiries";
+type Tab = "home" | "listings" | "subscriptions" | "inquiries" | "offers";
 
 type DBListing = {
   id: string;
@@ -40,6 +40,19 @@ type DBSubscription = {
   listings?: { title: string } | null;
 };
 
+type DBOffer = {
+  id: string;
+  listing_id: string;
+  buyer_id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  message: string | null;
+  created_at: string;
+  listings: { title: string; images: string[] } | null;
+  buyer: { name: string } | null;
+};
+
 export default function DashboardPage() {
   return (
     <Suspense fallback={
@@ -64,6 +77,7 @@ function DashboardContent() {
   const [user, setUser] = useState<User | null>(null);
   const [listings, setListings] = useState<DBListing[]>([]);
   const [subscriptions, setSubscriptions] = useState<DBSubscription[]>([]);
+  const [offers, setOffers] = useState<DBOffer[]>([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(
     justPosted ? "🎉 Listing posted successfully!" : justEdited ? "✅ Listing updated." : null
@@ -81,15 +95,21 @@ function DashboardContent() {
     const { data: { user: u } } = await supabase.auth.getUser();
     if (!u) { setLoading(false); return; }
     setUser(u);
-    const [listingsRes, subsRes, profileRes] = await Promise.all([
+    const [listingsRes, subsRes, profileRes, offersRes] = await Promise.all([
       supabase.from("listings").select("id, title, price, currency, category, location, images, tier, created_at, expires_at, sold, views")
         .eq("user_id", u.id).order("created_at", { ascending: false }),
       supabase.from("subscriptions").select("*, listings(title)").eq("user_id", u.id).order("created_at", { ascending: false }),
       supabase.from("sellers").select("name, avatar, bio, location").eq("id", u.id).maybeSingle(),
+      supabase.from("offers")
+        .select("id, listing_id, buyer_id, amount, currency, status, message, created_at, listings(title, images), buyer:sellers!buyer_id(name)")
+        .eq("seller_id", u.id)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false }),
     ]);
     setListings(listingsRes.data ?? []);
     setSubscriptions(subsRes.data ?? []);
     setSellerProfile(profileRes.data ?? null);
+    setOffers((offersRes.data ?? []) as DBOffer[]);
     setLoading(false);
   }, []);
 
@@ -135,6 +155,36 @@ function DashboardContent() {
     await supabase.from("subscriptions").update({ status: "cancelled", cancelled_at: new Date().toISOString() }).eq("id", subId);
     setSubscriptions((prev) => prev.map((s) => s.id === subId ? { ...s, status: "cancelled" } : s));
     showToast("Plan cancelled.");
+  };
+
+  const handleOfferAction = async (offer: DBOffer, action: "accepted" | "declined") => {
+    // Optimistic removal
+    setOffers((prev) => prev.filter((o) => o.id !== offer.id));
+    showToast(action === "accepted" ? "✅ Offer accepted!" : "Offer declined.");
+
+    const supabase = createClient();
+    await supabase.from("offers").update({ status: action }).eq("id", offer.id);
+
+    // Notify buyer via a message so NotificationBell picks it up
+    const listingTitle = offer.listings?.title ?? "your listing";
+    const formattedAmount = new Intl.NumberFormat("en-TT", {
+      style: "currency",
+      currency: offer.currency ?? "TTD",
+      minimumFractionDigits: 0,
+    }).format(offer.amount);
+    const msgText =
+      action === "accepted"
+        ? `✅ Offer accepted on "${listingTitle}" — your offer of ${formattedAmount} was accepted. Contact the seller to arrange pickup.`
+        : `❌ Offer declined on "${listingTitle}" — your offer of ${formattedAmount} was not accepted.`;
+
+    await supabase.from("messages").insert({
+      sender_id: user?.id,
+      receiver_id: offer.buyer_id,
+      listing_id: offer.listing_id,
+      listing_title: listingTitle,
+      listing_image: offer.listings?.images?.[0] ?? null,
+      text: msgText,
+    });
   };
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -184,6 +234,7 @@ function DashboardContent() {
   const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: "home", label: "Home", icon: <Home size={15} /> },
     { key: "listings", label: "My Listings", icon: <ClipboardList size={15} /> },
+    { key: "offers", label: "Offers", icon: <DollarSign size={15} /> },
     { key: "subscriptions", label: "Boosts", icon: <Zap size={15} /> },
     { key: "inquiries", label: "Inquiries", icon: <MessageCircle size={15} /> },
   ];
@@ -239,6 +290,9 @@ function DashboardContent() {
                 {label}
                 {key === "subscriptions" && activeSubs.length > 0 && (
                   <span className="ml-1 bg-red-600 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">{activeSubs.length}</span>
+                )}
+                {key === "offers" && offers.length > 0 && (
+                  <span className="ml-1 bg-amber-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">{offers.length}</span>
                 )}
               </button>
             ))}
@@ -702,6 +756,83 @@ function DashboardContent() {
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+        )}
+
+        {/* ── OFFERS TAB ── */}
+        {tab === "offers" && (
+          <div className="space-y-3">
+            {offers.length === 0 ? (
+              <div className="text-center py-20 bg-white dark:bg-[#1c1c1c] rounded-2xl border border-gray-200 dark:border-white/10">
+                <div className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-white/5 flex items-center justify-center mx-auto mb-4">
+                  <DollarSign size={28} className="text-gray-300 dark:text-gray-600" strokeWidth={1.5} />
+                </div>
+                <p className="font-display font-semibold text-gray-700 dark:text-gray-200 text-lg">No pending offers</p>
+                <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">When buyers make offers on your listings, they&apos;ll appear here.</p>
+              </div>
+            ) : (
+              offers.map((offer) => {
+                const formattedAmount = new Intl.NumberFormat("en-TT", {
+                  style: "currency",
+                  currency: offer.currency ?? "TTD",
+                  minimumFractionDigits: 0,
+                }).format(offer.amount);
+                const thumb = offer.listings?.images?.[0];
+                const buyerName = offer.buyer?.name ?? "A buyer";
+                return (
+                  <div
+                    key={offer.id}
+                    className="flex items-center gap-4 p-4 bg-white dark:bg-[#1c1c1c] rounded-2xl border border-gray-200 dark:border-white/10 hover:border-amber-300 dark:hover:border-amber-700/50 hover:shadow-md transition-all duration-200"
+                  >
+                    {/* Thumbnail */}
+                    <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-gray-100 dark:bg-white/5 shrink-0">
+                      {thumb ? (
+                        <Image src={thumb} alt={offer.listings?.title ?? ""} fill className="object-cover" sizes="40px" unoptimized={thumb.startsWith("blob:")} />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Package size={16} className="text-gray-300" strokeWidth={1.5} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Details */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-gray-900 dark:text-white truncate">
+                        {offer.listings?.title ?? "Listing"}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">{buyerName}</span>
+                        {" · "}
+                        <span className="font-bold text-amber-600 dark:text-amber-400">{formattedAmount}</span>
+                        {" · "}
+                        {new Date(offer.created_at).toLocaleDateString("en-TT", { month: "short", day: "numeric" })}
+                      </p>
+                      {offer.message && (
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate max-w-[320px] italic">&ldquo;{offer.message}&rdquo;</p>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => handleOfferAction(offer, "accepted")}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/50 hover:bg-green-600 hover:text-white hover:border-green-600 dark:hover:bg-green-600 dark:hover:text-white transition-all"
+                      >
+                        <Check size={13} strokeWidth={1.5} />
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleOfferAction(offer, "declined")}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-white/10 hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 dark:hover:border-red-800/50 transition-all"
+                      >
+                        <XCircle size={13} strokeWidth={1.5} />
+                        Decline
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
             )}
           </div>
         )}

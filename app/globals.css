@@ -72,6 +72,14 @@
   to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
+main > * {
+  animation: pageFadeIn 0.18s ease-out both;
+}
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .animate-float { animation: float 4s ease-in-out infinite; }
 .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
 .animate-float-reverse { animation: float-reverse 5s ease-in-out infinite; }

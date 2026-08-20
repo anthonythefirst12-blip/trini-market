@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase-browser";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface Particle { x: number; y: number; vx: number; vy: number; life: number; }
 interface Props { listingId: string; }
@@ -66,6 +67,7 @@ export function SaveButton({ listingId }: Props) {
   const [loading, setLoading] = useState(true);
   const [burst, setBurst] = useState(false);
   const router = useRouter();
+  const toast = useToast();
 
   useEffect(() => {
     const check = async () => {
@@ -97,8 +99,10 @@ export function SaveButton({ listingId }: Props) {
     try {
       if (prev) {
         await supabase.from("saved_listings").delete().eq("user_id", user.id).eq("listing_id", listingId);
+        toast("Removed from saved");
       } else {
         await supabase.from("saved_listings").insert({ user_id: user.id, listing_id: listingId });
+        toast("Saved!");
       }
     } catch {
       setSaved(prev);
