@@ -82,7 +82,7 @@ function DashboardContent() {
   const [toast, setToast] = useState<string | null>(
     justPosted ? "🎉 Listing posted successfully!" : justEdited ? "✅ Listing updated." : null
   );
-  const [sellerProfile, setSellerProfile] = useState<{name:string|null, avatar:string|null, bio:string|null, location:string|null} | null>(null);
+  const [sellerProfile, setSellerProfile] = useState<{name:string|null, avatar:string|null, bio:string|null, location:string|null, phone:string|null} | null>(null);
   const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
   const [onboardingCollapsed, setOnboardingCollapsed] = useState(false);
 
@@ -100,7 +100,7 @@ function DashboardContent() {
       supabase.from("listings").select("id, title, price, currency, category, location, images, tier, created_at, expires_at, sold, views")
         .eq("user_id", u.id).order("created_at", { ascending: false }),
       supabase.from("subscriptions").select("*, listings(title)").eq("user_id", u.id).order("created_at", { ascending: false }),
-      supabase.from("sellers").select("name, avatar, bio, location").eq("id", u.id).maybeSingle(),
+      supabase.from("sellers").select("name, avatar, bio, location, phone").eq("id", u.id).maybeSingle(),
       supabase.from("offers")
         .select("id, listing_id, buyer_id, amount, currency, status, message, created_at, listings(title, images), buyer:sellers!buyer_id(name)")
         .eq("seller_id", u.id)
@@ -329,7 +329,7 @@ function DashboardContent() {
         {/* Onboarding checklist */}
         {(() => {
           if (dismissedOnboarding || !sellerProfile) return null;
-          const profileComplete = !!(sellerProfile.name && sellerProfile.avatar && sellerProfile.bio);
+          const profileComplete = !!(sellerProfile.name && sellerProfile.phone);
           const hasListing = listings.length > 0;
           const steps = [
             { label: "Create your account", done: true, href: null },
@@ -340,18 +340,18 @@ function DashboardContent() {
           const doneCount = steps.filter((s) => s.done).length;
           if (doneCount === 4) return null;
           return (
-            <div className="mb-5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-2xl overflow-hidden">
+            <div className="mb-5 bg-white dark:bg-[#1c1c1c] border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden">
               <button
                 onClick={() => {
                   const next = !onboardingCollapsed;
                   setOnboardingCollapsed(next);
                   localStorage.setItem("onboarding_collapsed", next ? "1" : "0");
                 }}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors"
+                className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-amber-900 dark:text-amber-300 text-sm">Getting started with TriniSell</span>
-                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 rounded-full">{doneCount}/4 complete</span>
+                  <span className="font-semibold text-gray-900 dark:text-white text-sm">Getting started with TriniSell</span>
+                  <span className="text-xs font-medium text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">{doneCount}/4 complete</span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <button
@@ -360,18 +360,18 @@ function DashboardContent() {
                       setDismissedOnboarding(true);
                       localStorage.setItem("onboarding_dismissed", "1");
                     }}
-                    className="text-amber-400 hover:text-amber-600 transition-colors p-0.5 rounded"
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors p-0.5 rounded"
                     aria-label="Dismiss"
                   >
                     <X size={14} strokeWidth={1.5} />
                   </button>
-                  <svg className={`w-4 h-4 text-amber-500 transition-transform duration-200 ${onboardingCollapsed ? "" : "rotate-180"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${onboardingCollapsed ? "" : "rotate-180"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </button>
               {/* Progress bar */}
-              <div className="h-1 bg-amber-100 dark:bg-amber-900/30 mx-4 rounded-full overflow-hidden">
+              <div className="h-1 bg-gray-100 dark:bg-white/10 mx-4 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-amber-400 dark:bg-amber-500 rounded-full transition-all duration-500"
                   style={{ width: `${(doneCount / 4) * 100}%` }}
@@ -382,21 +382,21 @@ function DashboardContent() {
                   {steps.map((step) => (
                     <div key={step.label} className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className={`w-4 h-4 rounded flex items-center justify-center shrink-0 border ${step.done ? "bg-amber-400 border-amber-400 dark:bg-amber-500 dark:border-amber-500" : "border-amber-300 dark:border-amber-700"}`}>
+                        <div className={`w-4 h-4 rounded flex items-center justify-center shrink-0 border ${step.done ? "bg-amber-400 border-amber-400" : "border-gray-300 dark:border-white/20"}`}>
                           {step.done && (
                             <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                             </svg>
                           )}
                         </div>
-                        <span className={`text-sm ${step.done ? "text-amber-700 dark:text-amber-400 line-through opacity-60" : "text-amber-900 dark:text-amber-200 font-medium"}`}>
+                        <span className={`text-sm ${step.done ? "text-gray-400 line-through" : "text-gray-800 dark:text-gray-200 font-medium"}`}>
                           {step.label}
                         </span>
                       </div>
                       {!step.done && step.href && (
                         <Link
                           href={step.href}
-                          className="shrink-0 text-xs font-semibold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 hover:bg-amber-200 dark:hover:bg-amber-800/60 px-2.5 py-1 rounded-lg transition-colors"
+                          className="shrink-0 text-xs font-semibold text-white bg-amber-500 hover:bg-amber-600 px-2.5 py-1 rounded-lg transition-colors"
                         >
                           Go →
                         </Link>
