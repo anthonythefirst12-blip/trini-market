@@ -15,7 +15,7 @@ const BUSINESS_TYPES = [
   { value: "other",        label: "Other Business",       icon: Building2 },
 ];
 
-const MONTHLY_PRICE = 199;
+const MONTHLY_PRICE = 99;
 
 const inputClass =
   "w-full border border-gray-200 dark:border-white/10 dark:bg-white/5 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500";
