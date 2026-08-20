@@ -110,7 +110,7 @@ function DashboardContent() {
     setListings(listingsRes.data ?? []);
     setSubscriptions(subsRes.data ?? []);
     setSellerProfile(profileRes.data ?? null);
-    setOffers((offersRes.data ?? []) as DBOffer[]);
+    setOffers((offersRes.data ?? []) as unknown as DBOffer[]);
     setLoading(false);
   }, []);
 
