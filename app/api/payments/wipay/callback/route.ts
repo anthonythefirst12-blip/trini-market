@@ -34,6 +34,20 @@ export async function POST(request: Request) {
     const purpose: string = (payment.metadata as Record<string, string>)?.purpose ?? "wallet_topup";
     const amountTTD = payment.amount_ttd;
 
+    if (purpose.startsWith("storefront_")) {
+      // purpose format: storefront_{userId}_{encodedBusinessName}_{businessType}
+      const parts = purpose.split("_");
+      const sellerId = parts[1];
+      const businessName = decodeURIComponent(parts[2] ?? "");
+
+      await supabase
+        .from("sellers")
+        .update({ is_pro: true, business_name: businessName || null })
+        .eq("user_id", sellerId);
+
+      return NextResponse.redirect(`${appUrl}/profile/${sellerId}?storefront=activated`);
+    }
+
     if (purpose.startsWith("subscription_")) {
       // e.g. "subscription_featured_l1234567890"
       const parts = purpose.split("_");

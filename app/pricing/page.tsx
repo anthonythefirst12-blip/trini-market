@@ -214,7 +214,7 @@ function PricingInner() {
           <div className="text-center">
             <p className="pricing-sub text-xs font-semibold uppercase tracking-widest mb-3">Business Storefront</p>
             <div className="flex items-baseline gap-1.5 justify-center mb-3">
-              <span className="pricing-heading font-display font-bold text-5xl">TT$99</span>
+              <span className="pricing-heading font-display font-bold text-5xl">TT$199</span>
               <span className="pricing-sub text-lg">/ month</span>
             </div>
             <p className="pricing-sub max-w-lg mx-auto text-sm leading-relaxed">
@@ -248,10 +248,10 @@ function PricingInner() {
 
           {/* CTA */}
           <div className="text-center">
-            <Link href="/settings" className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-base px-8 py-3.5 rounded-xl transition-all duration-200 hover:shadow-[0_0_30px_rgba(220,38,38,0.35)] active:scale-95">
+            <Link href="/storefront/apply" className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-base px-8 py-3.5 rounded-xl transition-all duration-200 hover:shadow-[0_0_30px_rgba(220,38,38,0.35)] active:scale-95">
               Get a Business Storefront →
             </Link>
-            <p className="pricing-sub text-xs mt-3">Monthly · Billed on the same date · Cancel from Settings</p>
+            <p className="pricing-sub text-xs mt-3">TT$199/month · Pay securely via WiPay · Cancel anytime</p>
           </div>
 
           {/* FAQ */}
