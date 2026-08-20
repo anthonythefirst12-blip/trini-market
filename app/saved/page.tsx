@@ -41,15 +41,15 @@ export default async function SavedListingsPage() {
           /* Empty state */
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <Heart
-              size={40}
-              className="text-gray-200 dark:text-gray-700 mb-4"
+              size={48}
+              className="w-12 h-12 text-gray-300 mb-4"
               strokeWidth={1.5}
             />
             <p className="font-display font-semibold text-gray-700 dark:text-gray-300 text-lg">
               No saved listings yet
             </p>
             <p className="text-gray-400 text-sm mt-1 max-w-xs">
-              Tap the heart on any listing to save it for later
+              Browse listings and tap ♥ to save them here
             </p>
             <Link
               href="/listings"

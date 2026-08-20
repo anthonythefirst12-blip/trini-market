@@ -409,12 +409,10 @@ function MessagesContent() {
         </div>
 
         {conversations.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-            <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
-              <MessageCircle size={32} className="text-gray-300" strokeWidth={1.5} />
-            </div>
-            <h3 className="font-display font-semibold text-lg text-gray-700">No messages yet</h3>
-            <p className="text-gray-400 text-sm mt-1 mb-6">When you contact a seller or receive an enquiry, it will appear here.</p>
+          <div className="text-center py-20 bg-white dark:bg-[#1c1c1c] rounded-2xl border border-gray-200 dark:border-white/10">
+            <MessageCircle size={48} className="w-12 h-12 text-gray-300 mx-auto mb-4" strokeWidth={1.5} />
+            <h3 className="font-display font-semibold text-gray-700 dark:text-gray-300 text-lg">No messages yet</h3>
+            <p className="text-gray-400 text-sm mt-1 mb-6">Start a conversation by contacting a seller</p>
             <Link href="/listings" className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-red-700 transition-colors">
               Browse Listings
             </Link>
