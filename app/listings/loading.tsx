@@ -1,26 +1,24 @@
-import { SkeletonCard } from "@/components/listings/SkeletonCard";
+import { SkeletonGrid } from "@/components/ui/SkeletonCard";
 
 export default function ListingsLoading() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="h-8 w-48 bg-gray-200 rounded-lg animate-pulse mb-2" />
-          <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Header bar skeleton */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="h-5 w-32 bg-gray-100 dark:bg-white/5 rounded-full relative overflow-hidden">
+          <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/60 dark:via-white/10 to-transparent" />
+        </div>
+        <div className="h-9 w-28 bg-gray-100 dark:bg-white/5 rounded-xl relative overflow-hidden">
+          <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/60 dark:via-white/10 to-transparent" />
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
-          <div className="hidden lg:block w-64 shrink-0 space-y-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-24 bg-white rounded-2xl border border-gray-200 animate-pulse" />
-            ))}
-          </div>
-          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-            {[...Array(9)].map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        </div>
-      </div>
+      <SkeletonGrid count={12} />
+      <style>{`
+        @keyframes shimmer {
+          from { transform: translateX(-100%); }
+          to   { transform: translateX(100%); }
+        }
+      `}</style>
     </div>
   );
 }
