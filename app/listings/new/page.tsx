@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase-browser";
 import { compressImage } from "@/lib/compress-image";
 import { Confetti } from "@/components/ui/Confetti";
+import { ImageUploader } from "@/components/listings/ImageUploader";
 
 type Step = 1 | 2 | 3;
 
@@ -209,9 +210,7 @@ export default function NewListingPage() {
   const [sellerId, setSellerId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [dragOver, setDragOver] = useState(false);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
   const [confetti, setConfetti] = useState(false);
 
   const [form, setForm] = useState({
@@ -245,65 +244,17 @@ export default function NewListingPage() {
     });
   }, [router]);
 
-  const addImages = (files: File[]) => {
-    const MAX_SIZE_MB = 10;
-    const maxImages = form.tier === "free" ? 2 : 5;
-    const valid = files.filter((f) => {
-      if (f.size > MAX_SIZE_MB * 1024 * 1024) {
-        alert(`"${f.name}" is over ${MAX_SIZE_MB}MB and was skipped.`);
-        return false;
-      }
-      return true;
-    });
-    const newFiles = [...imageFiles, ...valid].slice(0, maxImages);
-    if (form.tier === "free" && imageFiles.length + valid.length > maxImages) {
-      alert(`Free listings are limited to ${maxImages} photos. Upgrade to Featured or Premium to add up to 5.`);
-    }
-    setImageFiles(newFiles);
-    setImagePreviews(newFiles.map((f) => URL.createObjectURL(f)));
-  };
-
-  const removeImage = (index: number) => {
-    const newFiles = imageFiles.filter((_, i) => i !== index);
-    setImageFiles(newFiles);
-    setImagePreviews(newFiles.map((f) => URL.createObjectURL(f)));
-  };
-
   const handleSubmit = async () => {
     if (!userId || !sellerId) return;
     setSubmitting(true);
     setSubmitError("");
 
     const supabase = createClient();
-    let imageUrls: string[] = [];
 
-    // Upload images to Supabase Storage
-    if (imageFiles.length > 0) {
-      for (const rawFile of imageFiles) {
-        const file = await compressImage(rawFile);
-        const ext = file.name.split(".").pop() ?? "webp";
-        const path = `listings/${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("listing-images")
-          .upload(path, file, { upsert: false });
-
-        if (uploadError) {
-          // If storage bucket doesn't exist yet, use placeholder
-          console.warn("Image upload failed:", uploadError.message);
-          imageUrls.push(`https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop`);
-        } else {
-          const { data: urlData } = supabase.storage
-            .from("listing-images")
-            .getPublicUrl(uploadData.path);
-          imageUrls.push(urlData.publicUrl);
-        }
-      }
-    }
-
-    // Fallback image if none uploaded
-    if (imageUrls.length === 0) {
-      imageUrls = [`https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop`];
-    }
+    // Images are already uploaded by ImageUploader; fall back to placeholder if none
+    const imageUrls = uploadedImageUrls.length > 0
+      ? uploadedImageUrls
+      : [`https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop`];
 
     const listingId = `l${Date.now()}`;
     const subcategoryValue =
@@ -573,54 +524,13 @@ export default function NewListingPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Photos <span className="text-gray-400 font-normal">(up to 5 images)</span>
                 </label>
-                <div
-                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                  onDragLeave={() => setDragOver(false)}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setDragOver(false);
-                    addImages(Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith("image/")));
-                  }}
-                  className={[
-                    "border-2 border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer",
-                    dragOver ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-red-400",
-                  ].join(" ")}
-                  onClick={() => document.getElementById("file-input")?.click()}
-                >
-                  <input
-                    id="file-input"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    onChange={(e) => addImages(Array.from(e.target.files || []))}
-                  />
-                  <div className="text-3xl mb-3">📷</div>
-                  <p className="font-semibold text-gray-700 text-sm">Drag photos here or click to upload</p>
-                  <p className="text-gray-400 text-xs mt-1">
-                    {form.tier === "free" ? "Up to 2 images on free plan" : "Up to 5 images"} · JPG, PNG, WEBP supported
-                  </p>
-                </div>
+                <ImageUploader
+                  value={uploadedImageUrls}
+                  onChange={setUploadedImageUrls}
+                  maxImages={5}
+                  userId={userId ?? undefined}
+                />
               </div>
-
-              {imagePreviews.length > 0 && (
-                <div className="grid grid-cols-3 gap-3">
-                  {imagePreviews.map((url, i) => (
-                    <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 group">
-                      <Image src={url} alt={`Photo ${i + 1}`} fill className="object-cover" sizes="200px" unoptimized />
-                      <button
-                        onClick={() => removeImage(i)}
-                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        ×
-                      </button>
-                      {i === 0 && (
-                        <span className="absolute bottom-1 left-1 bg-red-700 text-white text-xs px-1.5 py-0.5 rounded">Main</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
 
               {/* Summary */}
               <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-2 text-sm">
@@ -632,7 +542,7 @@ export default function NewListingPage() {
                   ["Price", form.price ? `${form.currency} ${parseFloat(form.price).toLocaleString()}${form.negotiable ? " (negotiable)" : ""}` : "—"],
                   ["Location", form.location],
                   ["Tier", "Free"],
-                  ["Photos", imagePreviews.length > 0 ? `${imagePreviews.length} photo${imagePreviews.length > 1 ? "s" : ""}` : "None (a placeholder will be used)"],
+                  ["Photos", uploadedImageUrls.length > 0 ? `${uploadedImageUrls.length} photo${uploadedImageUrls.length > 1 ? "s" : ""}` : "None (a placeholder will be used)"],
                 ].map(([label, value]) => (
                   <div key={label} className="flex gap-2">
                     <span className="text-gray-400 w-20 shrink-0">{label}:</span>
