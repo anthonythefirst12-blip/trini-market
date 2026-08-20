@@ -84,6 +84,7 @@ function DashboardContent() {
   );
   const [sellerProfile, setSellerProfile] = useState<{name:string|null, avatar:string|null, bio:string|null, location:string|null} | null>(null);
   const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
+  const [onboardingCollapsed, setOnboardingCollapsed] = useState(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -116,6 +117,10 @@ function DashboardContent() {
   useEffect(() => {
     loadData();
     if (justPosted || justEdited) setTimeout(() => setToast(null), 4000);
+    const dismissed = localStorage.getItem("onboarding_dismissed") === "1";
+    const collapsed = localStorage.getItem("onboarding_collapsed") === "1";
+    if (dismissed) setDismissedOnboarding(true);
+    if (collapsed) setOnboardingCollapsed(true);
   }, [loadData, justPosted, justEdited]);
 
   const handleDelete = async (listingId: string) => {
@@ -185,6 +190,18 @@ function DashboardContent() {
       listing_image: offer.listings?.images?.[0] ?? null,
       text: msgText,
     });
+
+    // Email notification to buyer (fire-and-forget)
+    fetch("/api/email/offer-update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        recipientId: offer.buyer_id,
+        listingTitle,
+        amount: offer.amount,
+        status: action,
+      }),
+    }).catch(() => {});
   };
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
