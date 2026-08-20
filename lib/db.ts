@@ -40,6 +40,7 @@ interface ListingRow {
   comment_count: number;
   views: number;
   sold?: boolean;
+  previous_price?: number;
   sellers: SellerRow;
 }
 
@@ -103,6 +104,7 @@ function mapListing(row: ListingRow): Listing {
     commentCount: row.comment_count,
     views: row.views ?? 0,
     sold: row.sold ?? false,
+    previous_price: row.previous_price ?? undefined,
   };
 }
 

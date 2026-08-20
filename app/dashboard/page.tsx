@@ -326,31 +326,88 @@ function DashboardContent() {
           </div>
         )}
 
-        {/* Onboarding banner */}
-        {!dismissedOnboarding && sellerProfile && (!sellerProfile.avatar || !sellerProfile.bio || !sellerProfile.location) && (
-          <div className="mb-5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-2xl p-4 flex items-start gap-3">
-            <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0 mt-0.5">
-              <UserCircle size={16} className="text-amber-600" strokeWidth={1.5} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-amber-900 dark:text-amber-300 text-sm">Complete your profile</p>
-              <p className="text-amber-700 dark:text-amber-400 text-xs mt-0.5">Add a photo, bio and location to build trust with buyers.</p>
-              <div className="flex gap-2 mt-3">
-                {!sellerProfile.avatar && <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2.5 py-1 rounded-full font-medium">📷 Photo</span>}
-                {!sellerProfile.location && <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2.5 py-1 rounded-full font-medium">📍 Location</span>}
-                {!sellerProfile.bio && <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2.5 py-1 rounded-full font-medium">✍️ Bio</span>}
-              </div>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <Link href="/profile/edit" className="text-xs font-semibold text-amber-700 hover:text-amber-900 bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:hover:bg-amber-800/50 px-3 py-1.5 rounded-lg transition-colors">
-                Edit Profile
-              </Link>
-              <button onClick={() => setDismissedOnboarding(true)} className="text-amber-400 hover:text-amber-600 transition-colors">
-                <X size={16} strokeWidth={1.5} />
+        {/* Onboarding checklist */}
+        {(() => {
+          if (dismissedOnboarding || !sellerProfile) return null;
+          const profileComplete = !!(sellerProfile.name && sellerProfile.avatar && sellerProfile.bio);
+          const hasListing = listings.length > 0;
+          const steps = [
+            { label: "Create your account", done: true, href: null },
+            { label: "Complete your profile", done: profileComplete, href: "/profile/edit" },
+            { label: "Post your first listing", done: hasListing, href: "/listings/new" },
+            { label: "Browse listings", done: true, href: null },
+          ];
+          const doneCount = steps.filter((s) => s.done).length;
+          if (doneCount === 4) return null;
+          return (
+            <div className="mb-5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-2xl overflow-hidden">
+              <button
+                onClick={() => {
+                  const next = !onboardingCollapsed;
+                  setOnboardingCollapsed(next);
+                  localStorage.setItem("onboarding_collapsed", next ? "1" : "0");
+                }}
+                className="w-full flex items-center justify-between px-4 py-3 hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-amber-900 dark:text-amber-300 text-sm">Getting started with TriniSell</span>
+                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 rounded-full">{doneCount}/4 complete</span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDismissedOnboarding(true);
+                      localStorage.setItem("onboarding_dismissed", "1");
+                    }}
+                    className="text-amber-400 hover:text-amber-600 transition-colors p-0.5 rounded"
+                    aria-label="Dismiss"
+                  >
+                    <X size={14} strokeWidth={1.5} />
+                  </button>
+                  <svg className={`w-4 h-4 text-amber-500 transition-transform duration-200 ${onboardingCollapsed ? "" : "rotate-180"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </button>
+              {/* Progress bar */}
+              <div className="h-1 bg-amber-100 dark:bg-amber-900/30 mx-4 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-amber-400 dark:bg-amber-500 rounded-full transition-all duration-500"
+                  style={{ width: `${(doneCount / 4) * 100}%` }}
+                />
+              </div>
+              {!onboardingCollapsed && (
+                <div className="px-4 py-3 space-y-2">
+                  {steps.map((step) => (
+                    <div key={step.label} className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className={`w-4 h-4 rounded flex items-center justify-center shrink-0 border ${step.done ? "bg-amber-400 border-amber-400 dark:bg-amber-500 dark:border-amber-500" : "border-amber-300 dark:border-amber-700"}`}>
+                          {step.done && (
+                            <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                        <span className={`text-sm ${step.done ? "text-amber-700 dark:text-amber-400 line-through opacity-60" : "text-amber-900 dark:text-amber-200 font-medium"}`}>
+                          {step.label}
+                        </span>
+                      </div>
+                      {!step.done && step.href && (
+                        <Link
+                          href={step.href}
+                          className="shrink-0 text-xs font-semibold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 hover:bg-amber-200 dark:hover:bg-amber-800/60 px-2.5 py-1 rounded-lg transition-colors"
+                        >
+                          Go →
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* ── HOME TAB ── */}
         {tab === "home" && (

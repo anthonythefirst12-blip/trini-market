@@ -48,6 +48,7 @@ export interface Listing {
   commentCount?: number;
   views?: number;
   sold?: boolean;
+  previous_price?: number;
 }
 
 export interface Inquiry {

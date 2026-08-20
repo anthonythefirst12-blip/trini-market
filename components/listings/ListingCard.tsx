@@ -49,6 +49,15 @@ function TierBadge({ tier }: { tier: Listing["tier"] }) {
   return null;
 }
 
+function PriceDropBadge({ listing }: { listing: Listing }) {
+  if (!listing.previous_price || listing.previous_price <= listing.price) return null;
+  return (
+    <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 border border-green-200 text-xs font-bold px-2 py-0.5 rounded">
+      ↓ Price Drop
+    </span>
+  );
+}
+
 function JustListedBadge({ createdAt }: { createdAt: string }) {
   const hoursOld = (Date.now() - new Date(createdAt).getTime()) / 1000 / 3600;
   if (hoursOld > 24) return null;
@@ -113,7 +122,10 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
                 <p className="text-gray-500 text-xs mt-1 line-clamp-2">{listing.description}</p>
               </div>
               <div className="flex items-center justify-between mt-2">
-                <span className="font-bold text-red-700 text-base">{formatted}</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-red-700 text-base">{formatted}</span>
+                  <PriceDropBadge listing={listing} />
+                </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={(e) => { e.preventDefault(); setQuickView(true); }}
@@ -207,7 +219,10 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
                 {listing.title}
               </h3>
               <div className="flex items-center justify-between mt-3">
-                <span className="font-bold text-red-700 text-lg">{formatted}</span>
+                <div className="flex flex-col gap-1">
+                  <span className="font-bold text-red-700 text-lg">{formatted}</span>
+                  <PriceDropBadge listing={listing} />
+                </div>
                 {listing.negotiable && (
                   <span className="text-xs text-gray-400 italic">Negotiable</span>
                 )}
