@@ -10,6 +10,7 @@ export function MobileBottomNav() {
   const pathname = usePathname();
   const [userId, setUserId] = useState<string | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadNotifs, setUnreadNotifs] = useState(0);
 
   useEffect(() => {
     const supabase = createClient();
@@ -26,9 +27,15 @@ export function MobileBottomNav() {
       .select("id", { count: "exact", head: true })
       .eq("receiver_id", userId)
       .eq("read", false)
-      .then(({ count }) => {
-        setUnreadCount(count ?? 0);
-      });
+      .then(({ count }) => setUnreadCount(count ?? 0));
+
+    // Unread notifications (reviews received)
+    supabase
+      .from("seller_reviews")
+      .select("id", { count: "exact", head: true })
+      .eq("seller_id", userId)
+      .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+      .then(({ count }) => setUnreadNotifs(count ?? 0));
   }, [userId]);
 
   const accountHref = userId ? "/dashboard" : "/auth/login";
@@ -80,8 +87,13 @@ export function MobileBottomNav() {
         </Link>
 
         {/* Account */}
-        <Link href={accountHref} className={`flex flex-col items-center gap-0.5 ${tabClass(accountHref)}`}>
-          <User size={isActive(accountHref) ? 20 : 22} strokeWidth={1.5} />
+        <Link href={accountHref} className={`flex flex-col items-center gap-0.5 relative ${tabClass(accountHref)}`}>
+          <span className="relative">
+            <User size={isActive(accountHref) ? 20 : 22} strokeWidth={1.5} />
+            {unreadNotifs > 0 && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-600" />
+            )}
+          </span>
           <span className={`text-[10px] font-medium ${labelClass(accountHref)}`}>Account</span>
         </Link>
       </div>

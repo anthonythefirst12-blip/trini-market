@@ -370,6 +370,167 @@ export async function sendContactEmail({
   });
 }
 
+// ─── Listing expiry warning ───────────────────────────────────────────────────
+
+export async function sendListingExpiryWarning({
+  toEmail,
+  listingTitle,
+  daysLeft,
+}: {
+  toEmail: string;
+  listingTitle: string;
+  daysLeft: number;
+}) {
+  const dashboardUrl = `${APP_URL}/dashboard`;
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /></head>
+<body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;padding:40px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden;max-width:600px;width:100%;">
+        <tr>
+          <td style="background:#dc2626;padding:28px 32px;">
+            <table cellpadding="0" cellspacing="0"><tr>
+              <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
+                <span style="color:#ffffff;font-weight:700;font-size:14px;">TM</span>
+              </td>
+              <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniSell</span></td>
+            </tr></table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px;">
+            <p style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;">Your listing expires in ${daysLeft} day${daysLeft === 1 ? "" : "s"}</p>
+            <p style="margin:0 0 24px;font-size:15px;color:#6b7280;">
+              Your listing <strong style="color:#111827;">${listingTitle}</strong> expires in ${daysLeft} day${daysLeft === 1 ? "" : "s"}.
+              Renew it from your dashboard to keep it visible.
+            </p>
+            <table cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="background:#dc2626;border-radius:10px;">
+                  <a href="${dashboardUrl}" style="display:inline-block;padding:14px 28px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;">
+                    Go to Dashboard →
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:20px 32px;border-top:1px solid #f3f4f6;">
+            <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">© ${new Date().getFullYear()} TriniSell · Trinidad &amp; Tobago's Marketplace</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
+  `.trim();
+
+  return resend.emails.send({
+    from: FROM,
+    to: toEmail,
+    subject: `Your listing "${listingTitle}" expires in ${daysLeft} day${daysLeft === 1 ? "" : "s"} — Renew now`,
+    html,
+  });
+}
+
+// ─── Saved search price alert ─────────────────────────────────────────────────
+
+export async function sendSavedSearchAlert({
+  toEmail,
+  searchLabel,
+  matchCount,
+  listings,
+  searchUrl,
+}: {
+  toEmail: string;
+  searchLabel: string;
+  matchCount: number;
+  listings: { title: string; price: number; url: string }[];
+  searchUrl: string;
+}) {
+  const listingRows = listings
+    .slice(0, 5)
+    .map(
+      (l) => `
+      <tr>
+        <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;">
+          <a href="${l.url}" style="font-size:14px;font-weight:600;color:#111827;text-decoration:none;">${l.title}</a>
+          <p style="margin:2px 0 0;font-size:13px;color:#6b7280;">TT$${l.price.toLocaleString()}</p>
+        </td>
+      </tr>`
+    )
+    .join("");
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /></head>
+<body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;padding:40px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden;max-width:600px;width:100%;">
+        <tr>
+          <td style="background:#dc2626;padding:28px 32px;">
+            <table cellpadding="0" cellspacing="0"><tr>
+              <td style="background:#ef4444;border-radius:8px;width:36px;height:36px;text-align:center;vertical-align:middle;">
+                <span style="color:#ffffff;font-weight:700;font-size:14px;">TM</span>
+              </td>
+              <td style="padding-left:10px;"><span style="color:#ffffff;font-size:20px;font-weight:700;">TriniSell</span></td>
+            </tr></table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px;">
+            <p style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;">&#128276; New listings for your saved search</p>
+            <p style="margin:0 0 4px;font-size:15px;color:#6b7280;">
+              <strong style="color:#111827;">${matchCount} new listing${matchCount !== 1 ? "s" : ""}</strong> matching
+              <strong style="color:#111827;">${searchLabel}</strong>
+            </p>
+            <p style="margin:0 0 24px;font-size:14px;color:#9ca3af;">Here are the latest ones — click to view any listing.</p>
+
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+              ${listingRows}
+            </table>
+
+            <table cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="background:#dc2626;border-radius:10px;">
+                  <a href="${searchUrl}" style="display:inline-block;padding:14px 28px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;">
+                    View All Matches &rarr;
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:20px 32px;border-top:1px solid #f3f4f6;">
+            <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">
+              &copy; ${new Date().getFullYear()} TriniSell &middot; Trinidad &amp; Tobago's Marketplace<br />
+              You are receiving this because you saved this search on TriniSell.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
+  `.trim();
+
+  return resend.emails.send({
+    from: FROM,
+    to: toEmail,
+    subject: `${matchCount} new listing${matchCount !== 1 ? "s" : ""} matching "${searchLabel}"`,
+    html,
+  });
+}
+
 // ─── Listing posted confirmation ──────────────────────────────────────────────
 
 export async function sendListingPostedEmail({

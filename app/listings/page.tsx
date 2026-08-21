@@ -36,7 +36,9 @@ import { Category } from "@/lib/types";
 import Link from "next/link";
 import { MobileFilterDrawer } from "@/components/listings/MobileFilterDrawer";
 import { CategoryHero } from "@/components/listings/CategoryHero";
+import { SaveSearchButton } from "@/components/listings/SaveSearchButton";
 import { Car, Home, Laptop, Shirt, UtensilsCrossed, Wrench, Sofa, Dumbbell } from "lucide-react";
+import { Suspense } from "react";
 
 const CATEGORIES: Category[] = [
   "Electronics",
@@ -222,16 +224,21 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
               </div>
               <SortSelect activeSort={sort} q={q} category={category} subcategory={subcategory} location={location} minPrice={minPrice} maxPrice={maxPrice} condition={condition} />
             </div>
-            {/* Active filter chips */}
-            <ActiveFilters
-              category={category}
-              subcategory={subcategory}
-              location={location}
-              condition={condition}
-              minPrice={minPrice}
-              maxPrice={maxPrice}
-              q={q}
-            />
+            {/* Active filter chips + Save Search */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <ActiveFilters
+                category={category}
+                subcategory={subcategory}
+                location={location}
+                condition={condition}
+                minPrice={minPrice}
+                maxPrice={maxPrice}
+                q={q}
+              />
+              <Suspense>
+                <SaveSearchButton />
+              </Suspense>
+            </div>
             {results.length === 0 ? (
               <div className="py-20 bg-white rounded-2xl border border-gray-200 flex flex-col items-center gap-4">
                 <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

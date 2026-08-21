@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { sendSubscriptionReminder } from "@/lib/email";
+import { sendSubscriptionReminder, sendListingExpiryWarning } from "@/lib/email";
 
 // Called daily by Vercel Cron.
 // 1. Renew subscriptions due today by deducting from wallet
@@ -123,10 +123,48 @@ export async function GET(request: Request) {
     }
   }
 
+  // ── 3. Send expiry warnings for listings expiring in 1–3 days ───────────
+  const { data: expiringListings } = await supabase
+    .from("listings")
+    .select("id, user_id, title, expires_at")
+    .eq("sold", false)
+    .lte("expires_at", in3Days.toISOString())
+    .gte("expires_at", now.toISOString());
+
+  let expirySent = 0;
+  const expiryErrors: string[] = [];
+
+  for (const listing of expiringListings ?? []) {
+    try {
+      const { data: userData } = await supabase.auth.admin.getUserById(listing.user_id);
+      const userEmail = userData?.user?.email;
+      if (!userEmail) continue;
+
+      const msLeft = new Date(listing.expires_at).getTime() - now.getTime();
+      const daysLeft = Math.max(1, Math.ceil(msLeft / (24 * 60 * 60 * 1000)));
+
+      await sendListingExpiryWarning({
+        toEmail: userEmail,
+        listingTitle: listing.title,
+        daysLeft,
+      });
+
+      expirySent++;
+    } catch (err) {
+      expiryErrors.push(`Listing ${listing.id}: ${err}`);
+    }
+  }
+
   return NextResponse.json({
     renewed,
     cancelled,
     remindersSent: sent,
-    errors: errors.length > 0 ? errors : undefined,
+    expiryWarningsSent: expirySent,
+    errors: [
+      ...(errors.length > 0 ? errors : []),
+      ...(expiryErrors.length > 0 ? expiryErrors : []),
+    ].length > 0
+      ? [...errors, ...expiryErrors]
+      : undefined,
   });
 }

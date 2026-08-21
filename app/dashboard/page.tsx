@@ -135,6 +135,30 @@ function DashboardContent() {
     const supabase = createClient();
     await supabase.from("listings").update({ sold: !currentlySold }).eq("id", listingId);
     setListings((prev) => prev.map((l) => l.id === listingId ? { ...l, sold: !currentlySold } : l));
+
+    if (!currentlySold) {
+      // Notify the most recent buyer who messaged about this listing
+      const listing = listings.find((l) => l.id === listingId);
+      const { data: lastMessage } = await supabase
+        .from("messages")
+        .select("sender_id")
+        .eq("listing_id", listingId)
+        .eq("receiver_id", user?.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (lastMessage?.sender_id) {
+        await supabase.from("messages").insert({
+          sender_id: user?.id,
+          receiver_id: lastMessage.sender_id,
+          listing_id: listingId,
+          listing_title: listing?.title ?? null,
+          text: "✅ Good news! This item has been sold. Thanks for your interest.",
+        });
+      }
+    }
+
     showToast(currentlySold ? "Listing marked as available." : "✅ Marked as sold.");
   };
 
