@@ -201,7 +201,7 @@ export function BusinessContent({ businesses }: { businesses: BusinessEntry[] })
               placeholder="Search by name or location…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="biz-search w-full border rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none transition-colors"
+              className="biz-search w-full border rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
             />
           </div>
           <p className="biz-count text-sm">

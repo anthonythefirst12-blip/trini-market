@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import { createClient } from "@/lib/supabase-server";
 import { ListingCard } from "@/components/listings/ListingCard";
+
+export const metadata: Metadata = {
+  title: "Saved Listings | TriniSell",
+  description: "View your saved listings on TriniSell.",
+};
 
 export default async function SavedListingsPage() {
   const supabase = await createClient();
@@ -25,16 +31,27 @@ export default async function SavedListingsPage() {
     .filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] [data-theme='dark']:bg-[#111111] dark:bg-[#111111]">
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#111111]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="font-display font-bold text-2xl text-gray-900 dark:text-white">
-            Saved Listings
-          </h1>
-          <p className="text-gray-400 text-sm mt-1">
-            {listings.length} {listings.length === 1 ? "listing" : "listings"} saved
-          </p>
+        <div className="flex items-start justify-between mb-8">
+          <div>
+            <h1 className="font-display font-bold text-2xl text-gray-900 dark:text-white">
+              Saved Listings
+            </h1>
+            <p className="text-gray-400 text-sm mt-1">
+              {listings.length} {listings.length === 1 ? "listing" : "listings"} saved
+            </p>
+          </div>
+          <Link
+            href="/saved/searches"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+            </svg>
+            Search Alerts
+          </Link>
         </div>
 
         {listings.length === 0 ? (

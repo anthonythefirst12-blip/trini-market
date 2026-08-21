@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getListing, getListings, getComments, getSellerResponseRate } from "@/lib/db";
+import { getListing, getListings, getComments, getSellerResponseRate, getSellerListings } from "@/lib/db";
 import { createClient } from "@/lib/supabase-server";
 import { ImageGallery } from "@/components/listings/ImageGallery";
 import { ContactForm } from "@/components/listings/ContactForm";
@@ -80,12 +80,14 @@ export default async function ListingDetailPage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser();
   const isOwner = !!user && user.id === listing.seller.id;
 
-  const [allListings, listingComments, responseRate] = await Promise.all([
+  const [allListings, listingComments, responseRate, sellerListings] = await Promise.all([
     getListings({ category: listing.category }),
     getComments(id),
     getSellerResponseRate(listing.seller.id),
+    getSellerListings(listing.seller.id),
   ]);
   const related = allListings.filter((l) => l.id !== listing.id).slice(0, 8);
+  const moreFromSeller = sellerListings.filter((l) => l.id !== listing.id && !l.sold).slice(0, 4);
 
   const formatted = new Intl.NumberFormat("en-TT", {
     style: "currency",
@@ -402,6 +404,26 @@ export default async function ListingDetailPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {/* More from this seller */}
+        {moreFromSeller.length > 0 && (
+          <div className="mt-10">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-display font-bold text-lg text-gray-900">
+                More from {listing.seller.isPro ? listing.seller.businessName ?? listing.seller.name : listing.seller.name}
+              </h2>
+              <Link
+                href={listing.seller.isPro ? `/store/${listing.seller.id}` : `/profile/${listing.seller.id}`}
+                className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors"
+              >
+                View all →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {moreFromSeller.map((l) => <ListingCard key={l.id} listing={l} />)}
+            </div>
+          </div>
+        )}
 
         {/* Related listings */}
         {related.length > 0 && (
