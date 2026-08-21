@@ -3,12 +3,12 @@ import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { CookieBanner } from "@/components/ui/CookieBanner";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { PingPresence } from "@/components/PingPresence";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { NavigationProgress } from "@/components/ui/NavigationProgress";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -66,10 +66,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen flex flex-col">
         <ThemeProvider>
           <ToastProvider>
+            <NavigationProgress />
             <Navbar />
             <main className="flex-1 pb-[60px] md:pb-0">{children}</main>
             <Footer />
-            <CookieBanner />
             <BackToTop />
             <PingPresence />
             <MobileBottomNav />

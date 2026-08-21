@@ -4,7 +4,9 @@ import Link from "next/link";
 import { getSeller, getSellerListings, getSellerReviews, getSellerResponseRate } from "@/lib/db";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { SellerPresence } from "@/components/listings/SellerPresence";
+import { StorefrontActivatedBanner } from "@/components/ui/StorefrontActivatedBanner";
 import { MapPin } from "lucide-react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ sellerId: string }> }): Promise<Metadata> {
@@ -48,6 +50,7 @@ export default async function SellerProfilePage({ params }: { params: Promise<{ 
 
   return (
     <div className="profile-page min-h-screen">
+      <Suspense><StorefrontActivatedBanner /></Suspense>
       <style>{`
         .profile-page { background: #fafafa; }
         .profile-card { background: #ffffff; border-color: #e5e7eb; }

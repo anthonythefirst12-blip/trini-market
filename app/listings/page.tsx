@@ -20,6 +20,11 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
     description,
     openGraph: { title, description, type: "website" },
     twitter: { card: "summary", title, description },
+    alternates: {
+      canonical: category
+        ? `https://trinisell.tt/listings?category=${encodeURIComponent(category)}`
+        : "https://trinisell.tt/listings",
+    },
   };
 }
 import { ListingCard } from "@/components/listings/ListingCard";

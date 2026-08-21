@@ -217,11 +217,11 @@ export function NotificationBell() {
           </div>
 
           <div className="px-4 py-2.5 border-t border-gray-100 flex items-center justify-between">
-            <Link href="/messages" onClick={() => setOpen(false)} className="text-xs text-red-600 hover:text-red-700 font-medium transition-colors">
-              All messages →
+            <Link href="/notifications" onClick={() => setOpen(false)} className="text-xs text-red-600 hover:text-red-700 font-medium transition-colors">
+              View all notifications →
             </Link>
-            <Link href="/dashboard" onClick={() => setOpen(false)} className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
-              Dashboard
+            <Link href="/messages" onClick={() => setOpen(false)} className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+              Messages
             </Link>
           </div>
         </div>
