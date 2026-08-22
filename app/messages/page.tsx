@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase-browser";
-import { MessageCircle, Send, ChevronLeft } from "lucide-react";
+import { MessageCircle, Send, ChevronLeft, ImagePlus, X } from "lucide-react";
 
 interface DBMessage {
   id: string;
@@ -62,6 +62,9 @@ function MessagesContent() {
   const [loading, setLoading] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
   const firstUnreadRef = useRef<HTMLDivElement>(null);
+  const imgInputRef = useRef<HTMLInputElement>(null);
+  const [imgUploading, setImgUploading] = useState(false);
+  const [imgPreview, setImgPreview] = useState<string | null>(null);
   const userIdRef = useRef<string | null>(null);
   const userNamesRef = useRef<Record<string, string>>({});
   const userAvatarsRef = useRef<Record<string, string>>({});
@@ -304,6 +307,22 @@ function MessagesContent() {
     }).catch(() => {});
   };
 
+  const sendImage = async (file: File) => {
+    if (!activeKey || !userId) return;
+    if (file.size > 5 * 1024 * 1024) { alert("Image must be under 5 MB."); return; }
+    if (!file.type.startsWith("image/")) { alert("Only image files are supported."); return; }
+    setImgUploading(true);
+    setImgPreview(URL.createObjectURL(file));
+    const supabase = createClient();
+    const path = `${userId}/${Date.now()}-${file.name}`;
+    const { data: uploadData, error } = await supabase.storage.from("listing-images").upload(path, file, { upsert: false });
+    if (error || !uploadData) { setImgUploading(false); setImgPreview(null); alert("Upload failed. Please try again."); return; }
+    const { data: urlData } = supabase.storage.from("listing-images").getPublicUrl(uploadData.path);
+    setImgUploading(false);
+    setImgPreview(null);
+    await sendDirect(`[img]${urlData.publicUrl}`);
+  };
+
   const sendMessage = async () => {
     const text = input.trim();
     if (!text || !activeKey || !userId) return;
@@ -531,11 +550,26 @@ function MessagesContent() {
                             <Image src={avatar} alt="" width={28} height={28} className="object-cover" unoptimized />
                           </div>
                           <div className={`max-w-[70%] flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                            {msg.text.startsWith("[img]") ? (
+                              <div className={`rounded-2xl overflow-hidden ${isMe ? "rounded-tr-sm" : "rounded-tl-sm"}`}>
+                                <a href={msg.text.slice(5)} target="_blank" rel="noopener noreferrer">
+                                  <Image
+                                    src={msg.text.slice(5)}
+                                    alt="Shared image"
+                                    width={240}
+                                    height={180}
+                                    className="object-cover max-w-[240px] max-h-[180px] w-full"
+                                    unoptimized
+                                  />
+                                </a>
+                              </div>
+                            ) : (
                             <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                               isMe ? "bg-red-600 text-white rounded-tr-sm" : "bg-gray-100 text-gray-800 rounded-tl-sm"
                             }`}>
                               {msg.text}
                             </div>
+                            )}
                             {/* Accept/Decline for offer messages received by current user */}
                             {!isMe && msg.text.startsWith("💰 Offer:") && (() => {
                               const hasResponse = active.messages.some(
@@ -597,7 +631,40 @@ function MessagesContent() {
                 </div>
 
                 <div className="px-5 py-3 border-t border-gray-200">
+                  {imgPreview && (
+                    <div className="mb-2 flex items-center gap-2">
+                      <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
+                        <Image src={imgPreview} alt="Preview" fill className="object-cover" unoptimized />
+                        {imgUploading && (
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          </div>
+                        )}
+                      </div>
+                      {!imgUploading && (
+                        <button onClick={() => setImgPreview(null)} className="text-gray-400 hover:text-gray-600">
+                          <X size={14} />
+                        </button>
+                      )}
+                    </div>
+                  )}
                   <form onSubmit={(e) => { e.preventDefault(); sendMessage(); }} className="flex gap-2 items-end">
+                    <input
+                      ref={imgInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => { const f = e.target.files?.[0]; if (f) sendImage(f); e.target.value = ""; }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => imgInputRef.current?.click()}
+                      disabled={imgUploading}
+                      className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors shrink-0 disabled:opacity-40"
+                      title="Send image"
+                    >
+                      <ImagePlus size={18} strokeWidth={1.5} />
+                    </button>
                     <div className="flex-1 relative">
                       <input
                         type="text"
