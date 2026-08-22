@@ -61,6 +61,7 @@ function MessagesContent() {
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const firstUnreadRef = useRef<HTMLDivElement>(null);
   const userIdRef = useRef<string | null>(null);
   const userNamesRef = useRef<Record<string, string>>({});
   const userAvatarsRef = useRef<Record<string, string>>({});
@@ -478,6 +479,14 @@ function MessagesContent() {
                     <p className="font-semibold text-sm text-gray-900">{active.otherName}</p>
                     <p className="text-xs text-gray-400 truncate">{active.listingTitle}</p>
                   </div>
+                  {active.unread > 0 && (
+                    <button
+                      onClick={() => firstUnreadRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                      className="text-xs text-white bg-red-600 hover:bg-red-700 font-semibold px-2.5 py-1 rounded-full shrink-0 transition-colors"
+                    >
+                      {active.unread} unread ↓
+                    </button>
+                  )}
                   <Link href={`/listings/${active.listingId}`} className="text-xs text-red-600 hover:text-red-800 font-medium shrink-0">
                     View listing →
                   </Link>
@@ -501,13 +510,23 @@ function MessagesContent() {
                   {(() => {
                     const sentMsgs = active.messages.filter((m) => m.sender_id === userId);
                     const lastReadSentId = [...sentMsgs].reverse().find((m) => m.read)?.id ?? null;
+                    const firstUnreadMsg = active.messages.find((m) => !m.read && m.receiver_id === userId);
                     return active.messages.map((msg) => {
                       const isMe = msg.sender_id === userId;
+                      const isFirstUnread = msg.id === firstUnreadMsg?.id;
                       const avatar = isMe
                         ? (myAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(myName || "Me")}&background=dc2626&color=fff&size=80`)
                         : (userAvatars[msg.sender_id] || `https://ui-avatars.com/api/?name=?&background=e2e8f0&color=475569&size=80`);
                       return (
-                        <div key={msg.id} className={`flex gap-2.5 ${isMe ? "flex-row-reverse" : ""}`}>
+                        <div key={msg.id} ref={isFirstUnread ? firstUnreadRef : undefined}>
+                          {isFirstUnread && (
+                            <div className="flex items-center gap-2 my-2">
+                              <div className="flex-1 h-px bg-red-200" />
+                              <span className="text-xs text-red-500 font-semibold whitespace-nowrap">New messages</span>
+                              <div className="flex-1 h-px bg-red-200" />
+                            </div>
+                          )}
+                        <div className={`flex gap-2.5 ${isMe ? "flex-row-reverse" : ""}`}>
                           <div className="w-7 h-7 rounded-full overflow-hidden bg-gray-100 shrink-0 mt-1">
                             <Image src={avatar} alt="" width={28} height={28} className="object-cover" unoptimized />
                           </div>
@@ -569,6 +588,7 @@ function MessagesContent() {
                               )}
                             </div>
                           </div>
+                        </div>
                         </div>
                       );
                     });

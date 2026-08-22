@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { X, Upload, ImagePlus } from "lucide-react";
+import { X, Upload, ImagePlus, GripVertical } from "lucide-react";
 import { createClient } from "@/lib/supabase-browser";
 
 interface Props {
@@ -26,6 +26,7 @@ export function ImageUploader({ value, onChange, maxImages = 5, userId }: Props)
   );
   const [dragOver, setDragOver] = useState(false);
   const [pasteUrl, setPasteUrl] = useState("");
+  const [dragSrcIdx, setDragSrcIdx] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const supabase = createClient();
@@ -115,6 +116,17 @@ export function ImageUploader({ value, onChange, maxImages = 5, userId }: Props)
     setPasteUrl("");
   };
 
+  const reorder = (from: number, to: number) => {
+    if (from === to) return;
+    setItems((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      notifyParent(next);
+      return next;
+    });
+  };
+
   const canAdd = items.length < maxImages;
 
   return (
@@ -161,7 +173,18 @@ export function ImageUploader({ value, onChange, maxImages = 5, userId }: Props)
       {items.length > 0 && (
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
           {items.map((item, idx) => (
-            <div key={item.id} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-white/10 group border border-gray-200 dark:border-white/10">
+            <div
+              key={item.id}
+              draggable
+              onDragStart={() => setDragSrcIdx(idx)}
+              onDragOver={(e) => { e.preventDefault(); }}
+              onDrop={(e) => { e.preventDefault(); if (dragSrcIdx !== null) reorder(dragSrcIdx, idx); setDragSrcIdx(null); }}
+              onDragEnd={() => setDragSrcIdx(null)}
+              className={[
+                "relative aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-white/10 group border transition-all",
+                dragSrcIdx === idx ? "opacity-40 scale-95" : "border-gray-200 dark:border-white/10",
+              ].join(" ")}
+            >
               <Image
                 src={item.preview}
                 alt={`Photo ${idx + 1}`}
@@ -190,6 +213,11 @@ export function ImageUploader({ value, onChange, maxImages = 5, userId }: Props)
                   <span className="text-white text-xs text-center leading-tight">Upload failed</span>
                 </div>
               )}
+
+              {/* Drag handle */}
+              <div className="absolute top-1 left-1 text-white/70 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
+                <GripVertical className="w-3.5 h-3.5 drop-shadow" strokeWidth={2} />
+              </div>
 
               {/* Remove button */}
               <button

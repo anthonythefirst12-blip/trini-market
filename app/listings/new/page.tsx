@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -203,6 +203,8 @@ const LOCATIONS: { region: string; areas: string[] }[] = [
   },
 ];
 
+const DRAFT_KEY = "trinisell_new_listing_draft";
+
 export default function NewListingPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
@@ -212,24 +214,43 @@ export default function NewListingPage() {
   const [submitError, setSubmitError] = useState("");
   const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
   const [confetti, setConfetti] = useState(false);
+  const [draftSaved, setDraftSaved] = useState(false);
 
-  const [form, setForm] = useState({
-    title: "",
-    category: "",
-    subcategory: "",
-    customSubcategory: "",
-    condition: "",
-    price: "",
-    currency: "TTD",
-    location: "",
-    negotiable: false,
-    description: "",
-    tags: "",
-    tier: "free" as "free",
+  const [form, setForm] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return { ...{
+            title: "", category: "", subcategory: "", customSubcategory: "",
+            condition: "", price: "", currency: "TTD", location: "",
+            negotiable: false, description: "", tags: "", tier: "free" as "free",
+          }, ...parsed };
+        }
+      } catch { /* ignore */ }
+    }
+    return {
+      title: "", category: "", subcategory: "", customSubcategory: "",
+      condition: "", price: "", currency: "TTD", location: "",
+      negotiable: false, description: "", tags: "", tier: "free" as "free",
+    };
   });
 
   const update = (key: string, value: string | boolean) =>
     setForm((prev) => ({ ...prev, [key]: value }));
+
+  // Autosave draft to localStorage
+  useEffect(() => {
+    const id = setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+        setDraftSaved(true);
+        setTimeout(() => setDraftSaved(false), 2000);
+      } catch { /* ignore */ }
+    }, 800);
+    return () => clearTimeout(id);
+  }, [form]);
 
   // Get logged-in user
   useEffect(() => {
@@ -300,6 +321,7 @@ export default function NewListingPage() {
       body: JSON.stringify({ listingTitle: form.title, listingId, tier: form.tier }),
     }).catch(() => {});
 
+    try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
     setConfetti(true);
     setTimeout(() => { window.location.href = `/dashboard?posted=1`; }, 1800);
   };
@@ -319,7 +341,14 @@ export default function NewListingPage() {
       <Confetti active={confetti} />
       <div className="max-w-2xl mx-auto px-4">
         <div className="mb-8">
-          <h1 className="font-display font-bold text-2xl text-gray-900">Post a Listing</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="font-display font-bold text-2xl text-gray-900">Post a Listing</h1>
+            {draftSaved && (
+              <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200 animate-fade-in">
+                Draft saved
+              </span>
+            )}
+          </div>
           <p className="text-sm text-gray-500 mt-1">Fill in the details to list your item on TriniSell.</p>
         </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import { Category } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 
@@ -110,6 +110,19 @@ export function FilterSidebar({
 }: FilterSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const MAX_SLIDER = 100000;
+  const [sliderMin, setSliderMin] = useState(parseInt(minPrice || "0", 10));
+  const [sliderMax, setSliderMax] = useState(parseInt(maxPrice || String(MAX_SLIDER), 10));
+  const sliderTrackRef = useRef<HTMLDivElement>(null);
+
+  const applyPriceRange = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (sliderMin > 0) params.set("minPrice", String(sliderMin)); else params.delete("minPrice");
+    if (sliderMax < MAX_SLIDER) params.set("maxPrice", String(sliderMax)); else params.delete("maxPrice");
+    params.delete("page");
+    router.push(`/listings?${params.toString()}`);
+  }, [sliderMin, sliderMax, searchParams, router]);
+
   const [showOtherInput, setShowOtherInput] = useState(
     !!activeLocation && !locations.includes(activeLocation)
   );
@@ -202,38 +215,76 @@ export function FilterSidebar({
       {/* Price range */}
       <div>
         <h4 className={sectionLabel}>Price (TTD)</h4>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const fd = new FormData(e.currentTarget);
-            const min = fd.get("minPrice") as string;
-            const max = fd.get("maxPrice") as string;
-            const params = new URLSearchParams(searchParams.toString());
-            if (min) params.set("minPrice", min); else params.delete("minPrice");
-            if (max) params.set("maxPrice", max); else params.delete("maxPrice");
-            params.delete("page");
-            router.push(`/listings?${params.toString()}`);
-          }}
-          className="space-y-2"
-        >
+        <div className="space-y-3">
+          {/* Dual-range slider */}
+          <div className="relative h-5 flex items-center" ref={sliderTrackRef}>
+            <div className="absolute inset-x-0 h-1.5 bg-gray-200 rounded-full" />
+            <div
+              className="absolute h-1.5 bg-red-500 rounded-full"
+              style={{
+                left: `${(sliderMin / MAX_SLIDER) * 100}%`,
+                right: `${100 - (sliderMax / MAX_SLIDER) * 100}%`,
+              }}
+            />
+            <input
+              type="range"
+              min={0}
+              max={MAX_SLIDER}
+              step={500}
+              value={sliderMin}
+              onChange={(e) => {
+                const v = parseInt(e.target.value, 10);
+                if (v <= sliderMax - 500) setSliderMin(v);
+              }}
+              className="absolute inset-0 w-full opacity-0 cursor-pointer h-5"
+              style={{ zIndex: sliderMin > MAX_SLIDER - 1000 ? 5 : 3 }}
+            />
+            <input
+              type="range"
+              min={0}
+              max={MAX_SLIDER}
+              step={500}
+              value={sliderMax}
+              onChange={(e) => {
+                const v = parseInt(e.target.value, 10);
+                if (v >= sliderMin + 500) setSliderMax(v);
+              }}
+              className="absolute inset-0 w-full opacity-0 cursor-pointer h-5"
+              style={{ zIndex: 4 }}
+            />
+            {/* Min thumb */}
+            <div
+              className="absolute w-4 h-4 bg-white border-2 border-red-500 rounded-full shadow pointer-events-none"
+              style={{ left: `calc(${(sliderMin / MAX_SLIDER) * 100}% - 8px)` }}
+            />
+            {/* Max thumb */}
+            <div
+              className="absolute w-4 h-4 bg-white border-2 border-red-500 rounded-full shadow pointer-events-none"
+              style={{ left: `calc(${(sliderMax / MAX_SLIDER) * 100}% - 8px)` }}
+            />
+          </div>
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <span>TT${sliderMin.toLocaleString()}</span>
+            <span>{sliderMax >= MAX_SLIDER ? "Any max" : `TT$${sliderMax.toLocaleString()}`}</span>
+          </div>
           <div className="flex gap-2">
             <input
-              name="minPrice"
               type="number"
-              defaultValue={minPrice}
+              value={sliderMin || ""}
+              onChange={(e) => { const v = parseInt(e.target.value || "0", 10); if (!isNaN(v) && v <= sliderMax - 500) setSliderMin(v); }}
               placeholder="Min"
               className="w-full px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
             />
             <input
-              name="maxPrice"
               type="number"
-              defaultValue={maxPrice}
+              value={sliderMax >= MAX_SLIDER ? "" : sliderMax}
+              onChange={(e) => { const v = parseInt(e.target.value || String(MAX_SLIDER), 10); if (!isNaN(v) && v >= sliderMin + 500) setSliderMax(Math.min(v, MAX_SLIDER)); }}
               placeholder="Max"
               className="w-full px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
-          <Button type="submit" variant="secondary" size="sm" fullWidth>Apply</Button>
-        </form>
+          <Button onClick={applyPriceRange} variant="secondary" size="sm" fullWidth>Apply</Button>
+        </div>
       </div>
 
       <div className="border-t border-gray-200" />
