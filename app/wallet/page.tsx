@@ -260,7 +260,7 @@ function WalletContent() {
         {/* Top Up */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
           <h2 className="font-display font-semibold text-base text-gray-900 mb-1">Top Up Balance</h2>
-          <p className="text-sm text-gray-400 mb-5">Add credits to your wallet. Minimum TT$50.</p>
+          <p className="text-sm text-gray-400 mb-5">Add credits to your wallet. Minimum TT$10.</p>
 
           {/* Payment provider */}
           <div className="flex items-center gap-2 mb-5 p-3 bg-red-50 border border-red-200 rounded-xl">
@@ -290,10 +290,10 @@ function WalletContent() {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium">TT$</span>
             <input
               type="number"
-              placeholder="Custom amount (min 50)"
+              placeholder="Custom amount (min 10)"
               value={custom}
               onChange={(e) => { setCustom(e.target.value); setSelected(0); }}
-              min="50"
+              min="10"
               className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
