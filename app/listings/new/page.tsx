@@ -205,6 +205,18 @@ const LOCATIONS: { region: string; areas: string[] }[] = [
 
 const DRAFT_KEY = "trinisell_new_listing_draft";
 
+type FormState = {
+  title: string; category: string; subcategory: string; customSubcategory: string;
+  condition: string; price: string; currency: string; location: string;
+  negotiable: boolean; description: string; tags: string; tier: "free";
+};
+
+const DEFAULT_FORM: FormState = {
+  title: "", category: "", subcategory: "", customSubcategory: "",
+  condition: "", price: "", currency: "TTD", location: "",
+  negotiable: false, description: "", tags: "", tier: "free",
+};
+
 export default function NewListingPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
@@ -216,25 +228,14 @@ export default function NewListingPage() {
   const [confetti, setConfetti] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
 
-  const [form, setForm] = useState(() => {
+  const [form, setForm] = useState<FormState>(() => {
     if (typeof window !== "undefined") {
       try {
         const raw = localStorage.getItem(DRAFT_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          return { ...{
-            title: "", category: "", subcategory: "", customSubcategory: "",
-            condition: "", price: "", currency: "TTD", location: "",
-            negotiable: false, description: "", tags: "", tier: "free" as "free",
-          }, ...parsed };
-        }
+        if (raw) return { ...DEFAULT_FORM, ...JSON.parse(raw) };
       } catch { /* ignore */ }
     }
-    return {
-      title: "", category: "", subcategory: "", customSubcategory: "",
-      condition: "", price: "", currency: "TTD", location: "",
-      negotiable: false, description: "", tags: "", tier: "free" as "free",
-    };
+    return DEFAULT_FORM;
   });
 
   const update = (key: string, value: string | boolean) =>
