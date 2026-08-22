@@ -85,7 +85,7 @@ function WalletContent() {
 
   const handleTopUp = async () => {
     const amount = custom ? Number(custom) : selected;
-    if (!amount || amount < 50) return showToast("error", "Minimum top-up is TT$50.");
+    if (!amount || amount < 10) return showToast("error", "Minimum top-up is TT$10.");
     if (!userId) return showToast("error", "You must be logged in.");
 
     setProcessing(true);
