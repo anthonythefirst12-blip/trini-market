@@ -383,6 +383,15 @@ export interface BusinessEntry {
   listingCount: number;
 }
 
+export async function getAllSellerIds(): Promise<{ id: string; isPro: boolean }[]> {
+  const { data, error } = await supabase
+    .from("sellers")
+    .select("id, is_pro")
+    .eq("banned", false);
+  if (error) { console.error("getAllSellerIds:", error.message); return []; }
+  return (data ?? []).map((s: { id: string; is_pro: boolean }) => ({ id: s.id, isPro: !!s.is_pro }));
+}
+
 export async function getBusinesses(): Promise<BusinessEntry[]> {
   // Fetch all listings in target categories, then filter pro sellers in JS
   const { data, error } = await supabase

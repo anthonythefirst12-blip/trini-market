@@ -2,9 +2,11 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getSeller, getSellerListings, getSellerReviews, getSellerResponseRate } from "@/lib/db";
+import { createClient } from "@/lib/supabase-server";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { SellerPresence } from "@/components/listings/SellerPresence";
 import { StorefrontActivatedBanner } from "@/components/ui/StorefrontActivatedBanner";
+import { ReportUserButton } from "@/components/listings/ReportUserButton";
 import { MapPin } from "lucide-react";
 import { Suspense } from "react";
 import type { Metadata } from "next";
@@ -28,6 +30,10 @@ export async function generateMetadata({ params }: { params: Promise<{ sellerId:
 
 export default async function SellerProfilePage({ params }: { params: Promise<{ sellerId: string }> }) {
   const { sellerId } = await params;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isOwnProfile = !!user && user.id === sellerId;
+
   const [seller, listings, reviews, responseRate] = await Promise.all([
     getSeller(sellerId),
     getSellerListings(sellerId),
@@ -149,16 +155,29 @@ export default async function SellerProfilePage({ params }: { params: Promise<{ 
             </div>
           </div>
 
-          <div className="pb-2">
-            <Link
-              href={`/messages?to=${sellerId}&title=General+Enquiry`}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl transition-colors active:scale-95"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              Message
-            </Link>
+          <div className="pb-2 flex items-center gap-3">
+            {!isOwnProfile && (
+              <Link
+                href={`/messages?to=${sellerId}&title=General+Enquiry`}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl transition-colors active:scale-95"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Message
+              </Link>
+            )}
+            {isOwnProfile && (
+              <Link
+                href="/profile/edit"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 text-sm font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+              >
+                Edit Profile
+              </Link>
+            )}
+            {!isOwnProfile && (
+              <ReportUserButton sellerId={sellerId} sellerName={seller.name} />
+            )}
           </div>
         </div>
 
