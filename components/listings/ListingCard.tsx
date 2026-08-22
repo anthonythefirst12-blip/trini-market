@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Listing } from "@/lib/types";
 import { Badge } from "@/components/ui/Badge";
 import { CardImageCarousel } from "./CardImageCarousel";
@@ -70,6 +71,12 @@ function JustListedBadge({ createdAt }: { createdAt: string }) {
 
 export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
   const [quickView, setQuickView] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const fromParam = pathname === "/listings" || pathname.startsWith("/listings?")
+    ? encodeURIComponent(`${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`)
+    : null;
+  const detailHref = fromParam ? `/listings/${listing.id}?from=${fromParam}` : `/listings/${listing.id}`;
 
   const formatted = new Intl.NumberFormat("en-TT", {
     style: "currency",
@@ -97,7 +104,7 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
   if (view === "list") {
     return (
       <>
-        <Link href={`/listings/${listing.id}`} className="group block">
+        <Link href={detailHref} className="group block">
           <article className={`flex gap-4 bg-white border ${borderClass} rounded-2xl p-4 shadow-sm card-hover focus-within:ring-2 focus-within:ring-red-400`}>
             <div className="relative shrink-0 w-36 h-28 rounded-lg overflow-hidden bg-gray-100">
               <CardImageCarousel images={listing.images} title={listing.title} sizes="144px" />
@@ -163,7 +170,7 @@ export function ListingCard({ listing, view = "grid" }: ListingCardProps) {
   return (
     <>
       <div className="group block relative">
-        <Link href={`/listings/${listing.id}`} className="block">
+        <Link href={detailHref} className="block">
           <article className={`bg-white border ${borderClass} rounded-2xl overflow-hidden shadow-sm card-hover focus-within:ring-2 focus-within:ring-red-400`}>
             {/* Top accent strip — premium and featured only */}
             {(listing.tier === "premium" || listing.tier === "featured") && (

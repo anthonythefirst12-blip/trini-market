@@ -189,7 +189,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex gap-6 items-start">
           {/* Sidebar */}
-          <aside className="hidden lg:block w-56 shrink-0">
+          <aside className="hidden lg:block w-56 shrink-0 sticky top-4 self-start max-h-[calc(100vh-2rem)] overflow-y-auto">
             <FilterSidebar
               categories={CATEGORIES}
               locations={LOCATIONS}
@@ -253,17 +253,21 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                 </Link>
               </div>
             ) : view === "list" ? (
-              <div className="flex flex-col gap-3">
-                {results.map((listing) => (
-                  <ListingCard key={listing.id} listing={listing} view="list" />
-                ))}
-              </div>
+              <Suspense fallback={<div className="flex flex-col gap-3">{results.map((l) => <div key={l.id} className="h-36 bg-white rounded-2xl border border-gray-200 animate-pulse" />)}</div>}>
+                <div className="flex flex-col gap-3">
+                  {results.map((listing) => (
+                    <ListingCard key={listing.id} listing={listing} view="list" />
+                  ))}
+                </div>
+              </Suspense>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {results.map((listing) => (
-                  <ListingCard key={listing.id} listing={listing} />
-                ))}
-              </div>
+              <Suspense fallback={<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">{results.map((l) => <div key={l.id} className="h-56 bg-white rounded-2xl border border-gray-200 animate-pulse" />)}</div>}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {results.map((listing) => (
+                    <ListingCard key={listing.id} listing={listing} />
+                  ))}
+                </div>
+              </Suspense>
             )}
 
             {/* Pagination */}

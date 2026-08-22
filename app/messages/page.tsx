@@ -631,6 +631,20 @@ function MessagesContent() {
                 </div>
 
                 <div className="px-5 py-3 border-t border-gray-200">
+                  {!input && (
+                    <div className="flex gap-1.5 flex-wrap mb-2">
+                      {["Is this still available?", "What's your best price?", "Can you do delivery?"].map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setInput(t)}
+                          className="text-xs px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:border-red-400 hover:text-red-700 hover:bg-red-50 transition-colors"
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   {imgPreview && (
                     <div className="mb-2 flex items-center gap-2">
                       <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-100">

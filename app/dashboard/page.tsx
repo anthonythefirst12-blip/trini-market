@@ -83,6 +83,7 @@ function DashboardContent() {
     justPosted ? "🎉 Listing posted successfully!" : justEdited ? "✅ Listing updated." : null
   );
   const [sellerProfile, setSellerProfile] = useState<{name:string|null, avatar:string|null, bio:string|null, location:string|null, phone:string|null} | null>(null);
+  const [listingMsgCounts, setListingMsgCounts] = useState<Record<string, number>>({});
   const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
   const [onboardingCollapsed, setOnboardingCollapsed] = useState(false);
 
@@ -107,10 +108,24 @@ function DashboardContent() {
         .eq("status", "pending")
         .order("created_at", { ascending: false }),
     ]);
-    setListings(listingsRes.data ?? []);
+    const ls = listingsRes.data ?? [];
+    setListings(ls);
     setSubscriptions(subsRes.data ?? []);
     setSellerProfile(profileRes.data ?? null);
     setOffers((offersRes.data ?? []) as unknown as DBOffer[]);
+
+    if (ls.length > 0) {
+      const { data: msgRows } = await supabase
+        .from("messages")
+        .select("listing_id")
+        .eq("receiver_id", u.id)
+        .in("listing_id", ls.map((l) => l.id));
+      const counts: Record<string, number> = {};
+      (msgRows ?? []).forEach((m: { listing_id: string }) => {
+        counts[m.listing_id] = (counts[m.listing_id] ?? 0) + 1;
+      });
+      setListingMsgCounts(counts);
+    }
     setLoading(false);
   }, []);
 
@@ -499,6 +514,34 @@ function DashboardContent() {
                     </div>
                   )}
                 </div>
+
+                {/* Messages by listing */}
+                {Object.keys(listingMsgCounts).length > 0 && (
+                  <div className="sm:col-span-3 bg-white rounded-2xl border border-gray-200 p-5">
+                    <h3 className="font-semibold text-sm text-gray-700 mb-4">Messages Received by Listing</h3>
+                    <div className="space-y-3">
+                      {listings
+                        .filter((l) => (listingMsgCounts[l.id] ?? 0) > 0)
+                        .sort((a, b) => (listingMsgCounts[b.id] ?? 0) - (listingMsgCounts[a.id] ?? 0))
+                        .slice(0, 6)
+                        .map((l) => {
+                          const maxMsgs = Math.max(...Object.values(listingMsgCounts), 1);
+                          const pct = Math.round(((listingMsgCounts[l.id] ?? 0) / maxMsgs) * 100);
+                          return (
+                            <div key={l.id}>
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-xs text-gray-600 truncate max-w-[60%]">{l.title}</span>
+                                <span className="text-xs font-semibold text-gray-900">{listingMsgCounts[l.id]} msgs</span>
+                              </div>
+                              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-full bg-blue-500 rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
 
                 {/* Quick stats */}
                 <div className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col gap-4">

@@ -25,6 +25,7 @@ import Image from "next/image";
 
 interface Props {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -71,8 +72,9 @@ function TierBadge({ tier }: { tier: string }) {
   return null;
 }
 
-export default async function ListingDetailPage({ params }: Props) {
+export default async function ListingDetailPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const { from } = await searchParams;
   const listing = await getListing(id);
   if (!listing) notFound();
 
@@ -139,8 +141,16 @@ export default async function ListingDetailPage({ params }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-400 mb-6" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-red-600 transition-colors">Home</Link>
-          <span>/</span>
+          {from && (
+            <>
+              <Link href={from} className="hover:text-red-600 transition-colors flex items-center gap-1">
+                ← Back to results
+              </Link>
+              <span>/</span>
+            </>
+          )}
+          {!from && <Link href="/" className="hover:text-red-600 transition-colors">Home</Link>}
+          {!from && <span>/</span>}
           <Link href="/listings" className="hover:text-red-600 transition-colors">Listings</Link>
           <span>/</span>
           <Link href={`/listings?category=${listing.category}`} className="hover:text-red-600 transition-colors">{listing.category}</Link>
