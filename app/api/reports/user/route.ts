@@ -4,7 +4,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = "TriniSell <noreply@trinisell.tt>";
-const ADMIN_EMAIL = "ezekiel.larose14@icloud.com";
+const ADMIN_EMAIL = "trinisellsupport@gmail.com";
 
 export async function POST(request: Request) {
   const supabase = await createClient();

@@ -10,7 +10,7 @@ import {
   Search, BarChart2, AlertTriangle, ExternalLink, X,
 } from "lucide-react";
 
-const ADMIN_EMAILS = ["ezekiel.larose14@icloud.com"];
+const ADMIN_EMAILS = ["trinisellsupport@gmail.com"];
 
 interface Report {
   id: string;

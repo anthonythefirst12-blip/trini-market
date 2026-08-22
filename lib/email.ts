@@ -363,7 +363,7 @@ export async function sendContactEmail({
 
   return resend.emails.send({
     from: FROM,
-    to: "ezekiel.larose14@icloud.com",
+    to: "trinisellsupport@gmail.com",
     replyTo: fromEmail,
     subject: `[Contact] ${subject} — from ${fromName}`,
     html,
